@@ -30,7 +30,7 @@ Sony's PsyQ library functions inside the main program are identified and named, 
 ## Why?
 
 ### Newest version
-The dualshock version is by definition (aside from the DS version), the most modern Resident Evil version.
+The Dualshock version is by definition (aside from the DS version), the most feature complete classic Resident Evil version.
 
 ### What about the music?
 Luckily, music is not bound to code, so it can be swapped out.
