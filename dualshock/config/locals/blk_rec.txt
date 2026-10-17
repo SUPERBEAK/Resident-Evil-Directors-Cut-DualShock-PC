@@ -1,0 +1,13 @@
+# One record of the room's BLK section (RDT +0x58, 12 bytes; the records start after the section's 2-byte
+# count). Names from the RDT format page (Just Solve the File Format Problem wiki) (rdt_blk_obj_t: x1, z1, x2, z2, Dir_bit, Abut) and
+# walk_zone_find (x0..x1 / z0..z1 is the zone, a/b go to the scratchpad); zone_walk_cw uses `abut` as the
+# bit mask of the blocks next to this one.
+struct BlkRec
+macro BLK
+define
+0x00 u16 x0
+0x02 u16 z0
+0x04 u16 x1
+0x06 u16 z1
+0x08 u16 dir_bits
+0x0A u16 abut

@@ -1,0 +1,15 @@
+# Interactive screens (passcode panel 3x3 grid, computer lab terminal): state block g_InteractiveScreenState,
+# reached through g_InteractiveScreenStatePtr (src/main/interactive_screen.c, computer_lab.c).
+struct InteractiveScreen
+view ISCREEN = ((InteractiveScreen *)g_InteractiveScreenStatePtr)
+base g_InteractiveScreenStatePtr
+define
+0x00 u8  state        # top-level state (passcode_panel_state_tbl / screen dispatch)
+0x01 u8  substate     # passcode_panel_update_tbl index; d-pad held/confirm advance it
+0x02 u8  step         # animation step (passcode_panel_anim_tbl); computer lab: stage step
+0x03 u8  substep      # computer lab boot/login step (cl_boot_step_tbl, ...)
+0x04 s32 cursor_col   # passcode panel cursor column 0..2 (left 0x8000 / right 0x2000)
+0x08 s32 cursor_row   # passcode panel cursor row 0..2 (up 0x1000 / down 0x4000)
+0x0C s32 saved_pos_y  # computer lab: the player's pos_y while the screen is open (cl_finish_restore_room)
+0x10 u16 timer        # frames until the next animation step
+0x12 u16 counter      # animation position (index into g_PasscodePanelAnimTiles)

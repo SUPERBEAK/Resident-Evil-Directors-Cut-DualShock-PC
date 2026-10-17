@@ -1,0 +1,8 @@
+# Local pointers to an effect slot (an element of g_EffectPool at 0x800C3024).
+struct Effect
+macro EFF
+fields Effect
+source ^\s*\(?\s*(\(\w+ \*+\)\s*)?&(\(\(Effect \*\)0x800C3024\)|LITP\(Effect, g_EffectPool\))\[[^\]]+\]\s*\)?\s*$
+
+# rawfield.py round (2026-10-16): g_EffectPool + slot * 0x84 by hand
+param effect_behavior_fire_burst ply

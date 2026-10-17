@@ -1,0 +1,8 @@
+# Event script command 7 (exec; PC scd_event_cmd_exec): runs one embedded SCD opcode record.
+struct ScdEventCmdExec
+noaddr
+macro SCD_EVENT_CMD_EXEC
+param scd_event_cmd_exec cmd
+define
+0x00 u16 head   # high byte: command length (the event pc advances by it)
+0x02 u8 opcode  # the embedded SCD record starts here (g_ScdIp = +2); its opcode picks g_ScdOpcodeTable

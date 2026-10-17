@@ -1,0 +1,11 @@
+# SCD 0x17 sfx_3d_play record (10 bytes; PC cmd_sfx_3d_play).
+struct ScdSfx3dPlay
+noaddr
+macro SCD_SFX_3D
+param scd_op_17_sfx_3d_play p
+define
+0x00 u16 head    # high byte: sound bank type (sound_play_se_3d / play_sfx arg 0)
+0x02 u16 sound   # low byte: sound id, high byte: signed third argument of sound_play_se_3d
+0x04 u16 where   # low byte: 0 = at x/z below, 1 = player, 2 = enemy slot (high byte), 3 = no position (play_sfx)
+0x06 s16 x       # where 0: position x (y is 0)
+0x08 s16 z       # where 0: position z

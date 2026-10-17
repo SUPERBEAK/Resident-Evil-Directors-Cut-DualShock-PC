@@ -1,0 +1,13 @@
+# A room sprite record (RDT sprite group, 8 + 4 bytes; room_load_camera_sprites copies it into g_RoomSprites).
+struct RoomSpriteRec
+macro ROOM_SPR
+define
+0x00 u8  u
+0x01 u8  v
+0x02 u8  x            # + group x - 0xA0 = screen x
+0x03 u8  y            # + group y - 0x78 = screen y
+0x04 u16 depth        # -> RoomSprite.x22
+0x06 u16 attr         # low 5 bits: texture page (+ g_VramTpageCursor); 0xF000: w/h follow
+0x08 u16 w
+0x0A u16 h
+param room_load_camera_sprites q

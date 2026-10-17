@@ -1,0 +1,30 @@
+# Door-animation script commands with halfword arguments (src/main/door.c door_op_*): the command at the
+# script pointer (DoorCmd ip). Byte 0 = opcode, byte 1 = an index, then halfwords; the meaning is per opcode
+# (PC DoorSystem.cpp door_op_*): wait_free 1 = command slot; loop_push arg0 = repeat count; activate arg0 =
+# slot | script << 8; shortvar_set/add 1 = variable, arg0 = value; fade_in/out 1 = fade type, arg0 = speed,
+# arg1 = level; order_pos/vel/rot 1 = order, arg0..arg2 = x, y, z; order_setup 1 = order, 2 = model,
+# 3 = parent order (0xFF none), arg1 = order flags; order_vert_add 1 = order, 2 = vertex, arg1..arg3 =
+# delta; message 1 = type, arg0 = message id; order_flags 1 = order, arg0 = flags; buffer_advance arg0 = bytes.
+struct DoorOp
+macro DOOR_OP
+define
+0x00 u8 opcode
+0x01 u8 index      # order / variable / command slot / fade type (per opcode)
+0x02 u16 arg0
+0x04 u16 arg1
+0x06 u16 arg2
+0x08 u16 arg3
+param door_op_wait_free op
+param door_op_shortvar_set op
+param door_op_shortvar_add op
+param door_op_fade_in op
+param door_op_fade_out op
+param door_op_order_setup rec
+param door_op_order_pos op
+param door_op_order_vel op
+param door_op_order_rot op
+param door_op_order_vert_add op
+param door_op_message op
+param door_op_order_flags op
+param door_op_order_vert_set p
+param door_op_jmp_short p

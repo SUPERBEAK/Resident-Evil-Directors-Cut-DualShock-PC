@@ -1,0 +1,18 @@
+# A door's room-action record: RoomAction.rec of a door points into its SCD 0x0C door_set instruction at x
+# (RDT page script_door_set_t, from +2). Used by door_try_enter.
+struct ScdDoorRec
+macro SCD_DOOR
+param door_try_enter ROOM_ACTION(act)->rec
+define
+0x00 s16 x
+0x02 s16 z
+0x04 s16 w
+0x06 s16 d
+0x0C u8  lock            # low 6 bits: lock flag number (bank 0x800C86B4, set when unlocked); 0x40: only for character id 3
+0x0D u8  next_stage_room # bits 7-5: stage (0 = this stage), bits 4-0: room
+0x0E s16 next_x
+0x10 s16 next_y
+0x12 s16 next_z
+0x14 s16 next_dir
+0x16 u8  key_item        # item that unlocks it (include_key compares the equipped item)
+param build_enemy_snap g_DoorRecord

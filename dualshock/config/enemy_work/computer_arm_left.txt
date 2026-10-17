@@ -1,0 +1,11 @@
+# Left computer arm (stage 5 lab, computer_arm_left_update, the arm15_* steps, arm_step_*15 and the lever steps,
+# which are all in the left arm's step tables D_8012DE10..) work area, entity 0x16C.. (16.16 fixed point).
+struct ComputerArmLeftWork ARM_LEFT
+only arm15_* arm_step_*15 arm_step_lever_* computer_arm_left_update
+0x00 s32 vel_x         # 0x16C: x velocity, 16.16 (arm15_set_velocity: delta/frames)
+0x04 s32 vel_y         # 0x170: fall velocity added to pos_y (arm15_cmd7_drop/_fall, gravity +0x28000)
+0x08 s32 vel_z         # 0x174: z velocity (arm15_set_velocity, arm15_integrate)
+0x0C s32 pos_x         # 0x178: x position accumulator (arm15_state_init, arm15_integrate)
+0x10 s32 pos_y         # 0x17C: y position while falling (arm15_cmd7_drop/_fall, stops at scd_pos_y)
+0x14 s32 pos_z         # 0x180: z position accumulator (arm15_state_init, arm15_set_velocity, arm15_integrate)
+0x18 s16 slide_frames  # 0x184: 0xA or 0x12 by player character (arm_step_login15); slide duration for arm15_set_velocity

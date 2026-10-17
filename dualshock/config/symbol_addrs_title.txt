@@ -1,0 +1,17 @@
+// Capcom symbol names for overlay TITLE.EXE (splat format).
+title_state = 0x800E0064; // type:func
+title_init = 0x800E051C; // type:func
+title_menu_update = 0x800E07BC; // type:func
+title_nop = 0x800E1850; // type:func
+title_draw_option = 0x800E1870; // type:func
+title_draw_mode_option = 0x800E1A04; // type:func
+title_request_exit = 0x800E1B6C; // type:func
+g_TitleMenuChoice = 0x800E1C00;
+g_TitleOptionPad = 0x800E1C01;
+g_TitleRunning = 0x800E1C02;
+g_TitlePage = 0x800E1C03;
+g_TitleState = 0x800E1C04;
+g_TitleSpriteClutRow = 0x800E1BD8;
+g_TitleSpriteTpage = 0x800E1BF0;
+title__main = 0x800E1BB8; // type:func
+g_TitleTimers = 0x800E1BD0; // type:func

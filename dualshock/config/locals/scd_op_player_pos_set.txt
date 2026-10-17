@@ -1,0 +1,12 @@
+# SCD 0x20 player_pos_set record (14 bytes; RDT page script_player_pos_set_t, PC cmd_player_pos_set).
+struct ScdPlayerPosSet
+noaddr
+macro SCD_PLAYER_POS_SET
+param scd_op_20_player_pos_set p
+define
+0x02 u16 rot_x     # -> g_PlayerRotX
+0x04 u16 angle     # -> g_PlayerAngle
+0x06 u16 angle_z   # -> g_PlayerAngleZ
+0x08 u16 x         # -> g_PlayerPositionVx / g_PlayerPosX
+0x0A u16 y         # -> g_PlayerPositionVy / g_PlayerPosY
+0x0C u16 z         # -> g_PlayerPositionVz / g_PlayerPosZ

@@ -1,0 +1,9 @@
+# SCD 0x3A cut_zone_set record (4 bytes; PC cmd_cut_zone_set): rewrites a CamSwitchZone (RDT +0x48).
+struct ScdCutZoneSet
+noaddr
+macro SCD_CUT_ZONE_SET
+param scd_op_3a_cut_zone_set p
+define
+0x01 u8 zone       # camera switch zone index
+0x02 u8 cam_from   # -> CamSwitchZone.cam_from (+2)
+0x03 u8 cam_to     # -> CamSwitchZone.cam_to (+0)

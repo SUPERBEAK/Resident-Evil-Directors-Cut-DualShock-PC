@@ -1,0 +1,7 @@
+# SCD 0x23 cut_lock_write record (2 bytes; PC cmd_cut_lock_write); read through g_ScdIp.
+struct ScdCutLockWrite
+noaddr
+macro SCD_CUT_LOCK_WRITE
+param scd_op_23_cut_lock_write g_ScdIp
+define
+0x01 u8 lock   # 0 = clear the camera lock (g_GameStateFlags 0x100000), else set it

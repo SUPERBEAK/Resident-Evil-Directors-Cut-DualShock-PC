@@ -1,0 +1,8 @@
+# SCD 0x43 bgm_volume_ramp record (4 bytes; PC cmd_bgm_volume_ramp).
+struct ScdBgmVolumeRamp
+noaddr
+macro SCD_BGM_RAMP
+param scd_op_43_bgm_volume_ramp p
+define
+0x00 u16 head   # high byte: BGM channel (SsSepSetCrescendo seq number; only if its g_BgmState bit is set)
+0x02 u16 ramp   # low byte: volume change (s8), high byte: ramp time

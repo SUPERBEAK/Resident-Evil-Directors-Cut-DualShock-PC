@@ -1,0 +1,8 @@
+# Pointers into the player's inventory: g_ItemSlotsPointer + slot * 2 (2-byte InventorySlot records:
+# item id, count; struct InventorySlot from config/structs/inventory_slot.txt). The status-menu combine /
+# reload handlers and SCD 0x1D / 0x4C reach slots this way.
+struct InventorySlot
+macro INV_SLOT
+fields InventorySlot
+source g_ItemSlotsPointer
+expr ^\(?\s*(\(\s*)?\w+( \* 2\))? \+ g_ItemSlotsPointer\s*\)?$

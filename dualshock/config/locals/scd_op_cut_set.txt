@@ -1,0 +1,7 @@
+# SCD 0x09 cut_lock_set record (2 bytes; PC cmd_cut_lock_set).
+struct ScdCutSet
+noaddr
+macro SCD_CUT_SET
+param scd_op_09_cut_lock_set p
+define
+0x01 u8 cut   # camera (cut) to switch to (stored in 0x800C8662 after saving the current one)

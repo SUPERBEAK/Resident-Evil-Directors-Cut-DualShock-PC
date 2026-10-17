@@ -1,0 +1,14 @@
+# Black Tiger (giant spider boss, stage 3) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from black_tiger.c usage; the RE1 PC decomp's BlackTiger.cpp header notes were checked for agreement.
+# black_tiger_state_tbl: 0 init, 1 normal (black_tiger_pick_behavior / black_tiger_behavior_dispatch), 2 damaged (black_tiger_hit_react), 3 dying (black_tiger_die_burst/b/c).
+struct BlackTigerWork BLACK_TIGER
+0x00 s16 turn_step            # 0x16C: turn rate / heading step: 0x80 for approach, +-0x18 added to angle each frame while strafing, random direction for api_entity_add_speed_xz in circle
+0x02 s16 path_flags            # 0x16E: bit 0 = api_entity_pathfind_update result bit 0 (clear line to player); gates turning, spit and circle exit
+0x04 s16 player_touch         # 0x170: api_check_entity_collision result (black_tiger_update); lunge hits when set
+0x06 s16 attack_cooldown        # 0x172: frames before the spit (behavior 0xD) may be chosen; 0x1E/0x14 after attacks, counted down in black_tiger_state_run
+0x08 s16 death_behavior       # 0x174: dying variant picked in black_tiger_state_death (1 or 6); restored with action_state 3 when the dying state restarts
+0x0A s16 room_hit             # 0x176: api_check_room_collision result (black_tiger_update)
+0x0C s16 wall_stuck_frames    # 0x178: frames touching walls (black_tiger_state_run); >= 21 makes black_tiger_pick_behavior choose strafe/approach and reset it
+0x0E s16 unused_17A                # 0x17A: set 0 in black_tiger_state_init and 6 each frame of behavior 1 (walk); never read in this file
+0x10 s16 wound_count          # 0x17C: next index into g_BlackTigerWoundedJoints (black_tiger_hit_react adds one per hit); black_tiger_die_writhe checks < 6
+0x12 s16 pick_cooldown        # 0x17E: frames black_tiger_pick_behavior waits before choosing a new behavior (0x2D at init), counted down there

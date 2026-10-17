@@ -1,0 +1,688 @@
+// Overlay globals (2026-10-16): <program> D_X = name; // type, confidence: evidence. Applied with tools/rename.py --target <program>; rodata pieces (D_80105400/D_801054AC/D_801054B4) keep their address names.
+// 2026-10-16 (array pass): the element symbols NAME_N of one array (g_KeyConfig_1, g_PlayerAnimFunctions_07,
+// g_SelectPanels_1_vx, zombie_sca_info_ptr_1, ...) were removed from the symbol files again: the code writes
+// NAME[N] / NAME[i].field now. The lines below stay as the record of what each element is.
+// gb proposals: overlay globals (stage1..7, ending, select, title, logo, prologue) + main slots only overlays touch
+// format: <program> D_X = name; // type, confidence: evidence
+// ---- main-program slots referenced ONLY from overlays (not declared in capcom.c) ----
+// ---- stage1 ----
+stage1 D_80105400 = zombie_hit_threshold_hard_tbl; // u8[32] rodata, high: byte-identical to PC zombie_hit_threshold_hard_tbl; copied to stack by zombie_init/zombie_damaged (PS1 keeps only this one)
+stage1 D_801054AC = zombie_body_probe_neg; // SVECTOR {-800,0,0} rodata, medium: start point of api_check_room_collision_two_point in explode_leg_and_drop/push_and_stagger/zombie_dead_animation
+stage1 D_801054B4 = zombie_body_probe_pos; // SVECTOR {+800,0,0} rodata, medium: end point of the same two-point collision probe
+stage1 D_80121EE8 = stage_voice_offset_tbl; // u16[] (in sony stub area, runs on into D_80121F0C), high: stage1_entry stores it in g_StageVoiceOffsetTable (PC per-room CD-streaming/voice table; bit-15 entries = XA channel)
+stage1 D_80122014 = stage_bg_checksum_tbl; // u8[232], high: stage1_entry stores it in g_StageBgChecksumTable when ADVANCED bit 0x20000 clear (PC docs: STANDARD descriptor / bg checksums)
+stage1 D_801220FC = stage_bg_checksum_tbl_adv; // u8[232], high: same, ADVANCED-mode copy (g_StatusFlags & 0x20000)
+stage1 D_801222A4 = stage_bgm_tbl; // u8[32 rooms][4], high: stored in D_801FEC04, read by update_room_bgm as [room*4 + (bgm&7)] (PC g_bgmDataTable)
+stage1 D_80122348 = zombie_sca_info_ptr; // short* , high: PC g_pZombieScaInfo[0] -> zombie_sca_info[0] (D_80122324, radius 422); zombie_init stores it in sca_info [renamed from g_pZombieScaInfo: sca info spelling (pointer variable)]
+stage1 D_8012234C = zombie_sca_info_ptr_1; // short*, high: PC g_pZombieScaInfo[1] -> naked-zombie record (radius 322) [renamed from g_pZombieScaInfo_1: sca info spelling (pointer variable; entity id 1)]
+stage1 D_80122350 = zombie_sca_info_ptr_2; // short*, high: PC g_pZombieScaInfo[2] -> DC-only record (radius 1000), behaviour 11 [renamed from g_pZombieScaInfo_2: sca info spelling (pointer variable; behaviour 0xB)]
+stage1 D_80122354 = zombie_health_tbl; // u8[16], high: identical to PC zombie_health_tbl (59,59,79,...) zombie_init health base
+stage1 D_80122364 = zombie_anim_id_tbl; // u8[12], high: = PC zombie_anim_id_tbl_dc (index 11 = 29); zombie_init animation_id by behavior_flags&0xF
+stage1 D_80122370 = zombie_stagger_tbl; // u8[32], high: identical to PC zombie_stagger_tbl (index g_RandSeed&0x1F)
+stage1 D_80122390 = zombie_state_tbl; // fnptr[9], high: PC zombie_states_table, zombie_update dispatches by state [renamed from zombie_states_table: _table -> _tbl]
+stage1 D_801223B4 = zombie_behavior_tbl; // fnptr[12], high: PC zombie_behavior_tbl (= states+9 on PS1), zombie_state_check by behavior_flags&0xF; [11]=dc_standup_lunge
+stage1 D_801223E4 = zombie_damage_action_tbl; // u8[2][6], high: = PC zombie_damage_action_tbl[1..12] (0,5,0,2,0,0,4,4,...), zombie_damaged
+stage1 D_801223F0 = zombie_damage_behavior_tbl; // fnptr[8], high: PC zombie_damage_behavior_tbl (short_push_back.. benddown_and_standup)
+stage1 D_80122410 = zombie_action_tbl; // fnptr[8], high: PC zombie_action_tbl (zombie_idle..zombie_falldown), update_zombie_action
+stage1 D_80122430 = zombie_move_behavior_tbl; // fnptr[11], high: PC zombie_move_behavior_tbl (zombie_walk1, check_player_distance, ...), zombie_move_update
+stage1 D_8012245C = zombie_attack_anim_tbl; // u8[4][3], high: identical to PC zombie_attack_anim_tbl (0x11,0,0, 0x14,3,0, ...)
+stage1 D_80122468 = attack_dir_offset_tbl; // s16[4], high: PC attack_dir_offset_tbl {0x7FFF,0,0x7FFF,0}
+stage1 D_80122470 = player_bite_blood_tint_tbl; // fnptr[4], high: PC player_death_animations_tbl (player_death_anim_0..3) [renamed from player_death_animations_tbl: [attack_direction] -> blood tint of the bitten player's joints (zombie_attack_main)]
+stage1 D_80122480 = zombie_damage_tbl; // u8[12], medium-high: values = PC zombie_damage_hard_tbl (12,12,9,9,12...); PS1 has only this one table; subtracted from player health in zombie_attack_main
+stage1 D_8012248C = zombie_attack_data_tbl; // s16[4][3], high: PC zombie_attack_data_tbl {speed, timer, angle}; turn_towards_player
+stage1 D_801224A4 = zombie_recovery_timer_tbl; // u8[16], high: identical to PC zombie_recovery_timer_tbl (2,4,4,...,9) x30 frames, zombie_falldown
+stage1 D_801224B4 = zombie_action_tbl_scd; // fnptr[20], high: PC zombie_action_tbl_scd (scd_no_action, aggresive_roar, headshot, scd_dying, vomiting...)
+stage1 D_80122504 = cerberus_sca_info; // s16[8], high: = PC cerberus_sca_info {0x8000,500,-800,0,800,400}; cerberus_init
+stage1 D_80122506 = cerberus_probe_dist; // s16 (cerberus_sca_info[1] = 500), high: PC cerberus_probe_ahead reads word [sca_info+2] directly; same here in cerberus_probe_ahead
+stage1 D_80122510 = cerberus_health_tbl; // u8[16], high: identical to PC cerberus_health_tbl (119,99,...)
+stage1 D_80122520 = g_CerberusBarked; // s32 (.data, mutable), high: PC g_cerberusBarked latch, reset in cerberus_init, read in cerberus_beh_stalk
+stage1 D_80122524 = cerberus_state_tbl; // fnptr[5], high: PC cerberus_states_table (init, behavior_run, damaged, die, no_action) [renamed from cerberus_states_table: _table -> _tbl]
+stage1 D_80122538 = cerberus_behavior_tbl; // fnptr[10], high: PC cerberus_behavior_view (= states+5), cerberus_behavior_run [renamed from cerberus_behavior_view: behaviour part of the state table (states+5), indexed by sub_state]
+stage1 D_80122560 = cerberus_behavior_select_tbl; // fnptr[13], high: PC cerberus_behavior_select_tbl
+stage1 D_80122594 = cerberus_walk_params; // {u8 anim,u8 pad,s16 speed}[2], high: = PC cerberus_walk_params {1,40},{14,130}
+stage1 D_8012259C = cerberus_chase_tbl; // fnptr[3], high: PC cerberus_chase_tbl
+stage1 D_801225A8 = cerberus_leap_tbl; // fnptr[5], high: PC cerberus_leap_tbl
+stage1 D_801225BC = cerberus_strafe_tbl; // fnptr[3], high: PC cerberus_strafe_tbl
+stage1 D_801225C8 = cerberus_patrol_tbl; // fnptr[3], high: PC cerberus_patrol_tbl
+stage1 D_801225D4 = cerberus_stalk_tbl; // fnptr[4], high: PC cerberus_stalk_tbl
+stage1 D_801225E4 = cerberus_wall_follow_tbl; // fnptr[5], medium-high: PC "five-step wall-follow sequence" table (unnamed in PC), cerberus_wall_follow_step
+stage1 D_801225F8 = cerberus_damaged_tbl; // fnptr[5], medium-high: cerberus_damaged sub-states (begin, stumble, knock_airborne, skid, getup)
+stage1 D_8012260C = cerberus_recoil_angle_tbl; // s16[8], high: = PC cerberus_recoil_angle_tbl {128,-192,-128,192,-256,256,256,-256}
+stage1 D_8012261C = cerberus_die_tbl; // fnptr[4], medium-high: cerberus_die sub-states
+stage1 D_8012262C = cerberus_turn_anim_tbl; // u8[3], high: = PC cerberus_turn_anim_tbl {15,2,16}
+stage1 D_8012263C = crow_sca_info_ptr; // short* -> D_80122630 (crow_sca_info {0x8000,0,0,0,180,200}), high: PC "0x004badcc holds a POINTER to this record"; crow_state_init
+stage1 D_80122640 = crow_state_tbl; // fnptr[9], high: PC crow_state_table [renamed from crow_state_table: _table -> _tbl]
+stage1 D_80122664 = crow_behavior_tbl; // fnptr[14], high: PC behaviour jumptable 0x004badf8 (14 entries), crow_behavior_dispatch
+stage1 D_8012269C = monster_plant_sca_info; // s16[6], high: = PC s_mpScaInfo {0x8000,0,0,0,0,0x190}; mp_init [renamed from s_mpScaInfo: sca info spelling: <enemy>_sca_info (data) / <enemy>_sca_info_ptr (pointer)]
+stage1 D_801226A8 = g_MonsterPlantLastSides; // u32 (.data, mutable), high: PC s_mpLastSides (reset by mp_init, used by mp_variant_8) [renamed from g_MpLastSides: one prefix per enemy]
+stage1 D_801226AC = monster_plant_state_tbl; // fnptr[5], high: PC s_mpState [renamed from s_mpState: one prefix per enemy]
+stage1 D_801226C0 = monster_plant_mode_tbl; // fnptr[7], high: PC s_mpBehavior [renamed from s_mpBehavior: one prefix per enemy (was s_mp camelCase)] [renamed from monster_plant_behavior_tbl: [sub_state] -> monster_plant_mode_*]
+stage1 D_801226DC = monster_plant_start_tbl; // fnptr[10], high: PC s_mpVariant [renamed from s_mpVariant: one prefix per enemy] [renamed from monster_plant_variant_tbl: [behavior_flags & 0xF] -> monster_plant_start_* (sets sub_state = mode)]
+stage1 D_80122704 = monster_plant_watch_tbl; // fnptr[3], high: PC s_mpSub [renamed from s_mpSub: one prefix per enemy] [renamed from monster_plant_sub_tbl: [behavior_flags] -> range checks of the watch mode]
+stage1 D_80122710 = monster_plant_grab_step_tbl; // fnptr[6], high: PC s_mpStep (behaviour 2 enters at 0) [renamed from s_mpStep: one prefix per enemy] [renamed from monster_plant_step_tbl: grab steps [0..5] (the strike / ambush tables follow)]
+stage1 D_80122728 = monster_plant_strike_step_tbl; // fnptr[2], high: PC s_mpStep+6 view (behaviour 3) [renamed from s_mpStep_beh3: view of monster_plant_step_tbl+6 (behaviour 3)] [renamed from monster_plant_step_tbl_beh3: view +6 of the step table: strike steps]
+stage1 D_80122730 = monster_plant_ambush_step_tbl; // fnptr[4], high: PC s_mpStep+8 view (behaviour 4; [9] aliases mp_step_03 as in PC) [renamed from s_mpStep_beh4: view of monster_plant_step_tbl+8 (behaviour 4)] [renamed from monster_plant_step_tbl_beh4: view +8 of the step table: ambush steps (its [1] is monster_plant_grab_squeeze)]
+stage1 D_80122740 = monster_plant_extend_stops; // s16[4], high: = PC s_mpExtendStops {8,4,2,0} [renamed from s_mpExtendStops: one prefix per enemy]
+stage1 D_80122748 = monster_plant_retract_stops; // s16[12], high: = PC s_mpRetractStops [renamed from s_mpRetractStops: one prefix per enemy]
+stage1 D_80122760 = monster_plant_die_tbl; // fnptr[3], medium: mp_die sub-cases [renamed from mp_die_tbl: one prefix per enemy]
+stage1 D_8012276C = player_plant_hold_tbl; // fnptr[3], high: PC DAT_004c10b0 (player_plant_hold_00..02), dispatched by player_anim_dispatch_4b1a90 by action_state
+// ---- stage2 ----
+stage2 D_80105400 = zombie_hit_threshold_hard_tbl; // high: twin of stage1 D_80105400 (fns+content)
+stage2 D_801054AC = zombie_body_probe_neg; // high: twin of stage1 D_801054AC (fns+content)
+stage2 D_801054B4 = zombie_body_probe_pos; // high: twin of stage1 D_801054B4 (fns+content)
+stage2 D_80121ADC = zombie_sca_info_ptr; // medium-high: twin of stage1 D_80122348 (fns+decl(content differs)) [renamed from g_pZombieScaInfo: sca info spelling (pointer variable)]
+stage2 D_80121AE8 = zombie_health_tbl; // high: twin of stage1 D_80122354 (fns+content)
+stage2 D_80121AF8 = zombie_anim_id_tbl; // high: twin of stage1 D_80122364 (fns+content)
+stage2 D_80121B04 = zombie_stagger_tbl; // high: twin of stage1 D_80122370 (fns+content)
+stage2 D_80121B24 = zombie_state_tbl; // high: twin of stage1 D_80122390 (fns+content) [renamed from zombie_states_table: _table -> _tbl]
+stage2 D_80121B48 = zombie_behavior_tbl; // high: twin of stage1 D_801223B4 (fns+content)
+stage2 D_80121B78 = zombie_damage_action_tbl; // high: twin of stage1 D_801223E4 (fns+content)
+stage2 D_80121B84 = zombie_damage_behavior_tbl; // high: twin of stage1 D_801223F0 (fns+content)
+stage2 D_80121BA4 = zombie_action_tbl; // high: twin of stage1 D_80122410 (fns+content)
+stage2 D_80121BC4 = zombie_move_behavior_tbl; // high: twin of stage1 D_80122430 (fns+content)
+stage2 D_80121BF0 = zombie_attack_anim_tbl; // high: twin of stage1 D_8012245C (fns+content)
+stage2 D_80121BFC = attack_dir_offset_tbl; // high: twin of stage1 D_80122468 (fns+content)
+stage2 D_80121C04 = player_bite_blood_tint_tbl; // high: twin of stage1 D_80122470 (fns+content) [renamed from player_death_animations_tbl: [attack_direction] -> blood tint of the bitten player's joints (zombie_attack_main)]
+stage2 D_80121C14 = zombie_damage_tbl; // high: twin of stage1 D_80122480 (fns+content)
+stage2 D_80121C20 = zombie_attack_data_tbl; // high: twin of stage1 D_8012248C (fns+content)
+stage2 D_80121C38 = zombie_recovery_timer_tbl; // high: twin of stage1 D_801224A4 (fns+content)
+stage2 D_80121C48 = zombie_action_tbl_scd; // high: twin of stage1 D_801224B4 (fns+content)
+stage2 D_80121CA4 = crow_sca_info_ptr; // medium-high: twin of stage1 D_8012263C (fns+decl(content differs))
+stage2 D_80121CA8 = crow_state_tbl; // high: twin of stage1 D_80122640 (fns+content) [renamed from crow_state_table: _table -> _tbl]
+stage2 D_80121CCC = crow_behavior_tbl; // high: twin of stage1 D_80122664 (fns+content)
+stage2 D_80121AE0 = zombie_sca_info_ptr_1; // high: twin of stage1 D_8012234C (fns+addr-delta) [renamed from g_pZombieScaInfo_1: sca info spelling (pointer variable; entity id 1)]
+stage2 D_80121AE4 = zombie_sca_info_ptr_2; // high: twin of stage1 D_80122350 (fns+addr-delta) [renamed from g_pZombieScaInfo_2: sca info spelling (pointer variable; behaviour 0xB)]
+stage2 D_80121A38 = stage_bgm_tbl; // high: stage2_entry stores it in D_801FEC04 (same pattern as stage1)
+stage2 D_801216CC = stage_voice_offset_tbl; // high: stage2_entry stores it in g_StageVoiceOffsetTable (same pattern as stage1)
+stage2 D_801217A8 = stage_bg_checksum_tbl; // high: stage2_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage2 D_80121890 = stage_bg_checksum_tbl_adv; // high: stage2_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage2 D_80121D10 = yawn_sca_info_ptr; // short* -> D_80121D04 (s_yawnScaInfo), high: PC "Sca_info points at 0x004b19bc, which holds the address of this block"; yawn_init
+stage2 D_80121D14 = g_YawnCaptureMatrix; // MATRIX (mutable), high: PC g_yawnCaptureMatrix (swallow capture matrix, also read by player_anim_death_alt_body)
+stage2 D_80121D28 = g_YawnCaptureMatrix_tx; // s32 = g_YawnCaptureMatrix.t[0], high: PC "its translation (0x004b19d4/d8/dc) is stepped every frame"; yawn_action_swallow
+stage2 D_80121D2C = g_YawnCaptureMatrix_ty; // s32 = .t[1], high: same
+stage2 D_80121D30 = g_YawnCaptureMatrix_tz; // s32 = .t[2], high: same
+stage2 D_80121D34 = yawn_state_tbl; // fnptr[5], high: PC Yawn "state table 0x004b19e0" (init, state_check, damaged, die, state_wait), yawn_update [renamed from yawn_state_table: _table -> _tbl]
+stage2 D_80121D48 = yawn_action_tbl; // fnptr[9], high: PC Yawn "action table 0x004b19f8" indexed by action_behavior, yawn_check_actions [renamed from yawn_action_table: _table -> _tbl]
+stage2 D_80121D6C = yawn_selector_tbl; // fnptr[7], high: PC Yawn "selector table 0x004b1a20" by behavior_flags&7 (odd entries NULL), yawn_select_behavior [renamed from yawn_selector_table: _table -> _tbl]
+stage2 D_80121D88 = yawn_bite_window; // u8[2][2], high: = PC s_yawnBiteWindow {13,6},{18,5} [renamed from s_yawnBiteWindow: snake_case like the other enemy data]
+stage2 D_80121D8C = yawn_entry_path; // s16[6][2], high: = PC s_yawnEntryPath {4500,24500},... [renamed from s_yawnEntryPath: snake_case like the other enemy data]
+stage2 D_80121DA4 = yawn_flee_path; // s16[9][2], high: = PC s_yawnFleePath {7300,10000},... [renamed from s_yawnFleePath: snake_case like the other enemy data]
+stage2 D_80121DC8 = yawn_reposition_path; // s16[4][2], high: = PC s_yawnRepositionPath {6500,7500},... [renamed from s_yawnRepositionPath: snake_case like the other enemy data]
+stage2 D_80121DD8 = player_death_alt_tbl; // fnptr[1] {player_anim_death_alt_body}, high: PC player_anim_death_alt "JMP [action_behavior*4 + 0x004b1a90]" (DAT_004b1a90)
+stage2 D_80121DDC = yawn_dust_offset; // s16[3][2], high: = PC s_yawnDustOffset {300,400},{600,100},{800,50} [renamed from s_yawnDustOffset: snake_case like the other enemy data]
+stage2 D_80121DE8 = g_YawnFleeTimer; // s16 (mutable), medium: yawn_action_flee zeroes it on entry, ++ while path step < 6, forces state 0x80101 at >= 9001 (flee timeout)
+// ---- stage3 ----
+stage3 D_80131DE4 = cerberus_sca_info; // high: twin of stage1 D_80122504 (fns+content)
+stage3 D_80131DE6 = cerberus_probe_dist; // high: twin of stage1 D_80122506 (fns+content)
+stage3 D_80131DF0 = cerberus_health_tbl; // high: twin of stage1 D_80122510 (fns+content)
+stage3 D_80131E00 = g_CerberusBarked; // high: twin of stage1 D_80122520 (fns+content)
+stage3 D_80131E04 = cerberus_state_tbl; // high: twin of stage1 D_80122524 (fns+content) [renamed from cerberus_states_table: _table -> _tbl]
+stage3 D_80131E18 = cerberus_behavior_tbl; // high: twin of stage1 D_80122538 (fns+content) [renamed from cerberus_behavior_view: behaviour part of the state table (states+5), indexed by sub_state]
+stage3 D_80131E40 = cerberus_behavior_select_tbl; // high: twin of stage1 D_80122560 (fns+content)
+stage3 D_80131E74 = cerberus_walk_params; // high: twin of stage1 D_80122594 (fns+content)
+stage3 D_80131E7C = cerberus_chase_tbl; // high: twin of stage1 D_8012259C (fns+content)
+stage3 D_80131E88 = cerberus_leap_tbl; // high: twin of stage1 D_801225A8 (fns+content)
+stage3 D_80131E9C = cerberus_strafe_tbl; // high: twin of stage1 D_801225BC (fns+content)
+stage3 D_80131EA8 = cerberus_patrol_tbl; // high: twin of stage1 D_801225C8 (fns+content)
+stage3 D_80131EB4 = cerberus_stalk_tbl; // high: twin of stage1 D_801225D4 (fns+content)
+stage3 D_80131EC4 = cerberus_wall_follow_tbl; // high: twin of stage1 D_801225E4 (fns+content)
+stage3 D_80131ED8 = cerberus_damaged_tbl; // medium-high: twin of stage1 D_801225F8 (fns+decl(content differs))
+stage3 D_80131EEC = cerberus_recoil_angle_tbl; // high: twin of stage1 D_8012260C (fns+content)
+stage3 D_80131EFC = cerberus_die_tbl; // medium-high: twin of stage1 D_8012261C (fns+decl(content differs))
+stage3 D_80131F0C = cerberus_turn_anim_tbl; // high: twin of stage1 D_8012262C (fns+content)
+stage3 D_80131D64 = stage_bgm_tbl; // high: stage3_entry stores it in D_801FEC04 (same pattern as stage1)
+stage3 D_80131B00 = stage_voice_offset_tbl; // high: stage3_entry stores it in g_StageVoiceOffsetTable (same pattern as stage1)
+stage3 D_80131B84 = stage_bg_checksum_tbl; // high: stage3_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage3 D_80131C14 = stage_bg_checksum_tbl_adv; // high: stage3_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage3 D_80131F4C = black_tiger_sca_info_ptr; // short*[2] {idle D_80131F10, front D_80131F1C}, high: PC bt_sca_table (0x004bf398) entries 0-1; bt_state0 / bt_behaviour_* [renamed from bt_sca_table: sca info pointers [idle, front] (PC bt_sca_table[0..1])]
+stage3 D_80131F54 = black_tiger_sca_info_ptr_walk; // short* -> D_80131F28 (bt_sca_info_walk), high: PC bt_sca_table[2] [renamed from bt_sca_table_walk: sca info pointer while walking (PC bt_sca_table[2])]
+stage3 D_80131F58 = black_tiger_sca_info_ptr_dead; // short* -> D_80131F40 (bt_sca_info_shoot), high: PC bt_sca_table[3]; bt_web_shoot_a/b/c [renamed from bt_sca_table_shoot: sca info pointer of the dead body (PC bt_sca_table[3])]
+stage3 D_80131F5C = black_tiger_state_tbl; // fnptr[4], high: PC bt_state_table (bt_state0..3), black_tiger_update [renamed from bt_state_table: one prefix]
+stage3 D_80131F6C = black_tiger_step_se_tbl; // u8[16], high: identical to PC bt_frame_sfx (0,2,0,0,0,0,0,1,...) [renamed from bt_frame_sfx: twin of web_spinner_step_se_tbl]
+stage3 D_80131F7C = black_tiger_wound_joints; // u8[8], high: identical to PC bt_web_joints {5,7,7,9,0xB,0xB,0xF,0x11} [renamed from bt_web_joints: twin of web_spinner_wound_joints]
+stage3 D_80131F84 = g_BlackTigerWoundedJoints; // u8[8] (mutable), high: PC bt_web_joints_used registry (bt_web_build) [renamed from g_BtWebJointsUsed: twin of g_WebSpinnerWoundedJoints]
+stage3 D_80131FB0 = hunter_sca_info_ptr; // short*[2] {D_80131F8C, D_80131F98}, high: PC hunter_sca_info_a/b pointers; hunter_state_init [renamed from hunter_sca_info_table: sca info spelling (pointer variable)]
+stage3 D_80131FB8 = hunter_sca_info_ptr_late; // short* -> D_80131FA4, medium-high: selected when behavior_flags&0x20 or g_StageId>=5 (PC "late-game/hard variant" radius-500 record) [renamed from hunter_sca_info_table_late: sca info spelling (pointer variable)]
+stage3 D_80131FBC = hunter_health_tbl; // u8[16], high: identical to PC hunter_health_tbl
+stage3 D_80131FCC = hunter_decap_chance_mid; // u8[16], high: identical to PC hunter_decap_chance_mid
+stage3 D_80131FDC = hunter_decap_chance_low; // u8[16], high: identical to PC hunter_decap_chance_low
+stage3 D_80131FFC = g_HunterPlayerHealthGate; // u8[2] (mutable here), high: PC hunter_player_health_gate indexed by player id&1; PS1 values {98,67}, hunter_state_init rewrites to {75,52}
+stage3 D_80131FFD = g_HunterPlayerHealthGate_1; // u8, high: element [1] of the same gate
+stage3 D_80132000 = hunter_state_tbl; // fnptr[8], high: PC hunter_state_table (5 + NULL pad), hunter_update [renamed from hunter_state_table: _table -> _tbl]
+stage3 D_80132023 = hunter_behavior_seed_tbl; // u8[8] (unaligned, [0] overlaps last pointer byte), high: PC hunter_behavior_seed_tbl @odd addr, indexed by hit_state&7
+stage3 D_8013202C = hunter_act_tbl; // fnptr[9], high: PC hunter_act_table (state 2 action layer) [renamed from hunter_act_table: _table -> _tbl]
+stage3 D_80132050 = hunter_death_tbl; // fnptr[7], high: PC hunter_death_table [renamed from hunter_death_table: _table -> _tbl]
+stage3 D_8013206C = hunter_behavior_tbl; // fnptr[12], high: PC hunter_behavior_table (state 1 AI layer) [renamed from hunter_behavior_table: _table -> _tbl]
+stage3 D_8013209C = hunter_variant_tbl; // fnptr[8], high: PC hunter_variant_table (by behavior_flags) [renamed from hunter_variant_table: _table -> _tbl]
+stage3 D_801320DC = hunter_idle_variant_tbl; // fnptr[8], high: PC hunter_idle_variant_table [renamed from hunter_idle_variant_table: _table -> _tbl]
+stage3 D_801320FC = hunter_attack_sub_tbl; // fnptr[5], high: PC hunter_attack_sub_table [renamed from hunter_attack_sub_table: _table -> _tbl]
+stage3 D_80132110 = hunter_decap_leap_sub_tbl; // fnptr[5], high: PC hunter_decap_leap_sub_table [renamed from hunter_decap_leap_sub_table: _table -> _tbl]
+stage3 D_80132124 = hunter_swipe_reach_tbl; // HunterSwipeRecord[3] (10 bytes), high: PC hunter_swipe_reach_tbl {7,0,4,12,1500,600}...
+stage3 D_80132144 = hunter_dodge_sub_tbl; // fnptr[4], high: PC hunter_dodge_sub_table (dodge_start, hop, swipe, end, land) [renamed from hunter_dodge_sub_table: _table -> _tbl]
+stage3 D_80132148 = hunter_intro_anim_tbl; // u8 view into the dodge table, high: PC hunter_intro_anim_tbl (stride-2 byte reads straight through the dodge pointers)
+stage3 D_8013214C = hunter_intro_angle_tbl; // u16 view into the dodge table, high: PC hunter_intro_angle_tbl (same trick)
+stage3 D_80132158 = hunter_intro_move_tbl; // s16[6][2], high: PC hunter_intro_move_tbl {24,25},...
+stage3 D_80132170 = g_HunterIntroJumpKind; // u8 (mutable), high: PC hunter_intro_jump_kind
+stage3 D_80132174 = g_HunterScdVictim; // Entity* (mutable), medium: hunter_scd_state_dispatch sets it to enemy slot 0 (0x800C52A4); SCD bite/kill code writes its state
+stage3 D_80132178 = hunter_scd_state_tbl; // fnptr[24], high: SCD behaviour table dispatched by action_behavior from hunter_scd_state_dispatch (PC hunter_scd_state_dispatch) [renamed from hunter_scd_state_table: _table -> _tbl]
+stage3 D_801321D8 = hunter_scd_dodge_tbl; // fnptr[4], medium-high: hunter_scd_dodge_run sub-states
+stage3 D_801321E8 = hunter_scd_decap_leap_tbl; // fnptr[3], medium-high: hunter_scd_decap_leap_run sub-states
+stage3 D_801321F4 = hunter_scd_swipe_tbl; // fnptr[3], medium-high: hunter_scd_swipe_run sub-states
+stage3 D_80132200 = hunter_scd_attack_tbl; // fnptr[3], medium-high: hunter_scd_attack_run sub-states
+stage3 D_80132224 = adder_sca_info_ptr; // short*[2] {D_8013220C, D_80132218}, high: PC adder_sca_info_table (second entry never read) [renamed from adder_sca_info_table: sca info spelling: a pointer variable (its value is stored in sca_info)]
+stage3 D_8013222C = adder_state_tbl; // fnptr[4], high: PC adder_state_table [renamed from adder_state_table: _table -> _tbl]
+stage3 D_8013223C = adder_behavior_tbl; // fnptr[7], high: PC adder_behavior_jumptable [renamed from adder_behavior_jumptable: a function table (not a switch jump table)]
+stage3 D_80132258 = adder_decide_tbl; // fnptr[4]+pad, high: PC adder_decide_table [renamed from adder_decide_table: _table -> _tbl (one style)]
+stage3 D_80132280 = tyrant_sca_info_ptr; // short* -> D_80132274 (s_tyrantScaInfo), high: PC PTR_DAT_004ba24c points at the SCA record; tyrant_init
+stage3 D_80132284 = g_TyrantClawGhostBlock; // void* (mutable), high: PC g_tyClawGhostBlock (0x004ba250 scratch block, same layout) [renamed from g_TyClawGhostBlock: one tyrant prefix (g_Ty -> g_Tyrant)]
+stage3 D_80132288 = g_TyrantClawScaleA; // s16 = 3000, high: PC g_tyClawScaleA [renamed from g_TyClawScaleA: one tyrant prefix]
+stage3 D_8013228A = g_TyrantClawScaleB; // s16 = 300, high: PC g_tyClawScaleB [renamed from g_TyClawScaleB: one tyrant prefix]
+stage3 D_8013228C = g_TyrantClawScaleStep; // s8 = 0xC8 (-56), high: PC g_tyClawScaleStep [renamed from g_TyClawScaleStep: one tyrant prefix]
+stage3 D_80132290 = g_TyrantTrailBlock; // void* (mutable), high: PC g_tyTrailBlock (ribbon buffer) [renamed from g_TyTrailBlock: one tyrant prefix]
+stage3 D_80132294 = g_TyrantTrailTimer; // u16 (mutable), high: PC g_tyTrailTimer (0x8000 = arm) [renamed from g_TyTrailTimer: one tyrant prefix]
+stage3 D_80132296 = g_TyrantTrailSegments; // s8 = 8, high: PC g_tyTrailSegments [renamed from g_TyTrailSegments: one tyrant prefix]
+stage3 D_80132298 = g_TyrantTrailNear; // SVECTOR {0,-300,0}, high: PC g_tyTrailNear [renamed from g_TyTrailNear: one tyrant prefix]
+stage3 D_801322A0 = g_TyrantTrailFar; // SVECTOR {0,1500,0}, high: PC g_tyTrailFar [renamed from g_TyTrailFar: one tyrant prefix]
+stage3 D_801322A8 = tyrant_state_tbl; // fnptr[9], high: PC s_tyrantStates / "state table 0x004ba280" (init, state1, hit, forced, nop, -, -, -, scd) [renamed from s_tyrantStates: one tyrant naming style]
+stage3 D_801322CC = tyrant_uv_scroll_u_tbl; // s8[32], medium-high: PC "pad-rumble" s8 table 0x004ba2a8 (called dead there); on PS1 it is arg0 (U delta) of tyrant_scroll_body_uvs, indexed by the 0x16D step
+stage3 D_801322EC = tyrant_uv_scroll_v_tbl; // s16[30], medium-high: PC shorts table 0x004ba2c8; arg1 (V delta) of tyrant_scroll_body_uvs
+stage3 D_80132328 = tyrant_behavior_tbl; // fnptr[16] base, high: PC s_tyrantBehaviors (0x004ba308), state 3 (tyrant_state_forced) dispatch without bias [renamed from s_tyrantBehaviors: one tyrant naming style]
+stage3 D_80132330 = tyrant_behavior_tbl_state1; // fnptr view = table+2, high: PC "state 1 dispatches through &table[2]" (TYRANT_STATE1_BEHAVIOR_BIAS), tyrant_act [renamed from s_tyrantBehaviors_state1: view = tyrant_behavior_tbl + 2 (state 1 dispatch)]
+stage3 D_80132354 = tyrant_behavior_tbl_think; // fnptr view = table+11, medium-high: entries 11..15 (erupt, rush, rise, think_lab, think_roof), tyrant_think [renamed from s_tyrantBehaviors_think: view = tyrant_behavior_tbl + 11 (tyrant_think)]
+stage3 D_8013237C = player_tyrant_hit_tbl; // fnptr[3], high: PC DAT_004ba360 (player_tyrant_hit_00..02) dispatched by player_anim_limb_physics
+stage3 D_80132388 = tyrant_heartbeat_tbl; // s8[22], high: identical to PC s_tyrantHeartBeat {-122,-114,-98,...} [renamed from s_tyrantHeartBeat: s8 per-frame offsets of the beating heart (tyrant_draw_heart)]
+stage3 D_801323A0 = tyrant_uv_scroll_poly_tbl; // u16[], medium: list of polygon indices whose UVs tyrant_scroll_body_uvs shifts
+stage3 D_801323B4 = g_TyrantClutRectX; // u16, low: bumped by 0x10 in the unused tyrant_clut_set_stp_unused (looks like a debug RECT x)
+stage3 D_801323B6 = g_TyrantClutRectY; // u16 = 256, low: same, y
+stage3 D_801323B8 = g_TyrantScdVictim; // Entity* (mutable), medium: tyrant_state_scd sets it to enemy slot 0 (0x800C52A4); em_scd_behavior_impale snaps it to the grab position (Wesker impale)
+stage3 D_801323BC = tyrant_scd_behavior_tbl; // fnptr[18], high: PC s_emScdBehaviors (Tyrant SCD behaviour table 0x004c10c8), tyrant_state_scd [renamed from s_emScdBehaviors: tyrant script (SCD) behaviours]
+// ---- stage4 ----
+stage4 D_80105400 = zombie_hit_threshold_hard_tbl; // high: twin of stage1 D_80105400 (fns+content)
+stage4 D_801054AC = zombie_body_probe_neg; // high: twin of stage1 D_801054AC (fns+content)
+stage4 D_801054B4 = zombie_body_probe_pos; // high: twin of stage1 D_801054B4 (fns+content)
+stage4 D_801335BC = zombie_sca_info_ptr; // medium-high: twin of stage1 D_80122348 (fns+decl(content differs)) [renamed from g_pZombieScaInfo: sca info spelling (pointer variable)]
+stage4 D_801335C8 = zombie_health_tbl; // high: twin of stage1 D_80122354 (fns+content)
+stage4 D_801335D8 = zombie_anim_id_tbl; // high: twin of stage1 D_80122364 (fns+content)
+stage4 D_801335E4 = zombie_stagger_tbl; // high: twin of stage1 D_80122370 (fns+content)
+stage4 D_80133604 = zombie_state_tbl; // high: twin of stage1 D_80122390 (fns+content) [renamed from zombie_states_table: _table -> _tbl]
+stage4 D_80133628 = zombie_behavior_tbl; // high: twin of stage1 D_801223B4 (fns+content)
+stage4 D_80133658 = zombie_damage_action_tbl; // high: twin of stage1 D_801223E4 (fns+content)
+stage4 D_80133664 = zombie_damage_behavior_tbl; // high: twin of stage1 D_801223F0 (fns+content)
+stage4 D_80133684 = zombie_action_tbl; // high: twin of stage1 D_80122410 (fns+content)
+stage4 D_801336A4 = zombie_move_behavior_tbl; // high: twin of stage1 D_80122430 (fns+content)
+stage4 D_801336D0 = zombie_attack_anim_tbl; // high: twin of stage1 D_8012245C (fns+content)
+stage4 D_801336DC = attack_dir_offset_tbl; // high: twin of stage1 D_80122468 (fns+content)
+stage4 D_801336E4 = player_bite_blood_tint_tbl; // high: twin of stage1 D_80122470 (fns+content) [renamed from player_death_animations_tbl: [attack_direction] -> blood tint of the bitten player's joints (zombie_attack_main)]
+stage4 D_801336F4 = zombie_damage_tbl; // high: twin of stage1 D_80122480 (fns+content)
+stage4 D_80133700 = zombie_attack_data_tbl; // high: twin of stage1 D_8012248C (fns+content)
+stage4 D_80133718 = zombie_recovery_timer_tbl; // high: twin of stage1 D_801224A4 (fns+content)
+stage4 D_80133728 = zombie_action_tbl_scd; // high: twin of stage1 D_801224B4 (fns+content)
+stage4 D_80133BC0 = monster_plant_sca_info; // high: twin of stage1 D_8012269C (fns+content) [renamed from s_mpScaInfo: sca info spelling: <enemy>_sca_info (data) / <enemy>_sca_info_ptr (pointer)]
+stage4 D_80133BCC = g_MonsterPlantLastSides; // high: twin of stage1 D_801226A8 (fns+content) [renamed from g_MpLastSides: one prefix per enemy]
+stage4 D_80133BD0 = monster_plant_state_tbl; // high: twin of stage1 D_801226AC (fns+content) [renamed from s_mpState: one prefix per enemy]
+stage4 D_80133BE4 = monster_plant_mode_tbl; // high: twin of stage1 D_801226C0 (fns+content) [renamed from s_mpBehavior: one prefix per enemy (was s_mp camelCase)] [renamed from monster_plant_behavior_tbl: [sub_state] -> monster_plant_mode_*]
+stage4 D_80133C00 = monster_plant_start_tbl; // high: twin of stage1 D_801226DC (fns+content) [renamed from s_mpVariant: one prefix per enemy] [renamed from monster_plant_variant_tbl: [behavior_flags & 0xF] -> monster_plant_start_* (sets sub_state = mode)]
+stage4 D_80133C28 = monster_plant_watch_tbl; // high: twin of stage1 D_80122704 (fns+content) [renamed from s_mpSub: one prefix per enemy] [renamed from monster_plant_sub_tbl: [behavior_flags] -> range checks of the watch mode]
+stage4 D_80133C34 = monster_plant_grab_step_tbl; // high: twin of stage1 D_80122710 (fns+content) [renamed from s_mpStep: one prefix per enemy] [renamed from monster_plant_step_tbl: grab steps [0..5] (the strike / ambush tables follow)]
+stage4 D_80133C4C = monster_plant_strike_step_tbl; // high: twin of stage1 D_80122728 (fns+content) [renamed from s_mpStep_beh3: view of monster_plant_step_tbl+6 (behaviour 3)] [renamed from monster_plant_step_tbl_beh3: view +6 of the step table: strike steps]
+stage4 D_80133C54 = monster_plant_ambush_step_tbl; // high: twin of stage1 D_80122730 (fns+content) [renamed from s_mpStep_beh4: view of monster_plant_step_tbl+8 (behaviour 4)] [renamed from monster_plant_step_tbl_beh4: view +8 of the step table: ambush steps (its [1] is monster_plant_grab_squeeze)]
+stage4 D_80133C64 = monster_plant_extend_stops; // high: twin of stage1 D_80122740 (fns+content) [renamed from s_mpExtendStops: one prefix per enemy]
+stage4 D_80133C6C = monster_plant_retract_stops; // high: twin of stage1 D_80122748 (fns+content) [renamed from s_mpRetractStops: one prefix per enemy]
+stage4 D_80133C84 = monster_plant_die_tbl; // high: twin of stage1 D_80122760 (fns+content) [renamed from mp_die_tbl: one prefix per enemy]
+stage4 D_80133C90 = player_plant_hold_tbl; // medium-high: twin of stage1 D_8012276C (fns+decl(content differs))
+stage4 D_801335C0 = zombie_sca_info_ptr_1; // high: twin of stage1 D_8012234C (fns+addr-delta) [renamed from g_pZombieScaInfo_1: sca info spelling (pointer variable; entity id 1)]
+stage4 D_801335C4 = zombie_sca_info_ptr_2; // high: twin of stage1 D_80122350 (fns+addr-delta) [renamed from g_pZombieScaInfo_2: sca info spelling (pointer variable; behaviour 0xB)]
+stage4 D_80133518 = stage_bgm_tbl; // high: stage4_entry stores it in D_801FEC04 (same pattern as stage1)
+stage4 D_8013328C = stage_voice_offset_tbl; // high: stage4_entry stores it in g_StageVoiceOffsetTable (same pattern as stage1)
+stage4 D_80133338 = stage_bg_checksum_tbl; // high: stage4_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage4 D_801333C8 = stage_bg_checksum_tbl_adv; // high: stage4_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage4 D_80133790 = web_spinner_sca_info_ptr; // short* -> D_80133778 (ws_sca_info_big), high: PC ws_sca_table[0]; wsp_state0 [renamed from ws_sca_table: sca info spelling (pointer variable)]
+stage4 D_80133794 = web_spinner_sca_info_ptr_dead; // short* -> D_80133784 (ws_sca_info_small), high: PC ws_sca_table[1]; ws_web_shoot_a/b [renamed from ws_sca_table_small: sca info pointer for the dead body (smaller)]
+stage4 D_80133798 = web_spinner_health_tbl; // u8[16], medium-high: PC ws_health_table role (random health roll, wsp_state0); PS1 values 119/99/89 in a different order [renamed from ws_health_table: [rand & 0xF] -> health]
+stage4 D_801337A8 = web_spinner_state_tbl; // fnptr[6], high: PC wsp_state_table (wsp_state0..5), web_spinner_update [renamed from wsp_state_table: one prefix]
+stage4 D_801337C0 = web_spinner_pick_tbl; // fnptr[4] (= state table + 6), high: PC wsp_handler_table aliasing wsp_state_table[6+k] [renamed from wsp_handler_table: [behavior_flags]: floor0, floor1, ceiling]
+stage4 D_801337D0 = web_spinner_behavior_pick_tbl; // u8[2][8], high: byte-identical to PC ws_behavior_pick (2,1,2,2,2,1,2,5,0xB,0xB,5,0xB,3,5,4,4) [renamed from ws_behavior_pick: [path bit][rand & 7] -> next behaviour]
+stage4 D_801337F0 = web_spinner_idle_tbl; // fnptr[4], medium: ws_behaviour_idle sub-dispatch (idle_fast, idle_slow x3) [renamed from ws_behaviour_idle_tbl: one prefix]
+stage4 D_80133800 = web_spinner_step_se_tbl; // u8[16], high: identical to PC ws_frame_sfx [renamed from ws_frame_sfx: SE id per walk animation frame (0 = none)]
+stage4 D_80133810 = web_spinner_wound_joints; // u8[8], high: identical to PC ws_web_joints {3,5,7,9,0xB,0xD,0xF,0x11} [renamed from ws_web_joints: leg joints that can get a wound (web_spinner_hit_react)]
+stage4 D_80133818 = g_WebSpinnerWoundedJoints; // u8[8] (mutable), high: PC ws_web_joints_used registry (ws_web_build) [renamed from g_WsWebJointsUsed: joints already wounded]
+stage4 D_80133838 = wasp_sca_info_ptr; // short*[2] {D_80133820, D_8013382C}, high: PC wasp_sca_info_table [renamed from wasp_sca_info_table: sca info spelling (pointer variable)]
+stage4 D_80133840 = wasp_state_tbl; // fnptr[4], high: PC wasp_state_table [renamed from wasp_state_table: _table -> _tbl]
+stage4 D_80133850 = wasp_behavior_tbl; // fnptr[7], high: PC wasp_behavior_jumptable [renamed from wasp_behavior_jumptable: a function table (not a switch jump table)]
+stage4 D_8013389C = plant42_sca_info_ptr_vine; // short* -> D_8013386C (s_plant42ScaInfo[0]), high: PC PTR_DAT_004c29f0 (record 0, split vines); plant42_init [renamed from plant42_sca_info_vine_ptr: sca info spelling (pointer variable)]
+stage4 D_801338A0 = plant42_sca_info_ptr_main; // short* -> D_80133884 (s_plant42ScaInfo[2]), high: PC PTR_DAT_004c29f4 (record 2, main plant) [renamed from plant42_sca_info_main_ptr: sca info spelling (pointer variable)]
+stage4 D_801338A4 = g_Plant42CaptureMatrix; // MATRIX (mutable), high: PC g_plant42CaptureMatrix (0x004c29f8, live capture matrix)
+stage4 D_801338B8 = g_Plant42CaptureMatrix_tx; // s32 = .t[0], high: PC "t[0] is shared scratch" (knock-back facing read by player_anim_thrown)
+stage4 D_801338BC = g_Plant42CaptureMatrix_ty; // s32 = .t[1], high: same matrix
+stage4 D_801338C0 = g_Plant42CaptureMatrix_tz; // s32 = .t[2], high: same matrix
+stage4 D_801338C4 = plant42_state_tbl; // fnptr[9], high: PC plant42 states 0-4 + state 8 (plant42_scd_state), plant42_update [renamed from plant42_state_table: _table -> _tbl]
+stage4 D_801338E8 = plant42_effect_x; // s16[2] {0x0D54,0x45EC}, high: identical to PC s_plant42EffectX [renamed from s_plant42EffectX: snake_case like the other enemy data]
+stage4 D_801338EC = plant42_effect_z; // s16[2] {0x0D54,0x46FA}, high: identical to PC s_plant42EffectZ [renamed from s_plant42EffectZ: snake_case like the other enemy data]
+stage4 D_801338F8 = plant42_action_tbl; // fnptr[10], high: PC "action table 0x004c2a50", plant42_run_action [renamed from plant42_action_table: _table -> _tbl]
+stage4 D_80133920 = plant42_action_select_tbl; // fnptr[7], medium-high: plant42_action_dispatch picks the selector by spawn kind (select/select_none/select_flags5)
+stage4 D_8013393C = plant42_idle_anim_tbl; // u8[11], high: identical to PC s_plant42IdleAnims {2,3,4,5,6,9,10,11,12,13,15} [renamed from s_plant42IdleAnims: snake_case like the other enemy data]
+stage4 D_80133948 = plant42_chris_hold_matrix; // MATRIX, high: rotation shorts identical to PC s_plant42ChrisHoldMatrix (0x0090,0xF06D,...), plant42_behavior_suspend [renamed from s_plant42ChrisHoldMatrix: snake_case like the other enemy data]
+stage4 D_80133968 = player_plant42_hit_tbl; // fnptr[3], high: PC 0x004c2ac8 jumptable of player_anim_set_attacked_flag (knockdown_recover, grabbed, thrown)
+stage4 D_80133974 = plant42_pulse_tbl; // u8[90], high: identical to PC s_plant42Pulse (0,1,3,6,10,15,...) [renamed from s_plant42Pulse: snake_case like the other enemy data]
+stage4 D_80133A28 = plant42_body_state_tbl; // fnptr[3], high: PC "body state table 0x004c2b90" (body_idle/shrivel/fall), plant42_render_copies [renamed from plant42_body_state_table: _table -> _tbl]
+stage4 D_80133A34 = plant42_roots_clone_state_tbl; // fnptr[3], high: PC "roots state table 0x004c2ba0" (roots_idle/pulse/rise) [renamed from plant42_roots_state_table: states of the roots clone that plant42_render_copies draws (plant42.c), not plant42_roots.c's table]
+stage4 D_80133A40 = plant42_scd_action_tbl; // fnptr[20], high: PC "SCD action table 0x004b1808" used only by state 8 (plant42_scd_state) [renamed from plant42_scd_action_table: _table -> _tbl]
+stage4 D_80133A90 = neptune_sca_info_big; // s16[2][6], high: = PC neptune_sca_info_big {0,500,-800,0,800,600},{0x8000,-500,...}
+stage4 D_80133AA8 = neptune_sca_info_small; // s16[2][6], high: = PC neptune_sca_info_small (incl. odd trailing 600)
+stage4 D_80133AC0 = g_NeptuneCaptureMatrix; // MATRIX (mutable), high: PC neptune_capture_matrix (devour drag matrix, shared with player_anim_death_billboard)
+stage4 D_80133AD4 = g_NeptuneCaptureMatrix_tx; // s32 = .t[0], high: same matrix; neptune_devour_swallow
+stage4 D_80133AD8 = g_NeptuneCaptureMatrix_ty; // s32[2] = .t[1..2], high: same matrix
+stage4 D_80133AE0 = neptune_state_tbl; // fnptr[6], high: PC neptune_state_table [renamed from neptune_state_table: _table -> _tbl]
+stage4 D_80133AF8 = neptune_behavior_tbl; // fnptr[6], high: PC neptune_behavior_jumptable [renamed from neptune_behavior_jumptable: a function table (not a switch jump table)]
+stage4 D_80133B10 = neptune_swim_actions; // fnptr[3], high: PC neptune_swim_actions
+stage4 D_80133B1C = neptune_retreat_actions; // fnptr[2], high: PC neptune_retreat_actions (two entries)
+stage4 D_80133B24 = neptune_circle_actions; // fnptr[3], high: PC neptune_circle_actions
+stage4 D_80133B30 = neptune_devour_actions; // fnptr[7], high: PC neptune_devour_actions
+stage4 D_80133B4C = neptune_bite_actions; // fnptr[6], high: PC neptune_bite_actions
+stage4 D_80133B64 = neptune_death_kind_tbl; // fnptr[2], high: PC neptune_death_kind_table [renamed from neptune_death_kind_table: _table -> _tbl]
+stage4 D_80133B6C = neptune_death_actions; // fnptr[3], high: PC neptune_death_actions
+stage4 D_80133B78 = neptune_boss_death_actions; // fnptr[5], high: PC neptune_boss_death_actions
+stage4 D_80133B8C = plant42_roots_sca_info; // s16[6] {0x8000,0,0,0,0x1770,0x07D0}, high: = PC s_rootsScaInfo; roots_init [renamed from s_rootsScaInfo: one prefix per enemy, sca info spelling]
+stage4 D_80133B98 = plant42_roots_state_tbl; // fnptr[6], high: PC s_rootsStateTable, plant42_roots_update [renamed from s_rootsStateTable: one prefix per enemy]
+stage4 D_80133BB0 = plant42_roots_phase_tbl; // fnptr[4], high: PC roots_move_a local s_phaseDispatch (= state-table slots 6..9) [renamed from s_rootsPhaseDispatch: one prefix per enemy]
+// ---- stage5 ----
+stage5 D_80105400 = zombie_hit_threshold_hard_tbl; // high: twin of stage1 D_80105400 (fns+content)
+stage5 D_801054AC = zombie_body_probe_neg; // high: twin of stage1 D_801054AC (fns+content)
+stage5 D_801054B4 = zombie_body_probe_pos; // high: twin of stage1 D_801054B4 (fns+content)
+stage5 D_8012D8FC = zombie_sca_info_ptr; // medium-high: twin of stage1 D_80122348 (fns+decl(content differs)) [renamed from g_pZombieScaInfo: sca info spelling (pointer variable)]
+stage5 D_8012D908 = zombie_health_tbl; // high: twin of stage1 D_80122354 (fns+content)
+stage5 D_8012D918 = zombie_anim_id_tbl; // high: twin of stage1 D_80122364 (fns+content)
+stage5 D_8012D924 = zombie_stagger_tbl; // high: twin of stage1 D_80122370 (fns+content)
+stage5 D_8012D944 = zombie_state_tbl; // high: twin of stage1 D_80122390 (fns+content) [renamed from zombie_states_table: _table -> _tbl]
+stage5 D_8012D968 = zombie_behavior_tbl; // high: twin of stage1 D_801223B4 (fns+content)
+stage5 D_8012D998 = zombie_damage_action_tbl; // high: twin of stage1 D_801223E4 (fns+content)
+stage5 D_8012D9A4 = zombie_damage_behavior_tbl; // high: twin of stage1 D_801223F0 (fns+content)
+stage5 D_8012D9C4 = zombie_action_tbl; // high: twin of stage1 D_80122410 (fns+content)
+stage5 D_8012D9E4 = zombie_move_behavior_tbl; // high: twin of stage1 D_80122430 (fns+content)
+stage5 D_8012DA10 = zombie_attack_anim_tbl; // high: twin of stage1 D_8012245C (fns+content)
+stage5 D_8012DA1C = attack_dir_offset_tbl; // high: twin of stage1 D_80122468 (fns+content)
+stage5 D_8012DA24 = player_bite_blood_tint_tbl; // high: twin of stage1 D_80122470 (fns+content) [renamed from player_death_animations_tbl: [attack_direction] -> blood tint of the bitten player's joints (zombie_attack_main)]
+stage5 D_8012DA34 = zombie_damage_tbl; // high: twin of stage1 D_80122480 (fns+content)
+stage5 D_8012DA40 = zombie_attack_data_tbl; // high: twin of stage1 D_8012248C (fns+content)
+stage5 D_8012DA58 = zombie_recovery_timer_tbl; // high: twin of stage1 D_801224A4 (fns+content)
+stage5 D_8012DA68 = zombie_action_tbl_scd; // high: twin of stage1 D_801224B4 (fns+content)
+stage5 D_8012DBD4 = tyrant_sca_info_ptr; // medium-high: twin of stage3 D_80132280 (fns+decl(content differs))
+stage5 D_8012DBD8 = g_TyrantClawGhostBlock; // high: twin of stage3 D_80132284 (fns+content) [renamed from g_TyClawGhostBlock: one tyrant prefix (g_Ty -> g_Tyrant)]
+stage5 D_8012DBDC = g_TyrantClawScaleA; // high: twin of stage3 D_80132288 (fns+content) [renamed from g_TyClawScaleA: one tyrant prefix]
+stage5 D_8012DBDE = g_TyrantClawScaleB; // high: twin of stage3 D_8013228A (fns+content) [renamed from g_TyClawScaleB: one tyrant prefix]
+stage5 D_8012DBE0 = g_TyrantClawScaleStep; // high: twin of stage3 D_8013228C (fns+content) [renamed from g_TyClawScaleStep: one tyrant prefix]
+stage5 D_8012DBE4 = g_TyrantTrailBlock; // high: twin of stage3 D_80132290 (fns+content) [renamed from g_TyTrailBlock: one tyrant prefix]
+stage5 D_8012DBE8 = g_TyrantTrailTimer; // high: twin of stage3 D_80132294 (fns+content) [renamed from g_TyTrailTimer: one tyrant prefix]
+stage5 D_8012DBEA = g_TyrantTrailSegments; // high: twin of stage3 D_80132296 (fns+content) [renamed from g_TyTrailSegments: one tyrant prefix]
+stage5 D_8012DBEC = g_TyrantTrailNear; // high: twin of stage3 D_80132298 (fns+content) [renamed from g_TyTrailNear: one tyrant prefix]
+stage5 D_8012DBF4 = g_TyrantTrailFar; // high: twin of stage3 D_801322A0 (fns+content) [renamed from g_TyTrailFar: one tyrant prefix]
+stage5 D_8012DBFC = tyrant_state_tbl; // high: twin of stage3 D_801322A8 (fns+content) [renamed from s_tyrantStates: one tyrant naming style]
+stage5 D_8012DC20 = tyrant_uv_scroll_u_tbl; // high: twin of stage3 D_801322CC (fns+content)
+stage5 D_8012DC40 = tyrant_uv_scroll_v_tbl; // high: twin of stage3 D_801322EC (fns+content)
+stage5 D_8012DC7C = tyrant_behavior_tbl; // high: twin of stage3 D_80132328 (fns+content) [renamed from s_tyrantBehaviors: one tyrant naming style]
+stage5 D_8012DC84 = tyrant_behavior_tbl_state1; // high: twin of stage3 D_80132330 (fns+content) [renamed from s_tyrantBehaviors_state1: view = tyrant_behavior_tbl + 2 (state 1 dispatch)]
+stage5 D_8012DCA8 = tyrant_behavior_tbl_think; // high: twin of stage3 D_80132354 (fns+content) [renamed from s_tyrantBehaviors_think: view = tyrant_behavior_tbl + 11 (tyrant_think)]
+stage5 D_8012DCD0 = player_tyrant_hit_tbl; // high: twin of stage3 D_8013237C (fns+content)
+stage5 D_8012DCDC = tyrant_heartbeat_tbl; // high: twin of stage3 D_80132388 (fns+content) [renamed from s_tyrantHeartBeat: s8 per-frame offsets of the beating heart (tyrant_draw_heart)]
+stage5 D_8012DD0C = g_TyrantScdVictim; // high: twin of stage3 D_801323B8 (fns+content)
+stage5 D_8012DD10 = tyrant_scd_behavior_tbl; // high: twin of stage3 D_801323BC (fns+content) [renamed from s_emScdBehaviors: tyrant script (SCD) behaviours]
+stage5 D_8012D900 = zombie_sca_info_ptr_1; // high: twin of stage1 D_8012234C (fns+addr-delta) [renamed from g_pZombieScaInfo_1: sca info spelling (pointer variable; entity id 1)]
+stage5 D_8012D904 = zombie_sca_info_ptr_2; // high: twin of stage1 D_80122350 (fns+addr-delta) [renamed from g_pZombieScaInfo_2: sca info spelling (pointer variable; behaviour 0xB)]
+stage5 D_8012D858 = stage_bgm_tbl; // high: stage5_entry stores it in D_801FEC04 (same pattern as stage1)
+stage5 D_8012D4A0 = stage_voice_offset_tbl; // high: stage5_entry stores it in g_StageVoiceOffsetTable (same pattern as stage1)
+stage5 D_8012D638 = stage_bg_checksum_tbl; // high: stage5_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage5 D_8012D6E8 = stage_bg_checksum_tbl_adv; // high: stage5_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage5 D_8012DAD0 = chimera_sca_info_ptr; // short*[2] {D_8012DAB8, D_8012DAC4}, high: PC chimera_sca_info_a + the unreferenced second record (0x8001); chimera_state_init [renamed from chimera_sca_info_table: sca info spelling (pointer variable)]
+stage5 D_8012DAD8 = chimera_state_tbl; // fnptr[4], high: PC chimera_state_table (init, run, hit_dispatch, ...), chimera_update [renamed from chimera_state_table: _table -> _tbl]
+stage5 D_8012DAE7 = chimera_seed_tbl; // u8[8] (unaligned, [0] overlaps last pointer byte), high: PC chimera_seed_tbl @odd addr; [1..7] = 2,0,2,0,4,4,0; indexed by hit_state&7
+stage5 D_8012DAF0 = chimera_behavior_tbl; // fnptr[14+], high: PC chimera_behavior_table (idle, walk, turn, swipe, grabhold, toggle, drop, ...) [renamed from chimera_behavior_table: _table -> _tbl]
+stage5 D_8012DB28 = chimera_brain_tbl; // fnptr[3], high: PC chimera_brain_table (brain_a/b/c), chimera_variant_ai [renamed from chimera_brain_table: _table -> _tbl]
+stage5 D_8012DB34 = chimera_idle_variant_tbl; // fnptr[3], high: PC chimera_idle_variant_table (floor, floor, ceiling) [renamed from chimera_idle_variant_table: _table -> _tbl]
+stage5 D_8012DB40 = chimera_arc_heights; // s16[33], high: identical to PC chimera_arc_heights (1540,1225,1040,...,5068)
+stage5 D_8012DB82 = chimera_swoop_speed; // s16[33] (= arc+0x42), high: PC chimera_swoop_speed/chimera_drop_speed (one block: 0 run, 150 run; swoop reads forward, drop backward)
+stage5 D_8012DBC4 = chimera_death_anim_tbl; // u8[4] {0,6,6,0}, medium-high: PC chimera_death_anim_tbl {6,6,0}; indexed by behavior_flags in chimera_hit_fall
+stage5 D_8012DCF4 = tyrant_uv_scroll_poly_tbl; // u16[], high: same content as stage3 D_801323A0, read by tyrant_scroll_poly_uv (stage5 spelling of tyrant_scroll_body_uvs)
+stage5 D_8012DD08 = g_TyrantClutRectX; // u16, low: same as stage3 D_801323B4 (bumped by 0x10 in tyrant_clut_set_semitrans)
+stage5 D_8012DD0A = g_TyrantClutRectY; // u16 = 256, low: same as stage3 D_801323B6
+stage5 D_8012DD54 = arm_state_tbl; // fnptr[2], medium-high: em1014 (right computer arm) state table, computer_arm_right_update (PC "em1014 at 0x004ba5a0 (state)") [renamed from arm_state_table: _table -> _tbl]
+stage5 D_8012DD5C = arm_cmd_tbl; // fnptr[8], high: PC em1014 command table 0x004ba5a8 (8 commands), arm_state_run [renamed from arm_cmd_table: _table -> _tbl]
+stage5 D_8012DD7C = arm_cmd_reach_a_tbl; // fnptr[2], medium: arm_cmd_reach_a steps (reach_a, move)
+stage5 D_8012DD84 = arm_cmd_reach_b_tbl; // fnptr[2], medium: arm_cmd_reach_b steps
+stage5 D_8012DD8C = arm_cmd_reach_c_tbl; // fnptr[2], medium: arm_cmd_reach_c steps
+stage5 D_8012DD94 = arm_cmd_login_tbl; // fnptr[2], medium: arm_cmd_login steps (login, typing)
+stage5 D_8012DD9C = arm_step_typing_tbl; // fnptr[2], medium: arm_step_typing sub-steps (press, wait_voice)
+stage5 D_8012DDA4 = arm_cmd_lift_tbl; // fnptr[4], medium: arm_cmd_lift steps
+stage5 D_8012DDB4 = arm_cmd_reach_far_tbl; // fnptr[2], medium: arm_cmd_reach_far steps
+stage5 D_8012DDBC = arm_cmd_hold_tbl; // fnptr[4], medium: arm_cmd_hold steps
+stage5 D_8012DDCC = arm15_state_tbl; // fnptr[2], medium-high: em1015 (left arm) state table, computer_arm_left_update (PC 0x004b3418) [renamed from arm15_state_table: _table -> _tbl]
+stage5 D_8012DDD4 = arm15_cmd_tbl; // fnptr[9], high: PC em1015 command table 0x004b3420, arm15_state_run [renamed from arm15_cmd_table: _table -> _tbl]
+stage5 D_8012DDF8 = arm15_cmd_reach_a_tbl; // fnptr[2], medium: arm15_cmd_reach_a steps
+stage5 D_8012DE00 = arm15_cmd_reach_b_tbl; // fnptr[2], medium: arm15_cmd_reach_b steps
+stage5 D_8012DE08 = arm15_cmd_reach_c_tbl; // fnptr[2], medium: arm15_cmd_reach_c steps
+stage5 D_8012DE10 = arm15_cmd_login_tbl; // fnptr[3], medium: arm15_cmd_login steps
+stage5 D_8012DE1C = arm15_cmd5_tbl; // fnptr[2], medium: arm15_cmd5 (begin, dispatch)
+stage5 D_8012DE24 = arm15_cmd5_chris_tbl; // fnptr[3], medium: arm15_cmd5_dispatch Chris branch (chris_slide, chris_wait, play)
+stage5 D_8012DE30 = arm15_cmd5_jill_tbl; // fnptr[2], medium: arm15_cmd5_dispatch Jill branch (jill_start, play)
+stage5 D_8012DE38 = arm15_cmd6_tbl; // fnptr[3], medium: arm15_cmd6 steps (reach, lever_move, lever_pull)
+stage5 D_8012DE44 = arm15_cmd7_tbl; // fnptr[4], medium: arm15_cmd7 steps (hold, drop, fall, loop)
+stage5 D_8012DE54 = arm15_cmd8_lever_tbl; // fnptr[3], medium: arm15_cmd8_lever steps (lever_reach, lever_move, lever_pull)
+// ---- stage6 ----
+stage6 D_80105400 = zombie_hit_threshold_hard_tbl; // high: twin of stage1 D_80105400 (fns+content)
+stage6 D_801054AC = zombie_body_probe_neg; // high: twin of stage1 D_801054AC (fns+content)
+stage6 D_801054B4 = zombie_body_probe_pos; // high: twin of stage1 D_801054B4 (fns+content)
+stage6 D_80128C68 = stage_voice_offset_tbl; // high: twin of stage2 D_801216CC (fns+content)
+stage6 D_801290C8 = zombie_sca_info_ptr; // medium-high: twin of stage1 D_80122348 (fns+decl(content differs)) [renamed from g_pZombieScaInfo: sca info spelling (pointer variable)]
+stage6 D_801290D4 = zombie_health_tbl; // high: twin of stage1 D_80122354 (fns+content)
+stage6 D_801290E4 = zombie_anim_id_tbl; // high: twin of stage1 D_80122364 (fns+content)
+stage6 D_801290F0 = zombie_stagger_tbl; // high: twin of stage1 D_80122370 (fns+content)
+stage6 D_80129110 = zombie_state_tbl; // high: twin of stage1 D_80122390 (fns+content) [renamed from zombie_states_table: _table -> _tbl]
+stage6 D_80129134 = zombie_behavior_tbl; // high: twin of stage1 D_801223B4 (fns+content)
+stage6 D_80129164 = zombie_damage_action_tbl; // high: twin of stage1 D_801223E4 (fns+content)
+stage6 D_80129170 = zombie_damage_behavior_tbl; // high: twin of stage1 D_801223F0 (fns+content)
+stage6 D_80129190 = zombie_action_tbl; // high: twin of stage1 D_80122410 (fns+content)
+stage6 D_801291B0 = zombie_move_behavior_tbl; // high: twin of stage1 D_80122430 (fns+content)
+stage6 D_801291DC = zombie_attack_anim_tbl; // high: twin of stage1 D_8012245C (fns+content)
+stage6 D_801291E8 = attack_dir_offset_tbl; // high: twin of stage1 D_80122468 (fns+content)
+stage6 D_801291F0 = player_bite_blood_tint_tbl; // high: twin of stage1 D_80122470 (fns+content) [renamed from player_death_animations_tbl: [attack_direction] -> blood tint of the bitten player's joints (zombie_attack_main)]
+stage6 D_80129200 = zombie_damage_tbl; // high: twin of stage1 D_80122480 (fns+content)
+stage6 D_8012920C = zombie_attack_data_tbl; // high: twin of stage1 D_8012248C (fns+content)
+stage6 D_80129224 = zombie_recovery_timer_tbl; // high: twin of stage1 D_801224A4 (fns+content)
+stage6 D_80129234 = zombie_action_tbl_scd; // high: twin of stage1 D_801224B4 (fns+content)
+stage6 D_801292A0 = web_spinner_sca_info_ptr_dead; // medium-high: twin of stage4 D_80133794 (fns+decl(content differs)) [renamed from ws_sca_table_small: sca info pointer for the dead body (smaller)]
+stage6 D_801292A4 = web_spinner_health_tbl; // high: twin of stage4 D_80133798 (fns+content) [renamed from ws_health_table: [rand & 0xF] -> health]
+stage6 D_801292B4 = web_spinner_state_tbl; // high: twin of stage4 D_801337A8 (fns+content) [renamed from wsp_state_table: one prefix]
+stage6 D_801292CC = web_spinner_pick_tbl; // high: twin of stage4 D_801337C0 (fns+content) [renamed from wsp_handler_table: [behavior_flags]: floor0, floor1, ceiling]
+stage6 D_801292DC = web_spinner_behavior_pick_tbl; // high: twin of stage4 D_801337D0 (fns+content) [renamed from ws_behavior_pick: [path bit][rand & 7] -> next behaviour]
+stage6 D_801292FC = web_spinner_idle_tbl; // high: twin of stage4 D_801337F0 (fns+content) [renamed from ws_behaviour_idle_tbl: one prefix]
+stage6 D_8012930C = web_spinner_step_se_tbl; // high: twin of stage4 D_80133800 (fns+content) [renamed from ws_frame_sfx: SE id per walk animation frame (0 = none)]
+stage6 D_8012931C = web_spinner_wound_joints; // high: twin of stage4 D_80133810 (fns+content) [renamed from ws_web_joints: leg joints that can get a wound (web_spinner_hit_react)]
+stage6 D_80129324 = g_WebSpinnerWoundedJoints; // high: twin of stage4 D_80133818 (fns+content) [renamed from g_WsWebJointsUsed: joints already wounded]
+stage6 D_80129338 = crow_sca_info_ptr; // medium-high: twin of stage1 D_8012263C (fns+decl(content differs))
+stage6 D_8012933C = crow_state_tbl; // high: twin of stage1 D_80122640 (fns+content) [renamed from crow_state_table: _table -> _tbl]
+stage6 D_80129360 = crow_behavior_tbl; // high: twin of stage1 D_80122664 (fns+content)
+stage6 D_801293C8 = hunter_health_tbl; // high: twin of stage3 D_80131FBC (fns+content)
+stage6 D_801293D8 = hunter_decap_chance_mid; // high: twin of stage3 D_80131FCC (fns+content)
+stage6 D_801293E8 = hunter_decap_chance_low; // high: twin of stage3 D_80131FDC (fns+content)
+stage6 D_80129408 = g_HunterPlayerHealthGate; // high: twin of stage3 D_80131FFC (fns+content)
+stage6 D_80129409 = g_HunterPlayerHealthGate_1; // high: twin of stage3 D_80131FFD (fns+content)
+stage6 D_8012940C = hunter_state_tbl; // medium-high: twin of stage3 D_80132000 (fns+decl(content differs)) [renamed from hunter_state_table: _table -> _tbl]
+stage6 D_8012942F = hunter_behavior_seed_tbl; // high: twin of stage3 D_80132023 (fns+content)
+stage6 D_80129438 = hunter_act_tbl; // high: twin of stage3 D_8013202C (fns+content) [renamed from hunter_act_table: _table -> _tbl]
+stage6 D_8012945C = hunter_death_tbl; // high: twin of stage3 D_80132050 (fns+content) [renamed from hunter_death_table: _table -> _tbl]
+stage6 D_80129478 = hunter_behavior_tbl; // high: twin of stage3 D_8013206C (fns+content) [renamed from hunter_behavior_table: _table -> _tbl]
+stage6 D_801294A8 = hunter_variant_tbl; // high: twin of stage3 D_8013209C (fns+content) [renamed from hunter_variant_table: _table -> _tbl]
+stage6 D_801294E8 = hunter_idle_variant_tbl; // high: twin of stage3 D_801320DC (fns+content) [renamed from hunter_idle_variant_table: _table -> _tbl]
+stage6 D_80129508 = hunter_attack_sub_tbl; // high: twin of stage3 D_801320FC (fns+content) [renamed from hunter_attack_sub_table: _table -> _tbl]
+stage6 D_8012951C = hunter_decap_leap_sub_tbl; // high: twin of stage3 D_80132110 (fns+content) [renamed from hunter_decap_leap_sub_table: _table -> _tbl]
+stage6 D_80129530 = hunter_swipe_reach_tbl; // high: twin of stage3 D_80132124 (fns+content)
+stage6 D_80129550 = hunter_dodge_sub_tbl; // high: twin of stage3 D_80132144 (fns+content) [renamed from hunter_dodge_sub_table: _table -> _tbl]
+stage6 D_80129554 = hunter_intro_anim_tbl; // high: twin of stage3 D_80132148 (fns+content)
+stage6 D_80129558 = hunter_intro_angle_tbl; // high: twin of stage3 D_8013214C (fns+content)
+stage6 D_80129564 = hunter_intro_move_tbl; // high: twin of stage3 D_80132158 (fns+content)
+stage6 D_8012957C = g_HunterIntroJumpKind; // high: twin of stage3 D_80132170 (fns+content)
+stage6 D_80129580 = g_HunterScdVictim; // high: twin of stage3 D_80132174 (fns+content)
+stage6 D_80129584 = hunter_scd_state_tbl; // high: twin of stage3 D_80132178 (fns+content) [renamed from hunter_scd_state_table: _table -> _tbl]
+stage6 D_801295E4 = hunter_scd_dodge_tbl; // high: twin of stage3 D_801321D8 (fns+content)
+stage6 D_801295F4 = hunter_scd_decap_leap_tbl; // high: twin of stage3 D_801321E8 (fns+content)
+stage6 D_80129600 = hunter_scd_swipe_tbl; // high: twin of stage3 D_801321F4 (fns+content)
+stage6 D_8012960C = hunter_scd_attack_tbl; // high: twin of stage3 D_80132200 (fns+content)
+stage6 D_80129618 = monster_plant_sca_info; // high: twin of stage1 D_8012269C (fns+content) [renamed from s_mpScaInfo: sca info spelling: <enemy>_sca_info (data) / <enemy>_sca_info_ptr (pointer)]
+stage6 D_80129624 = g_MonsterPlantLastSides; // high: twin of stage1 D_801226A8 (fns+content) [renamed from g_MpLastSides: one prefix per enemy]
+stage6 D_80129628 = monster_plant_state_tbl; // high: twin of stage1 D_801226AC (fns+content) [renamed from s_mpState: one prefix per enemy]
+stage6 D_8012963C = monster_plant_mode_tbl; // high: twin of stage1 D_801226C0 (fns+content) [renamed from s_mpBehavior: one prefix per enemy (was s_mp camelCase)] [renamed from monster_plant_behavior_tbl: [sub_state] -> monster_plant_mode_*]
+stage6 D_80129658 = monster_plant_start_tbl; // high: twin of stage1 D_801226DC (fns+content) [renamed from s_mpVariant: one prefix per enemy] [renamed from monster_plant_variant_tbl: [behavior_flags & 0xF] -> monster_plant_start_* (sets sub_state = mode)]
+stage6 D_80129680 = monster_plant_watch_tbl; // high: twin of stage1 D_80122704 (fns+content) [renamed from s_mpSub: one prefix per enemy] [renamed from monster_plant_sub_tbl: [behavior_flags] -> range checks of the watch mode]
+stage6 D_8012968C = monster_plant_grab_step_tbl; // high: twin of stage1 D_80122710 (fns+content) [renamed from s_mpStep: one prefix per enemy] [renamed from monster_plant_step_tbl: grab steps [0..5] (the strike / ambush tables follow)]
+stage6 D_801296A4 = monster_plant_strike_step_tbl; // high: twin of stage1 D_80122728 (fns+content) [renamed from s_mpStep_beh3: view of monster_plant_step_tbl+6 (behaviour 3)] [renamed from monster_plant_step_tbl_beh3: view +6 of the step table: strike steps]
+stage6 D_801296AC = monster_plant_ambush_step_tbl; // high: twin of stage1 D_80122730 (fns+content) [renamed from s_mpStep_beh4: view of monster_plant_step_tbl+8 (behaviour 4)] [renamed from monster_plant_step_tbl_beh4: view +8 of the step table: ambush steps (its [1] is monster_plant_grab_squeeze)]
+stage6 D_801296BC = monster_plant_extend_stops; // high: twin of stage1 D_80122740 (fns+content) [renamed from s_mpExtendStops: one prefix per enemy]
+stage6 D_801296C4 = monster_plant_retract_stops; // high: twin of stage1 D_80122748 (fns+content) [renamed from s_mpRetractStops: one prefix per enemy]
+stage6 D_801296DC = monster_plant_die_tbl; // high: twin of stage1 D_80122760 (fns+content) [renamed from mp_die_tbl: one prefix per enemy]
+stage6 D_801296E8 = player_plant_hold_tbl; // medium-high: twin of stage1 D_8012276C (fns+decl(content differs))
+stage6 D_801290CC = zombie_sca_info_ptr_1; // high: twin of stage1 D_8012234C (fns+addr-delta) [renamed from g_pZombieScaInfo_1: sca info spelling (pointer variable; entity id 1)]
+stage6 D_801290D0 = zombie_sca_info_ptr_2; // high: twin of stage1 D_80122350 (fns+addr-delta) [renamed from g_pZombieScaInfo_2: sca info spelling (pointer variable; behaviour 0xB)]
+stage6 D_8012929C = web_spinner_sca_info_ptr; // high: twin of stage4 D_80133790 (fns+addr-delta) [renamed from ws_sca_table: sca info spelling (pointer variable)]
+stage6 D_801293BC = hunter_sca_info_ptr; // high: twin of stage3 D_80131FB0 (fns+addr-delta) [renamed from hunter_sca_info_table: sca info spelling (pointer variable)]
+stage6 D_801293C4 = hunter_sca_info_ptr_late; // high: twin of stage3 D_80131FB8 (fns+addr-delta) [renamed from hunter_sca_info_table_late: sca info spelling (pointer variable)]
+stage6 D_80129024 = stage_bgm_tbl; // high: stage6 entry (misnamed stage2_entry in stage6.c) stores it in D_801FEC04 (same pattern as stage1)
+stage6 D_80128D94 = stage_bg_checksum_tbl; // high: stage6 entry (misnamed stage2_entry in stage6.c) stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage6 D_80128E7C = stage_bg_checksum_tbl_adv; // high: stage6 entry (misnamed stage2_entry in stage6.c) stores it in g_StageBgChecksumTable (same pattern as stage1)
+// ---- stage7 ----
+stage7 D_80105400 = zombie_hit_threshold_hard_tbl; // high: twin of stage1 D_80105400 (fns+content)
+stage7 D_801054AC = zombie_body_probe_neg; // high: twin of stage1 D_801054AC (fns+content)
+stage7 D_801054B4 = zombie_body_probe_pos; // high: twin of stage1 D_801054B4 (fns+content)
+stage7 D_8012BF64 = zombie_sca_info_ptr; // medium-high: twin of stage1 D_80122348 (fns+decl(content differs)) [renamed from g_pZombieScaInfo: sca info spelling (pointer variable)]
+stage7 D_8012BF70 = zombie_health_tbl; // high: twin of stage1 D_80122354 (fns+content)
+stage7 D_8012BF80 = zombie_anim_id_tbl; // high: twin of stage1 D_80122364 (fns+content)
+stage7 D_8012BF8C = zombie_stagger_tbl; // high: twin of stage1 D_80122370 (fns+content)
+stage7 D_8012BFAC = zombie_state_tbl; // high: twin of stage1 D_80122390 (fns+content) [renamed from zombie_states_table: _table -> _tbl]
+stage7 D_8012BFD0 = zombie_behavior_tbl; // high: twin of stage1 D_801223B4 (fns+content)
+stage7 D_8012C000 = zombie_damage_action_tbl; // high: twin of stage1 D_801223E4 (fns+content)
+stage7 D_8012C00C = zombie_damage_behavior_tbl; // high: twin of stage1 D_801223F0 (fns+content)
+stage7 D_8012C02C = zombie_action_tbl; // high: twin of stage1 D_80122410 (fns+content)
+stage7 D_8012C04C = zombie_move_behavior_tbl; // high: twin of stage1 D_80122430 (fns+content)
+stage7 D_8012C078 = zombie_attack_anim_tbl; // high: twin of stage1 D_8012245C (fns+content)
+stage7 D_8012C084 = attack_dir_offset_tbl; // high: twin of stage1 D_80122468 (fns+content)
+stage7 D_8012C08C = player_bite_blood_tint_tbl; // high: twin of stage1 D_80122470 (fns+content) [renamed from player_death_animations_tbl: [attack_direction] -> blood tint of the bitten player's joints (zombie_attack_main)]
+stage7 D_8012C09C = zombie_damage_tbl; // high: twin of stage1 D_80122480 (fns+content)
+stage7 D_8012C0A8 = zombie_attack_data_tbl; // high: twin of stage1 D_8012248C (fns+content)
+stage7 D_8012C0C0 = zombie_recovery_timer_tbl; // high: twin of stage1 D_801224A4 (fns+content)
+stage7 D_8012C0D0 = zombie_action_tbl_scd; // high: twin of stage1 D_801224B4 (fns+content)
+stage7 D_8012C12C = crow_sca_info_ptr; // medium-high: twin of stage1 D_8012263C (fns+decl(content differs))
+stage7 D_8012C130 = crow_state_tbl; // high: twin of stage1 D_80122640 (fns+content) [renamed from crow_state_table: _table -> _tbl]
+stage7 D_8012C154 = crow_behavior_tbl; // high: twin of stage1 D_80122664 (fns+content)
+stage7 D_8012C1BC = hunter_health_tbl; // high: twin of stage3 D_80131FBC (fns+content)
+stage7 D_8012C1CC = hunter_decap_chance_mid; // high: twin of stage3 D_80131FCC (fns+content)
+stage7 D_8012C1DC = hunter_decap_chance_low; // high: twin of stage3 D_80131FDC (fns+content)
+stage7 D_8012C1FC = g_HunterPlayerHealthGate; // high: twin of stage3 D_80131FFC (fns+content)
+stage7 D_8012C1FD = g_HunterPlayerHealthGate_1; // high: twin of stage3 D_80131FFD (fns+content)
+stage7 D_8012C200 = hunter_state_tbl; // medium-high: twin of stage3 D_80132000 (fns+decl(content differs)) [renamed from hunter_state_table: _table -> _tbl]
+stage7 D_8012C223 = hunter_behavior_seed_tbl; // high: twin of stage3 D_80132023 (fns+content)
+stage7 D_8012C22C = hunter_act_tbl; // high: twin of stage3 D_8013202C (fns+content) [renamed from hunter_act_table: _table -> _tbl]
+stage7 D_8012C250 = hunter_death_tbl; // high: twin of stage3 D_80132050 (fns+content) [renamed from hunter_death_table: _table -> _tbl]
+stage7 D_8012C26C = hunter_behavior_tbl; // high: twin of stage3 D_8013206C (fns+content) [renamed from hunter_behavior_table: _table -> _tbl]
+stage7 D_8012C29C = hunter_variant_tbl; // high: twin of stage3 D_8013209C (fns+content) [renamed from hunter_variant_table: _table -> _tbl]
+stage7 D_8012C2DC = hunter_idle_variant_tbl; // high: twin of stage3 D_801320DC (fns+content) [renamed from hunter_idle_variant_table: _table -> _tbl]
+stage7 D_8012C2FC = hunter_attack_sub_tbl; // high: twin of stage3 D_801320FC (fns+content) [renamed from hunter_attack_sub_table: _table -> _tbl]
+stage7 D_8012C310 = hunter_decap_leap_sub_tbl; // high: twin of stage3 D_80132110 (fns+content) [renamed from hunter_decap_leap_sub_table: _table -> _tbl]
+stage7 D_8012C324 = hunter_swipe_reach_tbl; // high: twin of stage3 D_80132124 (fns+content)
+stage7 D_8012C344 = hunter_dodge_sub_tbl; // high: twin of stage3 D_80132144 (fns+content) [renamed from hunter_dodge_sub_table: _table -> _tbl]
+stage7 D_8012C348 = hunter_intro_anim_tbl; // high: twin of stage3 D_80132148 (fns+content)
+stage7 D_8012C34C = hunter_intro_angle_tbl; // high: twin of stage3 D_8013214C (fns+content)
+stage7 D_8012C358 = hunter_intro_move_tbl; // high: twin of stage3 D_80132158 (fns+content)
+stage7 D_8012C370 = g_HunterIntroJumpKind; // high: twin of stage3 D_80132170 (fns+content)
+stage7 D_8012C374 = g_HunterScdVictim; // high: twin of stage3 D_80132174 (fns+content)
+stage7 D_8012C378 = hunter_scd_state_tbl; // high: twin of stage3 D_80132178 (fns+content) [renamed from hunter_scd_state_table: _table -> _tbl]
+stage7 D_8012C3D8 = hunter_scd_dodge_tbl; // high: twin of stage3 D_801321D8 (fns+content)
+stage7 D_8012C3E8 = hunter_scd_decap_leap_tbl; // high: twin of stage3 D_801321E8 (fns+content)
+stage7 D_8012C3F4 = hunter_scd_swipe_tbl; // high: twin of stage3 D_801321F4 (fns+content)
+stage7 D_8012C400 = hunter_scd_attack_tbl; // high: twin of stage3 D_80132200 (fns+content)
+stage7 D_8012C418 = yawn_sca_info_ptr; // medium-high: twin of stage2 D_80121D10 (fns+decl(content differs))
+stage7 D_8012C41C = g_YawnCaptureMatrix; // high: twin of stage2 D_80121D14 (fns+content)
+stage7 D_8012C43C = yawn_state_tbl; // high: twin of stage2 D_80121D34 (fns+content) [renamed from yawn_state_table: _table -> _tbl]
+stage7 D_8012C450 = yawn_action_tbl; // high: twin of stage2 D_80121D48 (fns+content) [renamed from yawn_action_table: _table -> _tbl]
+stage7 D_8012C474 = yawn_selector_tbl; // high: twin of stage2 D_80121D6C (fns+content) [renamed from yawn_selector_table: _table -> _tbl]
+stage7 D_8012C490 = yawn_bite_window; // high: twin of stage2 D_80121D88 (fns+content) [renamed from s_yawnBiteWindow: snake_case like the other enemy data]
+stage7 D_8012C494 = yawn_entry_path; // high: twin of stage2 D_80121D8C (fns+content) [renamed from s_yawnEntryPath: snake_case like the other enemy data]
+stage7 D_8012C4AC = yawn_flee_path; // high: twin of stage2 D_80121DA4 (fns+content) [renamed from s_yawnFleePath: snake_case like the other enemy data]
+stage7 D_8012C4D0 = yawn_reposition_path; // high: twin of stage2 D_80121DC8 (fns+content) [renamed from s_yawnRepositionPath: snake_case like the other enemy data]
+stage7 D_8012C4E0 = player_death_alt_tbl; // high: twin of stage2 D_80121DD8 (fns+content)
+stage7 D_8012C4E4 = yawn_dust_offset; // high: twin of stage2 D_80121DDC (fns+content) [renamed from s_yawnDustOffset: snake_case like the other enemy data]
+stage7 D_8012C4F0 = g_YawnFleeTimer; // medium-high: twin of stage2 D_80121DE8 (fns+decl(content differs))
+stage7 D_8012BF68 = zombie_sca_info_ptr_1; // high: twin of stage1 D_8012234C (fns+addr-delta) [renamed from g_pZombieScaInfo_1: sca info spelling (pointer variable; entity id 1)]
+stage7 D_8012BF6C = zombie_sca_info_ptr_2; // high: twin of stage1 D_80122350 (fns+addr-delta) [renamed from g_pZombieScaInfo_2: sca info spelling (pointer variable; behaviour 0xB)]
+stage7 D_8012C1B0 = hunter_sca_info_ptr; // high: twin of stage3 D_80131FB0 (fns+addr-delta) [renamed from hunter_sca_info_table: sca info spelling (pointer variable)]
+stage7 D_8012C1B8 = hunter_sca_info_ptr_late; // high: twin of stage3 D_80131FB8 (fns+addr-delta) [renamed from hunter_sca_info_table_late: sca info spelling (pointer variable)]
+stage7 D_8012C430 = g_YawnCaptureMatrix_tx; // high: twin of stage2 D_80121D28 (fns+addr-delta)
+stage7 D_8012C434 = g_YawnCaptureMatrix_ty; // high: twin of stage2 D_80121D2C (fns+addr-delta)
+stage7 D_8012C438 = g_YawnCaptureMatrix_tz; // high: twin of stage2 D_80121D30 (fns+addr-delta)
+stage7 D_8012BEC0 = stage_bgm_tbl; // high: stage7_entry stores it in D_801FEC04 (same pattern as stage1)
+stage7 D_8012BB54 = stage_voice_offset_tbl; // high: stage7_entry stores it in g_StageVoiceOffsetTable (same pattern as stage1)
+stage7 D_8012BC30 = stage_bg_checksum_tbl; // high: stage7_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+stage7 D_8012BD18 = stage_bg_checksum_tbl_adv; // high: stage7_entry stores it in g_StageBgChecksumTable (same pattern as stage1)
+// ---- title ---- (D_800E1C00..04 are already in names_overlays.txt)
+title D_800E1BD8 = g_TitleSpriteClutRow; // s16[8] (BSS), high: title_init fills each slot from g_VramClutRowCursor; title_draw_option reads [arg1] + 0x1E0 as the sprite CLUT y
+title D_800E1BDA = g_TitleSpriteClutRow_1; // s16 = g_TitleSpriteClutRow[1], high: element 1 of the same array (title_init)
+title D_800E1BDC = g_TitleSpriteClutRow_2; // s16 = g_TitleSpriteClutRow[2], high: element 2 of the same array (title_init)
+title D_800E1BDE = g_TitleSpriteClutRow_3; // s16 = g_TitleSpriteClutRow[3], high: element 3 of the same array (title_init)
+title D_800E1BE0 = g_TitleSpriteClutRow_4; // s16 = g_TitleSpriteClutRow[4], high: element 4 of the same array (title_init)
+title D_800E1BE2 = g_TitleSpriteClutRow_5; // s16 = g_TitleSpriteClutRow[5], high: element 5 of the same array (title_init)
+title D_800E1BE4 = g_TitleSpriteClutRow_6; // s16 = g_TitleSpriteClutRow[6], high: element 6 of the same array (title_init)
+title D_800E1BE6 = g_TitleSpriteClutRow_7; // s16 = g_TitleSpriteClutRow[7], high: element 7 of the same array (title_init)
+title D_800E1BF0 = g_TitleSpriteTpage; // s16[8] (BSS), high: title_init fills each slot from g_VramTpageCursor; title_draw_option reads [arg1] as the sprite tpage
+title D_800E1BF2 = g_TitleSpriteTpage_1; // s16 = g_TitleSpriteTpage[1], high: element 1 of the same array (title_init)
+title D_800E1BF4 = g_TitleSpriteTpage_2; // s16 = g_TitleSpriteTpage[2], high: element 2 of the same array (title_init)
+title D_800E1BF6 = g_TitleSpriteTpage_3; // s16 = g_TitleSpriteTpage[3], high: element 3 of the same array (title_init)
+title D_800E1BF8 = g_TitleSpriteTpage_4; // s16 = g_TitleSpriteTpage[4], high: element 4 of the same array (title_init)
+title D_800E1BFA = g_TitleSpriteTpage_5; // s16 = g_TitleSpriteTpage[5], high: element 5 of the same array (title_init)
+title D_800E1BFC = g_TitleSpriteTpage_6; // s16 = g_TitleSpriteTpage[6], high: element 6 of the same array (title_init)
+title D_800E1BFE = g_TitleSpriteTpage_7; // s16 = g_TitleSpriteTpage[7], high: element 7 of the same array (title_init)
+// ---- logo ----
+logo D_800E03BE = g_LogoSkipped; // s8 (BSS), high: set to 1 when a pad button (mask 0xDF0) aborts the Capcom logo movie
+logo D_800E03C0 = g_LogoStrVlcBuf0; // u_long* = 0x8010ED00, high: passed as str_open arg5 -> g_StrVlcBuf[0]
+logo D_800E03C4 = g_LogoStrVlcBuf1; // u_long* = 0x8011ED00, high: str_open arg6 -> second VLC buffer (D_800B27D8)
+logo D_800E03C8 = g_LogoStrRingBuf; // u_long* = 0x80102D00, high: str_open arg3 -> StSetRing(ring, 0x18 sectors)
+logo D_800E03CC = g_LogoStrSliceBuf; // u_long* = 0x80100000, high: str_open arg7 -> g_StrSliceBuf
+// ---- select ---- (SelPlayer = 0x240-byte panel record: x0,x2,x4 pos, x6,x8 velocity, xA,xB accel, xC OT depth, xD shade, a/b POLY_FT4 sets)
+select D_800E4E44 = select_chris_uv_tbl; // SelUV[2] {x,y,w,h}, medium-high: UVs of panel 0's two POLY_FT4 halves (CLUT 0x1EA+i); panel 0 = character 0 (Chris, g_SavePlayerId 0)
+select D_800E4E4C = select_jill_uv_tbl; // SelUV[2], medium-high: UVs of panel 1 (CLUT 0x1EA+2i)
+select D_800E4E54 = select_backdrop_uv_tbl; // SelUV[5], medium: UVs of the shared semi-transparent 'b' quads (rgb 0x40, tpage mode 2) of both panels
+select D_800E4E68 = g_SelectRtpFlag; // s32, high: last arg (flag) of every RotTransPers4 in select_draw_characters
+select D_800E4E70 = g_SelectMatrix; // MATRIX, high: RotMatrix(&rot, m); TransMatrix(m, &trans); SetRotMatrix/SetTransMatrix in select_state init
+select D_800E4E90 = g_SelectRtpInterp; // s32, high: 'p' (depth-cue interpolation) out-arg of RotTransPers4 in select_draw_characters
+select D_800E4E98 = g_SelectRot; // SVECTOR (vx), high: zeroed then fed to RotMatrix
+select D_800E4E9A = g_SelectRot_vy; // s16, high: g_SelectRot.vy
+select D_800E4E9C = g_SelectRot_vz; // s16, high: g_SelectRot.vz (+pad)
+select D_800E4EA0 = g_SelectTrans; // VECTOR (vx), high: zeroed then fed to TransMatrix
+select D_800E4EA4 = g_SelectTrans_vy; // s32, high: g_SelectTrans.vy
+select D_800E4EA8 = g_SelectTrans_vz; // s32, high: g_SelectTrans.vz (+pad)
+select D_800E4EB0 = g_SelectCharacter; // u8, high: highlighted character 0/1, toggled (^=1) by the slide, copied into g_SavePlayerId on confirm
+select D_800E4EB8 = g_SelectQuadVerts; // SVECTOR[4], high: corner vertices rebuilt per panel for RotTransPers4 in select_draw_characters
+select D_800E4ED8 = g_SelectState; // u8, high: select_state main switch (0 init,1,2 slide,3,7 ...)
+select D_800E4ED9 = g_SelectSubState; // u8, high: inner switch of the slide state
+select D_800E4EDA = g_SelectUnused; // s8, low: only zeroed at init
+select D_800E4EE0 = g_SelectPanels; // SelPlayer[2] (first field x0), high: two character panels; select_scroll_step adds x6/x8 into x0/x2
+select D_800E4EE2 = g_SelectPanels_y; // s16 = g_SelectPanels[0].x2, high: select_scroll_step
+select D_800E4EE6 = g_SelectPanels_vx; // s16 = [0].x6 velocity, high: select_scroll_step/accel
+select D_800E4EE8 = g_SelectPanels_vy; // s16 = [0].x8 velocity, high: same
+select D_800E4EEA = g_SelectPanels_ax; // s8 = [0].xA accel, high: select_scroll_accel (+-2)
+select D_800E4EEB = g_SelectPanels_ay; // s8 = [0].xB accel, high: select_scroll_accel (+-1)
+select D_800E5120 = g_SelectPanels_1; // s16 = g_SelectPanels[1].x0 (BSS), high: second panel record (0x800E4EE0 + 0x240)
+select D_800E5122 = g_SelectPanels_1_y; // s16 = [1].x2, high: select_scroll_step
+select D_800E5126 = g_SelectPanels_1_vx; // s16 = [1].x6, high: select_scroll_step/accel
+select D_800E5128 = g_SelectPanels_1_vy; // s16 = [1].x8, high: same
+select D_800E512A = g_SelectPanels_1_ax; // s8 = [1].xA, high: select_scroll_accel
+select D_800E512B = g_SelectPanels_1_ay; // s8 = [1].xB, high: select_scroll_accel
+select D_800E5360 = g_SelectPadChoice; // u8 (BSS), high: (g_PadRaw32 >> 15) & 1, compared with g_SelectCharacter to pick the slide direction
+select D_800E5361 = g_SelectTimer; // u8 (BSS), high: frame countdown of the select states; its 0x30 bits blink the arrows in select_draw_arrows
+// ---- ending ---- (g_EndingSlots/g_EndingSlotCur/g_EndingId already in names_overlays.txt)
+ending D_800E5BC0 = ending_text_page_tbl; // void*[2] {D_800E5AC0, D_800E5B40}, medium-high: credits text-page script per set, indexed by g_EndingTextSet; ending_text_page_update
+ending D_800E5CEC = ending_picture_seq_tbl; // void*[2] {D_800E5CB0, D_800E5CC8}, medium-high: picture-sequence script (12-byte records: frame, x, y...), ending_picture_sequence_update
+ending D_800E5CF4 = ending_def_tbl; // {u8 a,b,c,d}[7] by g_EndingId-1, high: a==1 -> extra FMV 0x16 afterwards, b -> movie+credits vs strip-scroll mode, c==1 -> result bonus screen, d -> alt TIM file (0xA vs 9)
+ending D_800E5D10 = ending_sprite_layout_tbl; // {u16 type; s16 x,y; u8,u8}[], medium: slot type/position rows used by ending_epilogue_build/ending_result_build
+ending D_800E5D70 = ending_camera_zones; // camera switch zone block, high: stored in g_CameraSwitchZones by ending_epilogue_build
+ending D_800E5D84 = ending_room_block_4c; // 28 zero bytes, low: stored at g_RoomData+0x4C (room collision/LOS block slot) by ending_check_clear_time_under_3h when under the limit
+ending D_800E5DA0 = g_EndingStrBuf; // u8* (0x30000), high: STR ring/VLC/slice buffers of the ending movies (str_open base) and the D_800CF63C FMV buffer
+ending D_800E5DA4 = g_EndingWorkBuf; // u8* (0x40000), high: TIM / save-file loads (load_file 0, 0x1A, 1) and memcard_screen buffer (PC s_saveScratch)
+ending D_800E5DAC = g_EndingSmallBuf; // u8* (0x1000), low: carved from g_LoadPointer in ending_state, no other use
+ending D_800E5DB0 = g_EndingPlayerPicBuf; // u8* (0x25800), medium: load_file 0x10 (Jill) / 3 (Chris); LoadImage full screen (0x140x0xF0) in ending_epilogue_build
+ending D_800E5DB4 = g_EndingModelBuf; // u8* (0x30000), medium-high: load_file 0x11A, result-screen model data
+ending D_800E5DB8 = g_EndingModelTmd; // u8* = g_EndingModelBuf + 0x10220, medium: tmd_relocate_texture + GsLinkObject5 source in ending_result_build
+ending D_800E5DBC = g_EndingPacketBuf; // u8*, medium-high: GsPresetObject packet area for the result model (g_EndingPacketCur starts here)
+ending D_800E5DC0 = g_EndingLoadBase; // u8*, high: g_LoadPointer is reset to it after the initial loads
+ending D_800E5DC4 = g_EndingTextCursor; // u8*, medium: reset to g_EndingWorkBuf in ending_scene_reset (PC s_dat4d6450 = s_saveScratch), read by the text unpacker
+ending D_800E5DD0 = g_EndingStripImage; // u_long*, medium: LoadImage source of each 0x80x0x10 credit strip in ending_strip_slot_setup (filled by ending_text_next_block)
+ending D_800E6370 = g_EndingDrawCursor; // EndSlot* (BSS), high: PC s_drawCursor (ending_result_draw / ending_draw_text walk g_EndingSlots with it)
+ending D_800E6374 = g_EndingBgSlotA; // EndSlot*, medium-high: first full-screen sprite slot of ending_bg_slot_setup (PC s_bgSlot)
+ending D_800E6378 = g_EndingBgSlotB; // EndSlot*, medium-high: second full-screen slot of ending_bg_slot_setup
+ending D_800E637C = g_EndingPictureSlot; // EndSlot*, medium-high: slot allocated by ending_picture_sequence_update
+ending D_800E6380 = g_EndingTextSlot; // EndSlot*, medium-high: text layer slot (ending_text_layer_setup / text_page_update / scroll_slot_update)
+ending D_800E6384 = g_EndingEpilogueSlots; // EndSlot*[5] (first), medium: epilogue slots faded in/out by ending_epilogue_update (PC s_creditSlots)
+ending D_800E6388 = g_EndingEpilogueSlots_1; // EndSlot*, medium: element 1
+ending D_800E638C = g_EndingEpilogueSlots_2; // EndSlot*, medium: element 2
+ending D_800E6390 = g_EndingEpilogueSlots_3; // EndSlot*, medium: element 3
+ending D_800E6394 = g_EndingEpilogueSlots_4; // EndSlot*, medium: element 4
+ending D_800E63A0 = g_EndingTextPage; // u8, medium-high: 0/1 double buffer of the text layer (tpage x = 0x140 + 0x80*page)
+ending D_800E63A4 = g_EndingSceneUnused; // s32, low: only zeroed by ending_scene_reset
+ending D_800E63A8 = g_EndingStripScroll; // u32 (16.16), high: credit-strip scroll accumulator (+=0x4000/frame, limit 0x0E100000), spawns a strip every 0x100000
+ending D_800E63AC = g_EndingStripLastSpawn; // u32, high: g_EndingStripScroll value at the last strip spawn
+ending D_800E63B0 = g_EndingStripLimit; // u32 = 0x0E100000, medium: set at start, end of the strip scroll
+ending D_800E63C8 = g_EndingStrDone; // s32, high: result of str_decode_next_frame (movie finished); also latches the volume fade at frame 0x3DE1
+ending D_800E63CC = g_EndingScrollMode; // s16, medium: = ending_def_tbl[id].b; g_EndingStep starts at b^1
+ending D_800E63D0 = g_EndingStripIndex; // u16, high: credit strip row 0..0x11 (tpage y = index*0x10), reset in ending_scene_reset
+ending D_800E63D4 = g_EndingScrollSpeed; // s16, medium: added to each slot +0x24 in ending_result_draw
+ending D_800E63D8 = g_EndingStrFrame; // u16, high: str_get_frame() result; pages/pictures trigger on it (skip after 0x4C, end at 0x691)
+ending D_800E63DC = g_EndingTextPageShown; // u16, medium: latch set once the current text page is uploaded (ending_text_page_update)
+ending D_800E63E0 = g_EndingTextPagePtr; // 6-byte record*, high: current entry of the ending_text_page_tbl script
+ending D_800E63E8 = g_EndingPicturePtr; // 12-byte record*, high: current entry of the ending_picture_seq_tbl script
+ending D_800E63EC = g_EndingView; // GsRVIEW2 (vpx), high: GsSetRefView2(&it), copied into the fake room camera matrix (PC s_camera[8])
+ending D_800E63F0 = g_EndingView_vpy; // s32, high: field of g_EndingView (-1500)
+ending D_800E63F4 = g_EndingView_vpz; // s32, high: (-1500)
+ending D_800E63F8 = g_EndingView_vrx; // s32, high: (6000)
+ending D_800E63FC = g_EndingView_vry; // s32, high
+ending D_800E6400 = g_EndingView_vrz; // s32, high
+ending D_800E6404 = g_EndingView_rz; // s32, high
+ending D_800E6408 = g_EndingView_super; // s32, high
+ending D_800E640C = g_EndingEffectPos; // VECTOR (vx), high: billboard origin of effect_create_billboard(0xB,...) in ending_epilogue_update (PC s_effectPos[3])
+ending D_800E6410 = g_EndingEffectPos_vy; // s32, high: same vector
+ending D_800E6414 = g_EndingEffectPos_vz; // s32, high: same vector
+ending D_800E641C = g_EndingCoordRoot; // GsCOORDINATE2 (flg), high: GsInitCoordinate2(NULL, root) (PC s_scaRoot)
+ending D_800E6420 = g_EndingCoordRoot_coord; // MATRIX, high: .coord of g_EndingCoordRoot (RotMatrix target)
+ending D_800E6434 = g_EndingCoordRoot_tx; // s32, high: .coord.t[0]
+ending D_800E6438 = g_EndingCoordRoot_ty; // s32 = 500, high: .coord.t[1]
+ending D_800E643C = g_EndingCoordRoot_tz; // s32, high: .coord.t[2]
+ending D_800E646C = g_EndingCoordSpin; // GsCOORDINATE2 (flg), high: child of root, re-rotated every frame by g_EndingSpinAngles (PC s_scaSpin)
+ending D_800E6470 = g_EndingCoordSpin_coord; // MATRIX, high: .coord of g_EndingCoordSpin
+ending D_800E64BC = g_EndingCoordLeaf; // GsCOORDINATE2 (flg), high: child of spin, the model coordinate (PC s_scaLeaf)
+ending D_800E64C0 = g_EndingCoordLeaf_coord; // MATRIX, high: .coord of g_EndingCoordLeaf
+ending D_800E656C = g_EndingModelObj; // GsDOBJ5 (attribute), high: GsLinkObject5/GsPresetObject/GsSortObject5 of the result model
+ending D_800E6570 = g_EndingModelObj_coord2; // GsCOORDINATE2*, high: .coord2 of g_EndingModelObj (= &g_EndingCoordLeaf)
+ending D_800E6580 = g_EndingLight; // GsF_LIGHT (vx=100), high: GsSetFlatLight(0, &it) (PC s_lightData)
+ending D_800E6584 = g_EndingLight_vy; // s32, high: same light
+ending D_800E6588 = g_EndingLight_vz; // s32, high: same light
+ending D_800E658C = g_EndingLight_r; // u8 = 0xFF, high: same light
+ending D_800E658D = g_EndingLight_g; // u8, high: same light
+ending D_800E658E = g_EndingLight_b; // u8, high: same light
+ending D_800E6590 = g_EndingPacketCur; // u8*, high: packet pointer returned by GsPresetObject
+ending D_800E6594 = g_EndingSpinAngles; // SVECTOR (vx = 0xAA), high: rotation of g_EndingCoordSpin (PC s_spinAngles)
+ending D_800E6596 = g_EndingSpinAngles_vy; // s16, high: same
+ending D_800E6598 = g_EndingSpinAngles_vz; // s16, high: += 0x20 per frame in ending_result_update
+ending D_800E659C = g_EndingHasRocketLauncher; // u8, high: counts item 0x38 in inventory/box (+ADVANCED); gates the result bonus and the next-run item (PC s_hasSpecialKey / g_HasRocketLauncherFlag)
+ending D_800E65A4 = g_EndingUnderTimeLimit; // u8, high: PC s_underTimeLimit, set by ending_check_clear_time_under_3h; grants item 0xA + flag 0x7E
+ending D_800E65A8 = g_EndingHadTimeReward; // u8, medium-high: Flg_ck(0x7E) before the reward (earlier under-time clear) [renamed from g_EndingHadFlag7E: 1 if SCN_FLAG_TIME_REWARD (0x7E) was already set: the new game gets item 0xA again]
+ending D_800E65AC = g_EndingHadAdvReward; // u8, medium-high: Flg_ck(0x7A) before the ADVANCED reward [renamed from g_EndingHadFlag7A: 1 if SCN_FLAG_ADV_REWARD (0x7A) was already set: the new game gets item 5 again]
+ending D_800E65B0 = g_EndingTextSet; // u8, low-medium: index into ending_text_page_tbl / ending_picture_seq_tbl, never written in this overlay (stays 0)
+ending D_800E65B4 = g_EndingStep; // u8, high: PC s_step, ending state-machine index (0 strip scroll, 1 movie, 2 scroll slot, >=4 exit)
+ending D_800E65B8 = g_EndingSubStep; // u8, medium-high: sub-step zeroed on every g_EndingStep change (PC s_dat4d6af4)
+ending D_800E65BC = g_EndingStepDone; // u8, medium: zeroed before each update loop (PC s_stepDone latch)
+ending D_800E65C0 = g_EndingStepTimer; // u16, high: PC s_stepTimer
+ending D_800E65C4 = g_EndingFrame; // u16, high: global ending frame counter (thresholds 0x12C, 0x3B4C, 0x3D0E, 0x3DE1)
+ending D_800E65C8 = g_EndingUnusedC8; // s8, low: only zeroed at ending start
+ending D_800E65CC = g_EndingUnusedCC; // s8, low: only zeroed
+ending D_800E65D0 = g_EndingUnusedD0; // s8, low: only zeroed
+ending D_800E65D4 = g_EndingPictureState; // u8, medium-high: switch state of ending_picture_sequence_update
+ending D_800E65D8 = g_EndingUnusedD8; // s8, low: only zeroed
+ending D_800E65DC = g_EndingUnusedDC; // s8, low: only zeroed
+ending D_800E65E0 = g_EndingScrollZ; // s32 = 0x2000, medium: text-slot depth; slot scale = 0x10000000 / it (ending_scroll_slot_update)
+ending D_800E65E4 = g_EndingScrollZVel; // s32 = 0x300, medium: added to g_EndingScrollZ
+ending D_800E65E8 = g_EndingScrollZAcc; // s32 = -4, medium: added to g_EndingScrollZVel
+ending D_800E65EC = g_EndingCopySrc; // s32*, high: source (g_EndingWorkBuf) of the 0x107-word copy to 0x800C8460 before the save screen
+ending D_800E65F0 = g_EndingCopyDst; // s32*, high: destination (0x800C8460) of that copy
+ending D_800E65F4 = g_EndingRoomData; // fake RDT block, high: g_RoomData = &it in ending_epilogue_build (camera matrix written into arr[cut])
+ending D_800E66B4 = g_EndingSavedStatusFlags; // u32, high: g_StatusFlags saved on entry; decides ADVANCED/arrange rewards and g_SaveDcMode, restored for the memcard screen (PC docs DAT_800e67d0)
+ending D_800E66B8 = g_EndingBoxA; // GsBOXF (attribute), high: GsSortBoxFill(&it) in ending_result_draw; init in ending_picture_sequence_update
+ending D_800E66BC = g_EndingBoxA_x; // s16, high: GsBOXF.x
+ending D_800E66BE = g_EndingBoxA_y; // s16, high: GsBOXF.y
+ending D_800E66C0 = g_EndingBoxA_w; // u16, high: GsBOXF.w
+ending D_800E66C2 = g_EndingBoxA_h; // u16, high: GsBOXF.h
+ending D_800E66C4 = g_EndingBoxA_r; // u8, high: GsBOXF.r
+ending D_800E66C5 = g_EndingBoxA_g; // u8, high: GsBOXF.g
+ending D_800E66C6 = g_EndingBoxA_b; // u8, high: GsBOXF.b
+ending D_800E66C8 = g_EndingBoxB; // GsBOXF (attribute), high: second GsSortBoxFill box
+ending D_800E66CC = g_EndingBoxB_x; // s16, high
+ending D_800E66CE = g_EndingBoxB_y; // s16, high
+ending D_800E66D0 = g_EndingBoxB_w; // u16, high
+ending D_800E66D2 = g_EndingBoxB_h; // u16, high
+ending D_800E66D4 = g_EndingBoxB_r; // u8, high
+ending D_800E66D5 = g_EndingBoxB_g; // u8, high
+ending D_800E66D6 = g_EndingBoxB_b; // u8, high

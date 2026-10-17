@@ -1,0 +1,23 @@
+# Zombie work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names: RE1 PC decomp's Entity 0x16C.. names where the use matches (it named them from its zombie code).
+struct ZombieWork ZOMBIE
+0x00 u8  attack_direction     # 0x16C: which attack animation (zombie_attack_anim_tbl index; facing test)
+0x01 u8  dir_control_flags    # 0x16D: room-collision bits of this frame (also given to the wander turn)
+0x04 s16 angle_turn_delta     # 0x170: turn step towards the target (added to angle)
+0x06 s16 walk_flags           # 0x172: bit 0 = wall/turn result copied while walking; non-zero = blocked
+0x08 s16 head_detached        # 0x174: 1 once the head (joint 2) has flag 0x40 = knocked off (seen in zombie_attack_main); zombie_update then moves it with zombie_head_bounce_physics
+0x0A s8  unused_176                # 0x176: only cleared in zombie_init
+0x0B s8  grab_struggle_timer  # 0x177: grab hold time; the player's struggle input counts it down
+0x0C s8  unused_178                # 0x178: only cleared in zombie_init
+0x0D s8  wander_turn_state    # 0x179: given by address to api_entity_update_wander_turn
+0x0E u16 wander_angle         # 0x17A: wander direction (from the path search)
+0x10 s8  hit_count            # 0x17C: hits taken; falls down when it reaches hit_threshold; -128 (bit 7) = knocked down
+0x11 u8  hit_threshold        # 0x17D: random per zombie (zombie_init)
+0x12 u8  down_flags           # 0x17E: bit 2 = lying on the floor (falldown), bit 0 checked when hit
+0x13 u8  push_back_count      # 0x17F: short push-backs in a row
+0x14 u8  move_speed           # 0x180: walk speed (45)
+0x15 u8  turn_speed           # 0x181: wander turn speed (24; 14 after a push-back)
+0x16 u8  push_cooldown        # 0x182: frames until the next push-back may start (150)
+0x18 s32 saved_state          # 0x184: copy of the state word (state, ignore flag, behavior, action)
+0x1C u8  stagger_timer        # 0x188: poise; counts down per hit (zombie_stagger_tbl), falls when 0
+0x1D s8  walk_decision_delay  # 0x189: frames before the walk picks a new direction (60 after a grab)

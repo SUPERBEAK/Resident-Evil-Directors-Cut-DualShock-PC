@@ -1,0 +1,11 @@
+# A command of a room event script (ScdEvent.ip / ScrCtx2.x8): opcode byte, then operands that depend
+# on the command (the movement/animation commands read three s16 values).
+struct ScdEventCmd
+macro SCD_EV_CMD
+define
+0x00 u8  opcode
+0x01 u8  index
+0x02 s16 arg0
+0x04 s16 arg1
+0x06 s16 arg2
+param scd_event_state1_anim pc

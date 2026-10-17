@@ -1,0 +1,8 @@
+# An inventory slot (2 bytes: item id, count), g_FoundItemSlot = get_item_slot's result (&inventory[i * 2], or a
+# dummy when not found); room_event_item_return (src/main/enemy_path.c) clears it.
+struct InventorySlot
+view FOUND_SLOT = ((InventorySlot *)g_FoundItemSlot)
+base g_FoundItemSlot
+define
+0x00 u8 item_id
+0x01 u8 count

@@ -1,0 +1,10 @@
+# SCD opcode 0x0F mirror_set (8 bytes): mirror range/plane for the player's reflection.
+struct ScdOpMirrorSet
+macro SCD_MIRROR
+define
+0x00 u8  opcode
+0x01 u8  mode         # -> g_GameStateFlags bits 0-1
+0x02 u16 range_min    # -> g_MirrorRangeMin
+0x04 u16 range_max    # -> g_MirrorRangeMax
+0x06 u16 plane        # -> g_MirrorPlane
+param scd_op_0f_mirror_set p

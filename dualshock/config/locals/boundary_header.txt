@@ -1,0 +1,9 @@
+# Header of the room collision data (RoomHeader.collision; PC RDT_BoundaryHeader, 0x18 bytes):
+# the quadrant split point and 5 boundary groups (pointers after the room is set up).
+struct BoundaryHeader
+macro BOUND_HDR
+define
+0x00 s16 cell_x       # X / Z of the quadrant split point
+0x02 s16 cell_z
+0x04 u16 * group[5]   # boundary records (12 bytes each) per group; group[4] = end
+param aim_ray_blocked_by_wall obj

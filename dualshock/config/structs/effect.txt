@@ -1,0 +1,6 @@
+# The current effect slot: g_EffectPool (0x800C3024, 64 x Effect) at the index byte 0x800CF86E.
+# Fields: struct Effect (re1_types.h).
+struct Effect
+view EFFECT = (&LITP(Effect, g_EffectPool)[LIT(u8, g_ActiveEffectIndex)])
+base &LITP(Effect, g_EffectPool)[LIT(u8, g_ActiveEffectIndex)]
+fields Effect

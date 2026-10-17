@@ -1,0 +1,17 @@
+# One collision boundary of the room's SCA section (RDT +0x4C; 12 bytes). Names from the RDT format
+# page (Just Solve the File Format Problem wiki, "RDT (Resident Evil 1997)": rdt_sca_obj_t x1, z1, x2, z2, type, floor); the room collision shape
+# callbacks (g_CollisionShapeFuncs: collision_push_rect / collision_push_circle) get one as their first argument.
+struct ScaBoundary
+macro SCA_BOUND
+param collision_push_circle box
+define
+0x00 u16 x1     # corner / extent values (collision_push_rect: box[0] / box[2] bound x, box[1] / box[3] bound z)
+0x02 u16 z1
+0x04 u16 x2
+0x06 u16 z2
+0x08 u16 type   # shape (1 standard, 3 circle, ...)
+0x0A u16 floor  # floor height / 256; its high byte is also read as flags (boundary_classify_flags, mask 0x300)
+
+# raw-cast round 3
+param boundary_classify box
+param check_room_collision p

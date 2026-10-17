@@ -1,0 +1,14 @@
+# Local pointers to the loaded room file header (RoomHeader, config/structs/room_header.txt): copies of
+# g_RoomData (0x800CAB10) in stage_init_eff_sprite.
+struct RoomHeader
+macro ROOM_HDR
+fields RoomHeader
+param stage_init_eff_sprite p
+param stage_init_eff_sprite r
+# raw-cast round 3 (2026-10-16): the room data through its aliases and local copies; op 0x46's d/d2 are
+# g_RoomData + i * 0x14 (light i: the light_* fields of light 0 then address light i)
+source ^\s*(LIT\(u8 \*, g_RoomData\)|g_RoomData(_\w+)?)\s*$
+expr ^g_RoomData(_\w+)?$
+param scd_op_46_room_lights_set d
+param scd_op_46_room_lights_set d2
+param cl_finish_restore_room w

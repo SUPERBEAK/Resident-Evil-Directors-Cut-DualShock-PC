@@ -1,0 +1,3 @@
+// Capcom symbol names for overlay PROLOGUE.EXE (splat format).
+prologue_main = 0x800E0000; // type:func
+prologue__main = 0x800E02AC; // type:func

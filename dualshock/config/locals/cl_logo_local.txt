@@ -1,0 +1,20 @@
+# Local pointers to a computer lab logo slot (ClLogoSlot, config/structs/cl_logo_slot.txt): new slots from
+# computer_logo_alloc, and a local copy of g_ClLogoCur.
+struct ClLogoSlot
+macro CLLOGO
+fields ClLogoSlot
+param computer_logo_update logo
+param computer_logo_hub_spin_up child
+param computer_logo_hub_spawn child
+param computer_logo_wedge_retire p
+
+# rawfield.py round (2026-10-16): local copies of g_ClLogoCur, and the slot computer_logo_alloc returns
+param computer_logo_wedge_a_spin obj
+param computer_logo_wedge_retire obj
+param computer_logo_wedge_b_spin obj
+param computer_logo_wordmark_shrink p
+param computer_logo_wedge_a_seed t
+expr ^g_ClLogoCur(_\w+)?$
+param computer_logo_wedge_a_spin t
+param computer_logo_wedge_retire t
+param computer_logo_wedge_b_spin t

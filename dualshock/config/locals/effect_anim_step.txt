@@ -1,0 +1,11 @@
+# One step (0x18 bytes) of an effect's animation data (Effect.anim_data_frame walks them); its first bytes
+# are copied into the effect's header (Effect +0x00..0x17).
+struct EffectAnimStep
+macro EFF_STEP
+define
+0x00 u8  pre_behavior
+0x01 u8  post_behavior
+0x10 u16 vel_x
+0x12 u16 vel_y
+0x14 u16 vel_z
+0x16 u16 yaw

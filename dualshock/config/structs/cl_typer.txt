@@ -1,0 +1,13 @@
+# Computer lab "hands type the text" animator g_ClTyper, reached through g_ClTyperPtr (src/main/computer_lab.c
+# computer_typer_*). Names from the RE1 PC decomp's ClTyper (names only).
+struct ClTyper
+view CL_TYPER = ((ClTyper *)g_ClTyperPtr)
+base g_ClTyperPtr
+view CL_TYPER_B = ((ClTyper *)g_ClTyperPtr_u8p)    # the u8 * alias of g_ClTyperPtr
+base g_ClTyperPtr_u8p
+define
+0x00 u8  active       # computer_typer_update runs the step table only while set
+0x01 u8  state        # computer_typer_step_tbl index (begin, press, wait, finish)
+0x04 s32 char_idx     # character being typed in the line
+0x10 s16 timer        # frames until the next key press
+0x12 s16 line         # text line (g_ClText0Buf + line * 18)

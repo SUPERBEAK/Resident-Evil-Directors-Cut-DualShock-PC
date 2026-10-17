@@ -1,0 +1,189 @@
+// Main-program + overlay globals, third round (2026-10-16): the last unnamed D_ globals. All applied (tools/rename.py, tools/rename_piece.py).
+// 2026-10-16 (array pass): the element symbols NAME_N of one array (g_KeyConfig_1, g_PlayerAnimFunctions_07,
+// g_SelectPanels_1_vx, zombie_sca_info_ptr_1, ...) were removed from the symbol files again: the code writes
+// NAME[N] / NAME[i].field now. The lines below stay as the record of what each element is.
+// 2026-10-17 (element-field pass): the NAME_N_Field symbols (g_MapSprites_0_X, g_DoorOrderTable_0_Pos, g_Tasks_1_State,
+// g_EffectPool_0_*, ...) were removed as well: the code writes NAME[N].field, or a function-local alias
+// `extern T NAME_N_Field __asm__("NAME+0xOFF")` where the -O2 code addressed the field as its own symbol.
+// --- rodata pieces (INCLUDE_RODATA, renamed with tools/rename_piece.py; overlay ones in stage1/2/4/5/6/7) ---
+D_80010000 = g_KnifeHitEffectOffsets; // s16[2][3], high: per character (id & 1) offset of the knife-hit billboard from joint 14 (weapon_post_hit_knife)
+D_80010030 = s_SumError; // char[], high: "SUM Error!!%x:%x\n" checksum printf (cd.c)
+D_80010044 = s_Empty; // char[], high: "" - file filter passed to memcard_list_files
+D_80010048 = s_SaveFilePattern; // char[], high: "BASLUS-00551*" save file wildcard
+D_80010058 = s_SaveFileName; // char[14], high: "BASLUS-005510" save file name, last digit += save slot
+D_800100B0 = s_MemcardTitleJill; // SJIS[0x2C], high: "R.E-DC 1. Jill /00/" memory card title (g_SavePlayerId & 1)
+D_800100E0 = s_MemcardTitleChris; // SJIS[0x2C], high: "R.E-DC 1. Chris/00/"
+D_80010110 = s_MemcardTagNone; // SJIS[4], high: two full-width spaces, title +0xE when no mode flag
+D_80010118 = s_MemcardTagTr; // SJIS[4], high: "Tr" when status flag 0x40000 (TRAINING mode: more HP, damage table 1, doubled ammo)
+D_80010120 = s_MemcardTagAd; // SJIS[4], high: "Ad" when status flag 0x20000 (ADVANCED mode)
+D_80010128 = s_MemcardTagAT; // SJIS[4], high: "AT" when status flag 0x10000 (ADVANCED*: hold Right on Advanced in the title menu; normal damage + doubled ammo)
+D_80010130 = s_bu00; // char[6], high: "bu00:" memory card device path template
+D_80010168 = g_EffectTintScales; // u8[10], high: Effect.scale per effect hdr04 (was g_EffectTintLightFactors) (effect_behavior_set_tint)
+D_800102F4 = g_StartItemsChris; // u8 pairs, high: {item, qty} list ending in 0 - knife, item 0x41 = lighter (special item slot, confirmed in game) (set_initial_items, id & 3 == 0)
+D_800102FC = g_StartItemsJill; // u8 pairs, high: knife, item 2 x15 (item 4 in Advanced mode), item 0x41 = lockpick
+D_80010304 = s_Nothing; // char[], high: "_Nothing_" item box empty line
+D_800103D4 = s_YesNo; // char[], high: "Yes  No" message choice
+D_800105D8 = g_WalkSpeedDips; // u8[2][4], high: per character {frame A, frame B, dip A, dip B}: walk speed 0x5D is lowered during those anim frames (player_ctrl_behavior_walk)
+D_80010634 = g_KnifeHitFrameWindows; // u8[2][3][2], high: per character and knife anim 6/7/8 {first frame, frame count} in which the swing deals damage (player_behavior_14_knife_swing)
+D_80010640 = g_DeathFallSpeeds; // u16[2][2], high: per character {anim speed, xz push} of the death fall (player_state_03_death)
+D_8001069C = g_AdvancedModeRooms; // u8[7][9], high: per stage the rooms (0xFF = none) that load the stage+7 RDT in Advanced mode (room_get_rdt_stage_index)
+D_80010954 = g_ViewEdgeVector; // VECTOR {2000,0,0}, high: rotated by +-angle to make the view cone edges (entity_check_view_and_distance)
+D_80010964 = g_SideTestVector; // VECTOR {5000,0,0}, high: rotated by angle + 0x400 for the left/right test (entity_is_target_on_side)
+D_80105400 = zombie_hit_threshold_hard_tbl; // u8[32], high: see config/globals_overlays.txt
+D_801054AC = zombie_body_probe_neg; // SVECTOR {-800,0,0}, medium: see config/globals_overlays.txt
+D_801054B4 = zombie_body_probe_pos; // SVECTOR {+800,0,0}, medium: see config/globals_overlays.txt
+// --- player object / enemy slot 0 (by hand / tools/rename.py) ---
+D_800C5124 = g_PlayerEntity; // Entity, high: the player's entity (g_PlayerWork = its own data at +0x15C)
+D_800C512C = g_PlayerScaHitData; // high: g_PlayerEntity.sca_hit_data
+D_800C5134 = g_PlayerCoord2Ptr; // high: g_PlayerEntity +0x10 (GsDOBJ coord2)
+D_800C5318 = g_EnemySlot0Angle; // high: enemy slot 0 entity fields
+D_800C5328 = g_EnemySlot0State;
+D_800C532C = g_EnemySlot0Health;
+D_800C533C = g_EnemySlot0Joints;
+// (also D_800C5144..D_800C5154 = g_PlayerCoordM00..M22, the player's coordinate matrix)
+// s_frameQuads (0x80096344) -> s_frameQuads_1: the table really starts at 0x80096338 (list A)
+s_frameQuads = g_ClFrameQuads_1;
+// --- list A (2026-10-16) ---
+D_80091674 = g_KeyCfgTypeBoxX; // s16[5], high: x of the key-config header boxes {-8,9,0x1A,0x2B,0x5C}: [0..2] preset A/B/C (w 0xE), [3] custom (w 0x2E), [4] exit (0x5C); keyconfig_draw_frame indexes by g_OptionsMenuSel / g_KeyConfigType&3
+D_80091704 = g_KeyCfgActionListA; // u8[8], high: digital-mode action list: per row the g_KeyConfig slot index(es), nibble-packed (0x76 = slots 7+6), 0xFE = "none" row; 7 rows; pairs with g_KeyCfgActionNamesA (keyconfig_input / keyconfig_draw_layout / keyconfig_draw_action_list)
+D_8009170C = g_KeyCfgActionListB; // u8[9], high: same for analog mode (g_KeyConfigType & 0x40), 8 rows {0,2,1,3,7,6,9,8,0xFE}; pairs with g_KeyCfgActionNamesB
+D_800917AC = g_KeyCfgActionNameXA; // u8[8], high: x offset added when printing g_KeyCfgActionNamesA[n] (centring; keyconfig_draw_layout / keyconfig_draw_action_list)
+D_800917B4 = g_KeyCfgActionNameXB; // u8[9], high: same for g_KeyCfgActionNamesB (analog list)
+D_800952B0 = g_OptionsMenuBoxX; // s16[4], high: x of the 4 options-menu item boxes {-0x3C,-8,0x2A,0x5C}; options_menu_draw_boxes, selected box drawn blue
+D_80091C3C = g_McSaveDoneAnimDelays; // u8[27], medium: per-step delay (value>>1 frames) of the post-save "typing" sweep in memcard_save_done_anim; each step redraws the file list with the cursor glyph one char further (typewriter SE when the char was not blank)
+D_80091F90 = g_EmdClutFadeMask; // u32, high: 0x0004F900 bitmask of entity types (bits 8,11-15,18) that get a clut_fade_add entry in load_entity_emd = PC DAT_004c1a2c (tintable types: plant42, neptune, tyrant, yawn...); sits right after g_EmdFileTable[2][0x45]
+D_800927C4 = g_FileTexRects_0_ClutRow; // s32, high: = g_FileTexRects + 8; records are {RECT rect; s32 clutRow} (stride 0xC); value 0x1C passed as tim_upload's 3rd arg (CLUT row - 0x1E0 -> 0x1FC, the cy of all file sprites); file_load_texture
+D_800927E4 = g_FileBookListSprite_X; // s16, high: field x of the GsSPRITE at 0x800927E0 (160x104 file-list page, tpage 0x15, cy 0x1FC) = slide_x + 0x20; drawn via GsSortFastSprite(&this - 4)
+D_800927E6 = g_FileBookListSprite_Y; // s16, high: field y of the same sprite = slide_y + 0x18
+D_80092804 = g_FileBookEntrySprites; // GsSPRITE[8], medium: one 4x8 marker per collected file of the shown list page (x 0x8C + i/2, y 0x29 + i*9, u 0xA8); file_book_draw loops 8 with stride 0x24
+D_8009294C = g_FileBookCursorSprite_X; // s16, medium: x of the GsSPRITE at 0x80092948 (same marker, u 0xA0 = highlighted) placed on the selected entry p[5]
+D_8009294E = g_FileBookCursorSprite_Y; // s16, medium: y of that cursor sprite (slide_y + p[5]*9 + 0x29)
+D_8009297A = g_FileBookPrevPageArrow_U; // u8, high: u of the GsSPRITE at 0x8009296C (x 0x3C, y 0x48), blink 0xB0/0xB8; drawn when list_page != 0 (left arrow)
+D_8009299E = g_FileBookNextPageArrow_U; // u8, high: u of the GsSPRITE at 0x80092990 (x 0x9C, y 0x48), blink 0xC0/0xC8; drawn when list_page != 1 (right arrow)
+D_800929B4 = g_FileBookUpArrow; // GsSPRITE, medium: arrow above the file name (y 0xB7); drawn when an earlier collected file exists in the list (j = p[5]-i-1)
+D_800929B8 = g_FileBookUpArrow_X; // s16, medium: = 0x67 - g_ScreenOffsetX
+D_800929BA = g_FileBookUpArrow_Y; // s16, medium: = 0xB7 - g_ScreenOffsetY
+D_800929C2 = g_FileBookUpArrow_U; // u8, medium: blink 0xD0/0xD8
+D_800929D8 = g_FileBookDownArrow; // GsSPRITE, medium: arrow below the file name (y 0xCF); drawn when a later collected file exists (j = p[5]+i+1)
+D_800929DC = g_FileBookDownArrow_X; // s16, medium: = 0x67 - g_ScreenOffsetX
+D_800929DE = g_FileBookDownArrow_Y; // s16, medium: = 0xCF - g_ScreenOffsetY
+D_800929E6 = g_FileBookDownArrow_U; // u8, medium: blink 0xE0/0xE8
+D_80092B06 = g_FileReaderPrevArrow_U; // u8, medium: u of the GsSPRITE at 0x80092AF8 (x 0x18, y 0x74) = blink*8, drawn when file_page != 0; [0x24] (D_80092B2A) is the u of the next-page arrow sprite at 0x80092B1C (x 0x110)
+D_80092B40 = g_FileReaderExitIcon; // GsSPRITE, medium: 24x16 icon at x 0x118 drawn only on the last page; brightness 0x50 when FileScreen.unk10 == 1 (right pressed on last page = exit selected, see file_reader_input) else 0x20
+D_80092B54 = g_FileReaderExitIcon_R; // u8, medium: r of that sprite (0x50 / 0x20)
+D_80092B55 = g_FileReaderExitIcon_G; // u8, medium: g
+D_80092B56 = g_FileReaderExitIcon_B; // u8, medium: b
+D_80092BFC = g_ImageFade_W; // u16, high: g_ImageFade is a 16-byte SpriteTemplate (attr,x,y,w,h,u,v,clut_y); +8 = w, image_update sets 1 (1-px columns)
+D_80092BFE = g_ImageFade_H; // u16, high: SpriteTemplate +0xA = h, image_update sets 0x40 (old LOW guesses Active/Level/State were wrong)
+D_80092C01 = g_ImageFade_V; // u8, high: SpriteTemplate +0xD = v, image_update sets 0 (u is then set per column in the scratch sprite)
+D_80092CA4 = g_ViewerArrowY; // u16[4], high: y of the 4 rotate arrows {0x1A,0x49,0x76,(0x49)} paired with g_ViewerArrowX {0x6D,0xB6,0x6D,0x22} in item_viewer_draw_arrows (up/right/down/left); label only holds 3, the 4th entry is the next 2 bytes
+D_80093A12 = g_MapFloorArea_6; // u8, high: = g_MapFloorArea + 6; g_MapFloorArea is really u8[12] floor->area {0,0,0,1,1,2,2,3,3,3,3} (matches g_MapAreaFloors); menu_init_map_display uses [0] with floor 0 and [6] with floor 6
+D_80093A24 = g_MapAreaFloorCount; // u8[4], high: floors per area {3,2,2,4} = count of non-0xFF entries in g_MapAreaFloors; map_update_layout_state stops "next floor" at it
+D_80093A28 = g_MapAreaFloorLabelBase; // u8[4], medium: {4,4,4,1} base row of the floor-label texture per area; map_draw_browser sets g_MapTabSprites_1_V = 0x60 - (base + selected floor)*0x10
+D_800953E4 = g_LadderStepFrames; // u8[4], high: {0x0C,0x1D,0x27} ladder climb frames that play SE 0x23 in player_behavior_0b_ladder (counter in g_PlayerMoveSpeedCurrent) = PC g_ladderStepFrames (0x004d45cc)
+D_800953E8 = g_AutoAimEnabled; // u8, high: constant 1, never written; gates player_find_aim_target / turn-to-target in the gun-aim and knife-aim behaviours (player_weapon.c)
+D_800953F0 = g_FireVibrationTbl_RampFrom; // s16, high: g_FireVibrationTbl record (10 bytes: dur, ?, rampFrom, rampTo, rampFrames) +4: pad_vibrate_large_ramp arg1 (start strength, e.g. 0xFA)
+D_800953F2 = g_FireVibrationTbl_RampTo; // s16, high: record +6: pad_vibrate_large_ramp arg2 (end strength)
+D_800953F4 = g_FireVibrationTbl_RampFrames; // s16, high: record +8: pad_vibrate_large_ramp arg0 (ramp length, 0 = no ramp); delay = record[0] + 2
+D_80095488 = g_WeaponFireHitTbl_1_HitMode; // s32, high: g_WeaponFireHitTbl[1].hitMode (8-byte records), passed to apply_weapon_damage at frames 7 and 9 for weapon 1 in player_shoot_weapon
+D_80095540 = g_WeaponShellFx; // struct{u8 frame,type,depth,pad; s16 x,y,z}[14], medium: second weapon-fire effect spawned in the entity matrix (player +0x20) = PC kFireFxShell (0x004c0e68, "ejected shell / smoke"); player_shoot_weapon / entity.c NPC shooter
+D_80095594 = g_WeaponShellFx_8_X; // s16, high: g_WeaponShellFx[8].x (0x578); player_shoot_weapon reloads it explicitly for weapon 8
+D_80095596 = g_WeaponShellFx_8_Y; // s16, high: g_WeaponShellFx[8].y (+ 500 for Jill)
+D_80095598 = g_WeaponShellFx_8_Z; // s16, high: g_WeaponShellFx[8].z
+D_8009559C = g_WeaponMuzzleFlash2Fx; // same struct[14], medium: third weapon-fire effect at the hand joint (joints + 0x70C) = PC kFireFxFlash2 (0x004c0ef8, "secondary flash")
+D_80095646 = g_AutoAimPitchTbl_Max; // s16, medium: per-character record {min,max,altMin,altMax} (stride 8 by id&1); +2 = upper y bound (above -> aim flag 0x20) in auto_aim_pitch_update
+D_80095648 = g_AutoAimPitchTbl_AltMin; // s16, medium: +4 = lower bound used instead for behavior_flags < 6 && != 3 (weapons 0/2/3)
+D_8009564A = g_AutoAimPitchTbl_AltMax; // s16, medium: +6 = upper bound for those weapons
+D_80095A7C = g_EkgCautionLabelSteps; // u8[8], medium: EKG sweep thresholds {0x0C,0x11,0x14,0x3C,0x3F,0x44,0x50} counted by menu_ekg_wave_index for the CAUTION label (g_HealthStatus 1)
+D_80095A84 = g_EkgDangerLabelSteps; // u8[12], medium: same for DANGER (status 0) and POISON (status 4) labels {3,7,0x21,0x25,0x2B,0x2F,0x49,0x4D,0x50}
+D_80095A90 = g_EkgCautionLabelFrames; // u8[8], medium: label frame per step (v = 0x18 + f*8; 0 = not drawn), indexed by the result for CAUTION
+D_80095A98 = g_EkgDangerLabelFrames; // u8[12], medium: label frame per step for DANGER (v 0x30 + f*8) / POISON (v 0x40 + f*8)
+D_80096A94 = g_InvMenuTabRecs; // u8[4][12], medium: 4 sprite records (x,y,w,h,u,v) of the 2x2 command tabs at x 0xD0/0x100, y 0x10/0x20 (48x16), popped backwards from D_80096AC4 by menu_draw_inventory; also the end of the 22 frame records starting at 0x8009698C (inside the g_StageOverlayFiles label)
+D_80096AC4 = g_InvFrameStripRecs; // u8[4][14], medium: 4 repeated-tile frame strips {x,y,w,h,u,v,u16 flags} (flags hi byte: count, bit 0x80 vertical; low bits -> sprite attribute), drawn by menu_draw_inventory from D_80096AFC down to here
+D_80096130 = g_PasscodePanelInitStates; // u8[4][12], high: initial 3x3 lit states, 9 bytes + pad each = PC s_passcodePanelInitialStates[0] (default) {0,0,0,0,0,0,0,0,1}
+D_8009613C = g_PasscodePanelInitStates_1; // u8[12], high: = PC [1], flag 0x1F set, Chris
+D_80096148 = g_PasscodePanelInitStates_2; // u8[12], high: = PC [2], flag 0x1E set, Jill
+D_80096154 = g_PasscodePanelInitStates_3; // u8[12], high: = PC [3], flag 0x1F set, Jill
+D_80096338 = g_ClFrameQuads; // ClQuad[8], medium: real start of the 8 frame quads (fixed top-left corner u 0x50 v 0x20) passed as the record list (n 8) to computer_draw_quads in computer_draw_windows = PC s_frameQuads[0]; NOTE: the existing s_frameQuads (0x80096344) is actually PC s_frameQuads[1] (the code patches t[0..6] = PC [1..7])
+D_80096930 = g_SndBank1HedFiles_10; // u16, high: = g_SndBank1HedFiles + 0x14 (entry 10, file 0x1DC); the table continues to entry 15 (select uses 0xD, ending 0xE); sound_preload_bank1 always loads entry 10 (stage 2 room 3, used later by tyrant_behavior_yield_to_scd via sound_load_bank1_from_memory)
+D_80096950 = g_SndBank1VbFiles_10; // u16, high: = g_SndBank1VbFiles + 0x14 (entry 10, file 0x1DD = HED+1), loaded by sound_preload_bank1
+// --- list B (2026-10-16; low = written but never read) ---
+D_80096AFC = g_InvSlotFrameTiles6; // u8[] tiled-sprite records (12-byte x,y,w,h,u,v + u16 header count|0x80 vertical), medium; frame around the 6-slot item grid (y 0x4E, slots from y 0x56); drawn when g_MenuCharacterFlags bit 2 is clear; also the end marker of the D_80096AC4 record list
+D_80096B7C = g_InvSlotFrameTiles8; // u8[] same record layout, medium; frame around the 8-slot grid (y 0x30, slots from y 0x38), chosen when g_MenuWork.x9 (g_MenuCharacterFlags) & 2 (the same bit adds a slot row in menu_draw_inventory)
+D_80096BFC = g_InvBackdropBoxes; // u16[4][4] x,y,w,h, medium; 4 black GsBOXF fills walked backwards from g_InvSlotPosX (0,0,320,12)(0,12,9,128)(199,12,121,128)(0,140,320,100) = everything except a 190x128 window at (9,12)
+D_80096D8C = g_NpcScaInfo41; // ScaInfo (12 bytes), high; 10th record after g_NpcScaInfoChris..Enrico, set as sca_info by npc_char_init_41 = PC g_charScaInfo[9]; npc_idle_walk_00 also indexes it as a table overlapping g_NpcStateTable (+0xC)
+D_80098D10 = g_UvScrollPrimIndices; // u16[7] {0x2A,0x60,0x61,0x6B,0x6C,0x6E,0x74}, medium; sorted primitive indices compared with the primitive counter in model_scroll_selected_uvs (those prims get v += 2); dead code
+D_800BC394 = g_LastSightBoundaryGroup; // u16*, high; = PC g_lastSightGroup (0x00ac9cc8) - start of the RDT+0x4C boundary record group for the cell, stored by room_check_sight_blocked and never read
+D_800B2584 = g_ClCaretBarWidth; // u8, high; number of 16-px tiles drawn for the menu-bar caret in computer_draw_caret (caret mode 1); 5 for cl_menu_setup / cl_menu_confirm_exit, 4 for the command bar
+D_800B27BC = g_BgmVabHeadDst; // u8*, high; = 0x800F8400, destination of mem_copy of the VAB head (+SEP) part of the BGM bank file in bgm_load_bank (same value as g_SndVabHeadBgm / initial g_BgmSepData)
+D_800B28BC = g_StrRingBuf; // u32*, high; str_open_by_name arg3, the ring buffer also passed to StSetRing(arg3, arg4)
+D_800B2920 = g_StrPcHasSubHeaders; // s32, high; str_pc_open sets 1 when the first 8 bytes are CD-XA sub-headers (0x42/0x64 in byte 2); str_pc_read_frame then reads 8-byte sub-headers and skips 0x118 per sector (raw 0x920-byte sectors)
+D_800B2948 = g_StrPcFrameSectors; // s32, high; number of sectors read (incl. skipped ones) for the last frame, stored at the end of str_pc_read_frame
+D_800BC9B0 = g_ScaHitPool; // u8[] of 6-byte records (3 s16 hit-centre offsets), high; = PC g_entityDataBlock; player sca_hit_data = first record (initialize_game), enemies get the following ones
+D_800BC358 = g_ScaHitPoolPtr; // u8*, high; = PC g_scaPoolPtr; allocation cursor, scd_op_1b_enemy_set gives it as sca_hit_data then advances by sca_count * 6
+D_800BC4A4 = g_ScaHitPoolBase; // u8*, high; = PC g_scaPoolBase; cursor value after the player record (pool+6), room_transition_load resets g_ScaHitPoolPtr to it
+D_800BC54B = g_MapScreen_ZoomState; // u8, high; g_MapScreen+3 zoom animation state 0-9 (PC MAP_ZOOM_STATE DAT_00ac9893); menu_map_state_machine allows cancel from 7
+D_800BC54D = g_MapScreen_AreaGroup; // s8, high; g_MapScreen+5 area group (PC MAP_GROUP, stageId % 5 or 5 for the lab map); menu_init_map_display sets 1 / 5
+D_800BC54F = g_MapScreen_Room; // s8, high; g_MapScreen+7 current room id (PC MAP_ROOM), its CLUT entry blinks
+D_800BC557 = g_MapScreen_Mode; // u8, high; g_MapScreen+0xF map mode/variant (PC MAP_MODE DAT_00ac989f); map_update_objective_highlight sets it, menu_init_map_display picks the start layout from it
+D_800BC5AA = g_MenuActionResult; // u8, medium; g_MenuWork+2 (also read as g_MenuWork.x2) = PC DAT_00ae9f12; pending item action result, message 0xF0 + value is shown (1/4/5 combine results, 2 menu_use_set_flag, 3 menu_use_set_mode, 0xFF heal bar); menu cannot be closed while non-zero
+D_800BC5B0 = g_MenuCursorBlinkTimer; // u8, high; g_MenuWork+8 = PC DAT_00ae9f18; decremented every idle frame, reset on cursor move, bit 0x20 switches the cursor sprite in menu_draw_cursor (status menu and itembox_update)
+D_800BC5B5 = g_MenuLoadedResourceId; // u8, medium; g_MenuWork+0xD = PC SUBMENU_STATE_ID 0x00ae9f1d; id of the image/model last loaded into the work buffer (menu_load_item_model item id, file_load_texture / file_load_page arg1, map tab 0x80+layout, map floor 0x84+area) - reused by the item box as its fine scroll offset 0-14 (S_8002DD14.b5 next to g_ItemboxScrollDir)
+D_800BC5B9 = g_ItemSubmenuState; // u8, high; g_MenuWork+0x11 = Menu_8005829C.state switched by menu_item_submenu (PC DAT_00ae9f21, same switch); cleared when the item box / status menu enter state 2
+D_800BC5BE = g_MenuSubTimer; // u8[2], medium; g_MenuWork+0x16 = PC DAT_00ae9f26; frame countdown - blink timer of the item-move cursor (menu_item_move_item, 0xFF start, bit 0x20) and auto-scroll delay (0xF) in itembox_update; [1] (0x800BC5BF) is the held-direction mask 0x10/0x40 in the item box and Menu_8005829C.t in menu_item_submenu
+D_800BC5E1 = g_ItemViewerState; // u8, high; g_MenuWork+0x39 = Demo_8002EE08.state switched by item_viewer_update (0 init .. 5 zoom-out exit; item_viewer_action_display sets 5) = PC DAT_00ae9f49
+D_800BC87A = g_OptionsRepeatPrevPad; // u16, high; g_OptionsMenu+0xA (Menu_8003A9AC.fA, KeyCfg_80016688.prev) previous g_PadHeldRaw for pad_get_repeat, paired with the repeat timer byte 0x800BC879; cleared when options_menu / keyconfig_update start
+D_800BC87C = g_OptionsControllerFadeState; // s8, high; g_OptionsMenu+0xC (Fade870.state) controller-image transition state 0 watch pad type, 1 fade in, 2, 3 load image 0x12/0x13, 4 fade out (options_update_controller_image)
+D_800BC8B8 = g_OptionsControllerFadeLevel; // s16, high; g_OptionsMenu+0x48 (Fade870.alpha) grey level of the two fade TILEs, stepped by 0x40 between 0x3F and 0xFF
+D_800BCCD1 = g_StatusScreen_State; // u8, high; FileScreen.state (+1) 0 init, 1 input (file_book_advance / file_reader_advance); menu_update_status_screen waits for 0
+D_800BCCD3 = g_StatusScreen_OpenRequest; // u8, medium; FileScreen.open_request (+3) 1 = open file (fade, then mode 1), 2 = fade back; cancel sfx only played when not 1/2
+D_800BCCD4 = g_StatusScreen_ListPage; // s8, high; FileScreen.list_page (+4), file index = page * 8 + selected
+D_800BCCD5 = g_StatusScreen_SelectedFile; // s8, high; FileScreen.selected (+5), 0xFF = no file collected
+D_800BCCD6 = g_StatusScreen_FilePage; // s8, high; FileScreen.file_page (+6) page of the open file, bounded by g_FilePageCount in file_reader_input
+D_800BCCD7 = g_StatusScreen_FileSet; // s8, high; FileScreen.file_set (+7) g_FileBookTable row, set to 1 when g_GameStateFlags & 0x800000 (menu_update_status_screen)
+D_800BCCD8 = g_StatusScreen_CloseRequest; // s8, high; FileScreen.close_request (+8), non-zero makes menu_file_state_machine return -1
+D_800BCCDA = g_StatusScreen_SlideSpeed; // s16, medium; FileScreen.slide_speed (+0xA), halved each frame
+D_800BCCDC = g_StatusScreen_SlideX; // s16, medium; FileScreen.slide_x (+0xC) horizontal page slide offset
+D_800BCCDE = g_StatusScreen_SlideY; // s16, medium; FileScreen.slide_y (+0xE) vertical slide-in offset
+D_800BCCE0 = g_StatusScreen_ExitSelected; // s8, high; FileScreen +0x10 (unk10), set by pressing right on the last page of a file (highlights the exit marker), confirm then closes the reader
+D_800BCCE1 = g_StatusScreen_ArrowBlink; // s8, high; FileScreen +0x11 (unk11) 0/1 blink phase of the page arrows (sprite v offset * 8), forced 1 when the exit marker is selected
+D_800BCCE2 = g_StatusScreen_BlinkTimer; // u8, high; FileScreen +0x12, ++ per frame, (& 0x30) gives the arrow blink phase
+D_800BCCE3 = g_StatusScreen_HoldTimer; // u8, high; FileScreen +0x13, counts frames a direction is held, auto-repeat after 20/21 frames in file_book_input / file_reader_input
+D_800BE4FC = g_DoorByteVar5; // u8, high; entry 5 of g_DoorByteVars (door script byte variable 5) = PC g_doorByteVar5 0x00be05b6 "zeroed by the animation init" (door_anim_init)
+D_800BEA40 = g_DoorCmdTable_0_LoopIp; // s32, high; g_DoorCmdTable[0]+8 = DoorCmd.loop_ip[0], cleared per entry by door_op_clear_entry
+D_800BEA60 = g_DoorCmdTable_0_LoopCount; // u16, high; g_DoorCmdTable[0]+0x28 = DoorCmd.loop_count[0], cleared by door_op_clear_entry / door_anim_init
+D_800C3020 = g_DefaultItemSlot; // u8[2] item slot (id, count), high; = PC g_defaultItemSlot 0x00be41e0; get_item_slot points g_FoundItemSlot here when the item is not held; first byte of the cleared game work area
+D_800C3021 = g_DefaultItemSlotCount; // u8, medium; second byte of the dummy slot (count) = PC DAT_00be41e1; cleared next to it in initialize_game
+D_800C3025 = g_EffectPool_0_UpdateId; // u8, high; g_EffectPool + 0x01 = Effect.update_id of slot 0
+D_800C3029 = g_EffectPool_0_Hdr05; // u8, high; g_EffectPool + 0x05 = Effect.hdr05 (effect_behavior_pair_timer alias)
+D_800C302B = g_EffectPool_0_Hdr07; // u8, high; g_EffectPool + 0x07 = Effect.hdr07
+D_800C302C = g_EffectPool_0_AccelX; // u16, high; g_EffectPool + 0x08 = Effect.hdr08
+D_800C302E = g_EffectPool_0_AccelY; // u16, high; g_EffectPool + 0x0A = Effect.hdr0A (effect_behavior_jitter alias)
+D_800C3030 = g_EffectPool_0_AccelZ; // u16, high; g_EffectPool + 0x0C = Effect.hdr0C
+D_800C3034 = g_EffectPool_0_VelX; // u16, high; g_EffectPool + 0x10 = Effect.hdr10
+D_800C3036 = g_EffectPool_0_VelY; // s16, high; g_EffectPool + 0x12 = Effect.hdr12 (effect_behavior_jitter alias)
+D_800C3038 = g_EffectPool_0_VelZ; // u16, high; g_EffectPool + 0x14 = Effect.hdr14
+D_800C3043 = g_EffectPool_0_FrameIndex; // u8, high; g_EffectPool + 0x1F = Effect.frame_index
+D_800C3044 = g_EffectPool_0_PosX; // s16, high; g_EffectPool + 0x20 = Effect.pos_x (world position)
+D_800C3090 = g_EffectPool_0_VramInfo; // s32, high; g_EffectPool + 0x6C = Effect.vram_info (frame list pointer)
+D_800C3094 = g_EffectPool_0_VramInfoBackup; // s32, high; g_EffectPool + 0x70 = Effect.vram_info_backup (current EffectFrame, see config/locals/effect_frame.txt)
+D_800C3098 = g_EffectPool_0_UvData; // s32, high; g_EffectPool + 0x74 = Effect.uv_data
+D_800C309C = g_EffectPool_0_UvDataBackup; // s32, high; g_EffectPool + 0x78 = Effect.uv_data_backup
+D_800B23AC = g_XaGetlocSpare; // u8[8], low: unclear - buffer after g_XaGetlocResult; only byte 0 is cleared after CdlGetlocP (xa_state_playing), never read
+D_800B27C4 = g_SndFadeEndDelay; // s32, low: unclear - set to 30 when the master volume fade reaches 0 (sound_fade_update), never read
+D_800BAC0C = g_UnusedInitWord; // s32, low: unclear - zeroed once in initialize_game, never read
+D_801E1314 = g_ItemModelTmdNobj; // u8 (low byte of the s32), high: nobj of the item-viewer TMD loaded at 0x801E130C (GsMapModelingData(0x801E1310), objects from 0x801E1318); item_viewer_update
+// --- unnamed functions called from C (2026-10-16) ---
+func_800698E0 = GsSetProjection; // psyq libgs, high: 2-instruction wrapper of SetGeomScreen (overlay API slot 12)
+func_8006A0D0 = GsSetWorkBase; // psyq libgs, high: stores its argument in GsOUT_PACKET_P (0x800BAE44); main passes g_PacketArea[g_ActiveBuffer]
+func_800885B4 = SsUtKeyOn; // psyq libsnd, high: 7 args (vab, prog, tone, note, fine, voll, volr), returns the voice; sits before SsUtPitchBend like libsnd's ut_key object
+func_80089618 = SsUtAllKeyOff; // psyq libsnd, medium: resets all 24 voices; BGM "stop all" calls it with 0
+// the empty `jr ra` stub every overlay entry calls first = that overlay's copy of GCC's __main hook
+title func_800E1BB8 = title__main; logo func_800E03A4 = logo__main; prologue func_800E02AC = prologue__main;
+select func_800E4E2C = select__main; ending func_800E5AA8 = ending__main; stage1 func_80121ED0 = stage1__main;
+stage2 func_801216B4 = stage2__main; stage3 func_80131AE8 = stage3__main; stage4 func_80133274 = stage4__main;
+stage5 func_8012D488 = stage5__main; stage6 func_80128C50 = stage6__main; stage7 func_8012BB3C = stage7__main;
+// data words in the overlays' Sony code area that splat labelled as functions (zero words)
+title func_800E1BD0 = g_TitleTimers; // high: base of the TitleTimers view (TITLE_TMR, config/structs/title_timers.txt)
+logo func_800E03BC = g_LogoStrDecodeX; // u16, high: first argument of str_decode_next_frame (screen x & 0x3FF + flags 0x400/0x800), set to 0 by logo_main
+D_800BC5B7 = g_MenuHasRadio; // (renamed from g_MenuHasMap) high: set from scenario flag 0x7F (PC HAS_RADIO); greys out status tab 4 (RADIO), which opens item 0x4D - confirmed in game: the RADIO tab is greyed until you have the radio

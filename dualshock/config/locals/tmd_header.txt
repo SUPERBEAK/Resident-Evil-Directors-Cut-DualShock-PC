@@ -1,0 +1,9 @@
+# The header of a PS1 TMD model file (id 0x41, flags, object count; the object table follows at +0xC).
+struct TmdHeader
+macro TMD_HDR
+param tmd_link_object tmd
+define
+0x00 u32 id
+0x04 u32 flags   # bit 0 set once GsMapModelingData has made the offsets addresses
+0x08 u32 nobj
+0x0C u8 * obj0_vert_top  # the objects follow the 12-byte header (0x1C each): (file + t * 0x1C)->obj0_vert_top is object t's vertex table

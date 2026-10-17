@@ -1,0 +1,24 @@
+# SCD 0x1F om_set record (28 bytes; RDT page script_om_set_t, PC cmd_omodel_set): a room object
+# (g_OmodelTable entry). The +0xC..+0x1A words land in object fields named after the Entity layout.
+struct ScdOmSet
+noaddr
+macro SCD_OM_SET
+param scd_op_1f_omodel_set p
+param scd_op_1f_omodel_set g_ScdIp
+define
+0x01 u8 id      # bits 0-5: g_OmodelTable / RDT +0x50 index; bit 7: CLUT fade (clut_fade_add)
+0x02 u8 flags   # -> status_flags; 0x10: model flag 0x40 (object +0xC)
+0x03 u8 parent  # 0xFF none, 0xFE the player, < 0x80 g_OmodelTable index, else enemy slot (& 0x7F)
+0x04 u16 x      # -> position_vx / pos_x
+0x06 u16 y      # -> position_vy / pos_y
+0x08 u16 z      # -> position_vz / pos_z
+0x0A u16 angle  # -> angle and speed_pad
+0x0C u16 probe1_x  # -> object Entity anim_base
+0x0E u16 probe1_z  # -> object Entity joints
+0x10 u16 probe2_x  # -> object Entity weapon_part_anim_slot
+0x12 u16 probe2_z  # -> object Entity weapon_part_anim_object
+0x14 u16 radius  # -> object +0x92
+0x16 u16 half_height  # -> object Entity blend_counter and anim_header
+0x18 u16 half_x  # -> object Entity hit_state
+0x1A u16 half_z  # -> object Entity floor_y (on room objects: the collision half-depth)
+param scd_op_1f_omodel_set LIT(void *, g_ScdIp)

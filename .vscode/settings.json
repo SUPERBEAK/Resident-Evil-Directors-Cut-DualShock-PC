@@ -1,0 +1,33 @@
+{
+    // Keep VS Code (C/C++ IntelliSense, file watcher, search) away from generated and tool
+    // folders: the decomp pipeline creates and deletes thousands of files there, which would
+    // otherwise keep the C/C++ extension re-indexing.
+    "files.watcherExclude": {
+        "**/dualshock/build/**": true,
+        "**/dualshock/asm/**": true,
+        "**/tools/external/**": true,
+        "**/reference/**": true,
+        "**/extracted/**": true,
+        "**/game_files/**": true,
+        "**/temp/**": true
+    },
+    "search.exclude": {
+        "**/dualshock/build": true,
+        "**/dualshock/asm": true,
+        "**/tools/external": true,
+        "**/reference": true,
+        "**/extracted": true,
+        "**/game_files": true,
+        "**/temp": true
+    },
+    "C_Cpp.files.exclude": {
+        "**/dualshock/build": true,
+        "**/dualshock/asm": true,
+        "**/tools/external": true,
+        "**/reference": true,
+        "**/extracted": true,
+        "**/game_files": true,
+        "**/temp": true
+    },
+    "C_Cpp.exclusionPolicy": "checkFilesAndFolders"
+}

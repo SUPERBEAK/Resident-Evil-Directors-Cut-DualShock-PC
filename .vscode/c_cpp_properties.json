@@ -1,0 +1,52 @@
+{
+    // IntelliSense for the RE1 decomp (dualshock/src): PS1 code built with GCC 2.6.3 for MIPS R3000.
+    // The per-file flags (include path, defines, the stage globals.h a shared enemy file is compiled with)
+    // come from dualshock/compile_commands.json - regenerate it with `make compile_commands` in dualshock/ after
+    // adding or splitting source files. The compiler below only tells IntelliSense the target (32-bit MIPS).
+    // VS Code picks the configuration named after your system (Win32 / Linux) automatically.
+    "configurations": [
+        {
+            "name": "Win32",
+            "compileCommands": "${workspaceFolder}/dualshock/compile_commands.json",
+            "compilerPath": "${workspaceFolder}/tools/external/mips-toolchain/bin/mips64-elf-gcc.exe",
+            "compilerArgs": [
+                "-mabi=32",
+                "-march=r3000"
+            ],
+            "intelliSenseMode": "gcc-x86",
+            "cStandard": "gnu89",
+            "includePath": [
+                "${workspaceFolder}/dualshock/include"
+            ],
+            "defines": [
+                "__GNUC__=2",
+                "mips",
+                "__mips__",
+                "_LANGUAGE_C",
+                "LANGUAGE_C"
+            ]
+        },
+        {
+            "name": "Linux",
+            "compileCommands": "${workspaceFolder}/dualshock/compile_commands.json",
+            "compilerPath": "${workspaceFolder}/tools/external/mips-toolchain/bin/mips64-elf-gcc",
+            "compilerArgs": [
+                "-mabi=32",
+                "-march=r3000"
+            ],
+            "intelliSenseMode": "gcc-x86",
+            "cStandard": "gnu89",
+            "includePath": [
+                "${workspaceFolder}/dualshock/include"
+            ],
+            "defines": [
+                "__GNUC__=2",
+                "mips",
+                "__mips__",
+                "_LANGUAGE_C",
+                "LANGUAGE_C"
+            ]
+        }
+    ],
+    "version": 4
+}

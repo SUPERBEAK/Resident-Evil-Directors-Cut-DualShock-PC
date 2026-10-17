@@ -1,0 +1,13 @@
+# g_CurrentEntity read through its literal address (0x800CAB14) - the -O2 main program needed the literal
+# form in some functions (a symbol compiled differently there). Same Entity, same field names.
+struct Entity
+view CURRENT_ENTITY_LIT = LIT(Entity *, g_CurrentEntity)
+base LIT(void *, g_CurrentEntity)
+fields Entity max 0x16C
+base LIT(s32, g_CurrentEntity)
+base LIT(s32, g_CurrentEntity)
+base LIT(u8 *, g_CurrentEntity)
+base LIT(u8 *, g_CurrentEntity)
+base LIT(void *, g_CurrentEntity)
+base LIT(Entity *, g_CurrentEntity)
+base OBJ

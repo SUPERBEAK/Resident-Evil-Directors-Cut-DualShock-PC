@@ -1,0 +1,9 @@
+// Capcom symbol names for overlay LOGO.EXE (splat format).
+logo_main = 0x800E0000; // type:func
+g_LogoSkipped = 0x800E03BE;
+g_LogoStrVlcBuf0 = 0x800E03C0;
+g_LogoStrVlcBuf1 = 0x800E03C4;
+g_LogoStrRingBuf = 0x800E03C8;
+g_LogoStrSliceBuf = 0x800E03CC;
+logo__main = 0x800E03A4; // type:func
+g_LogoStrDecodeX = 0x800E03BC; // type:func

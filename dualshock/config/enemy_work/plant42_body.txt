@@ -1,0 +1,8 @@
+# Plant 42's BODY clone (entity 0xB8, made by api_entity_clone in plant42_init, run by plant42_body_* via
+# plant42_render_copies): it uses entity 0x16C.. as an s32 scale vector for api_ScaleMatrix (0x1000 = 1.0),
+# not the plant's layout (config/enemy_work/plant42.txt). Both structs live in plant42.c.
+struct Plant42BodyWork PLANT42_BODY
+only plant42_body_*
+0x00 s32 scale_x   # 0x16C: x scale (0x1000 = 1.0; pulse/shrivel/fall)
+0x04 s32 scale_y   # 0x170: y scale
+0x08 s32 scale_z   # 0x174: z scale

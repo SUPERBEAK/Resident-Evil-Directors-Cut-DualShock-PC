@@ -1,0 +1,8 @@
+# SCD 0x31 state_word_set record (4 bytes; PC cmd_state_word_set).
+struct ScdStateWordSet
+noaddr
+macro SCD_STATE_WORD_SET
+param scd_op_31_state_word_set p
+define
+0x00 u16 head    # low byte opcode, high byte: index of the s16 state word (0x800C8674[idx])
+0x02 u16 value   # the value written

@@ -1,0 +1,19 @@
+# RDT camera record (0x2C bytes; RDT +0x94, one per camera angle, the current one at g_CutId; PC RDT_Camera):
+# the background masks, then the view (GsRVIEW2: from, to, roll, super) given to GsSetRefView2 and the
+# projection distance (effect_draw_mirror_reflection scales sprites by it).
+struct RdtCamera
+macro RDT_CAM
+define
+0x00 s32 mask           # background mask data
+0x04 s32 tim_mask       # mask texture
+0x08 s32 from_x         # GsRVIEW2 vpx (camera position)
+0x0C s32 from_y
+0x10 s32 from_z
+0x14 s32 to_x           # GsRVIEW2 vrx (looks at)
+0x18 s32 to_y
+0x1C s32 to_z
+0x20 s32 roll           # GsRVIEW2 rz
+0x24 s32 super          # GsRVIEW2 super (0)
+0x28 s32 fov            # projection distance (PC: fov)
+# scd_op_40: the camera record idx (RDT +0x94 + idx * 0x2C)
+param scd_op_40_light_param_set e

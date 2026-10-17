@@ -1,0 +1,6 @@
+# g_InteractiveScreenStatePtr through its u8 * alias (src/main/computer_lab.c), InteractiveScreen fields
+# (interactive_screen.txt).
+struct InteractiveScreen
+view ISCREEN_B = ((InteractiveScreen *)g_InteractiveScreenStatePtr_u8p)
+base g_InteractiveScreenStatePtr_u8p
+fields InteractiveScreen

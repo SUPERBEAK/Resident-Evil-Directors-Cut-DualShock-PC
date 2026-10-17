@@ -1,0 +1,10 @@
+# yawn.c only: the yawn's entities hold a JOINT pointer in aim_target (entity +0xB8; yawn_init stores
+# joints + n * 0x7C + 0xF8 there: the chain joint a body segment follows), and yawn_update walks its chain
+# joints with that pointer (index at +1, world.t at +0x58..).
+struct Joint
+macro JOINT
+fields Joint
+stride 0x7C
+file shared/yawn\.c$
+source ^\s*\(?\s*(\(\w+ \*+\)\s*)?(ENTITY_AS\(g_CurrentEntity, aim_target, void \*\)|g_CurrentEntity->aim_target|ENT\(\w+\)->aim_target|\(?\s*\(\w+ \*+\)\s*ENT\(\w+\)->aim_target\)?)\s*\)?\s*$|joints
+expr ^ENTITY_AS\(g_CurrentEntity, aim_target, void \*\)$

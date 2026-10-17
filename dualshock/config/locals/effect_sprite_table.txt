@@ -1,0 +1,21 @@
+# The effect sprite tables at 0x800CF878 (g_EffectTexPage, g_EffectTexPos and g_EffectClutPos are its first
+# fields): the VRAM cursors of setup_effect_sprite_textures, the loaded sprite ids per slot and, per sprite id,
+# its ESP sprite info and animation data (load_effect_sprite_data). stage_init_eff_sprite and
+# load_shoot_direction_data reach it through a local pointer (w / w2 = 0x800CF878).
+struct EffectSpriteTable
+macro EFF_SPR
+param stage_init_eff_sprite w
+param load_shoot_direction_data w
+param load_shoot_direction_data w2
+define
+0x00 s32 tex_page         # g_EffectTexPage: texture page cursor
+0x04 u16 tex_x            # g_EffectTexPos: VRAM position cursor
+0x06 u16 tex_y
+0x08 u16 clut_x           # g_EffectClutPos: CLUT position cursor
+0x0A u16 clut_y
+0x0C u8 sprite_ids[16]    # sprite id per slot (0-7: global effects, 8-15: the room's, from RDT +0x7C); 0xFF ends
+0x1C s32 sprite_info[50]  # per sprite id: its EspSpriteInfo (-1 = none)
+0xE4 s32 sprite_anim[50]  # per sprite id: its animation data (after the frame and UV records)
+
+# load_effect_sprite_data: p = the table + c * 4, so sprite_info[0] / sprite_anim[0] of p are entry c
+param load_effect_sprite_data p

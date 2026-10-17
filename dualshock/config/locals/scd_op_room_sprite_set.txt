@@ -1,0 +1,7 @@
+# SCD 0x25 room_sprite_set record (4 bytes; PC cmd_room_sprite_set).
+struct ScdRoomSpriteSet
+noaddr
+macro SCD_ROOM_SPRITE_SET
+param scd_op_25_room_sprite_set p
+define
+0x02 u16 sprite   # low byte: room sprite id; high byte nonzero = room_spr_set_inactive, 0 = active

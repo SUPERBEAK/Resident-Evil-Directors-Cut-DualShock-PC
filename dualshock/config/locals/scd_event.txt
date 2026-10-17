@@ -1,0 +1,23 @@
+# SCD event entry: one 0x34-byte element of the 8-entry table at 0x800CF68C (PC ScdEventEntry; this file's
+# ScdEventView in room_events_check). g_pScdEventCurrent / *(void **)0x800CF688 is the one being run.
+struct ScdEvent
+macro SCD_EVENT
+param scd_event_entry_init ev
+param scd_event_state3_set_behavior ev
+param scd_event_state3_set_behavior ev2
+param scd_event_state3_set_behavior ev3
+param scd_event_cmd_create ev
+param scd_event_cmd_create ev2
+param scd_event_cmd_init g_pScdEventCurrent
+param scd_event_cmd_exec g_pScdEventCurrent
+define
+0x00 u8 state        # 0 idle, 1 wait for the animation, 2 run, 3 wait (entry_init clears it with +1 as one s16)
+0x01 u8 unused_01        # cleared together with state
+0x02 u8 active       # nonzero = slot in use (scd_event_entry_create looks for a zero one; entry_init sets 1)
+0x03 s8 sp           # loop/call stack depth, -1 = empty
+0x04 void * entity   # the entity the event drives (entry_init: g_CurrentEntity)
+0x08 u8 * pc         # event script pointer (entry_init: g_RoomEventScripts[n])
+0x0C u8 * ret[4]     # per depth: loop restart / return address
+0x1C u8 * call[4]    # per depth: saved script pointer (calls)
+0x2C s16 cnt[4]      # per depth: loop counter
+expr ^g_pScdEventCurrent(_\w+)?$

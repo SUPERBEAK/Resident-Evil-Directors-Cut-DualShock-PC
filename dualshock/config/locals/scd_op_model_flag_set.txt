@@ -1,0 +1,8 @@
+# SCD 0x19 model_flag_set record (4 bytes; PC cmd_model_flag_set).
+struct ScdModelFlagSet
+noaddr
+macro SCD_MODEL_FLAG_SET
+param scd_op_19_model_flag_set p
+define
+0x01 u8 index   # g_ItemModelTable index
+0x02 u8 value   # written to byte 0 of that item model

@@ -1,0 +1,21 @@
+# Yawn work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from yawn.c usage; cross-checked with the RE1 PC decomp's Yawn.cpp field map (names only).
+# Type tie: 0x08 (u16 1 / s16 1) -> s16. Not accessed: 0x01, 0x0D..0x0F (after saved_state), 0x15.
+struct YawnWork YAWN
+0x00 s8  speed_accel          # 0x16C: accelerator for move_speed (yawn_turn_accel): |n| doubles up to 0x40, flips sign at the speed limit; 0x40 at init, 1 on flee/reposition
+0x02 u8  form                 # 0x16E: 0 = first-fight form, 1 = grown/rematch; picks bite anim (n*10+3), bite window, range (n*1000+5000), rear/emerge logic
+0x03 s8  bite_count           # 0x16F: bites in a row (++ per bite/swallow); >=5 within range forces the rear-up; reset in yawn_action_rear
+0x04 u16 swallow_scale        # 0x170: model scale ramp: 5000 at swallow start, +100 per step; non-zero applies scale (n-300) in yawn_update / swallow
+0x06 s16 move_speed           # 0x172: current XZ speed handed to api_entity_add_speed_xz, integrated by yawn_turn_accel; cleared when stopping
+0x08 s16 ground_y             # 0x174: ground height taken from joint 7 in yawn_init; yawn_anim_advance pins the body Y to it (<<9)
+0x0A s16 death_scale          # 0x176: death shrink ramp (0x1000, -0x14 per frame down to 0x1F4) in yawn_die_run; yawn_post_move tests it
+0x0C s32 saved_state          # 0x178: copy of the state word (yawn_state_check); restored by yawn_damaged
+0x10 s8  bite_turn_dir        # 0x17C: -1/0/1 turn during a bite (rotate_toward_target n*0x10); 1 on flee/reposition; yawn_damaged checks it
+0x11 u8  bite_recovery        # 0x17D: recovery countdown after a bite/hit (0xDA in yawn_damaged_run, low 7 bits counted down in yawn_action_move); bit 7 = interrupted
+0x12 u8  waypoint_index       # 0x17E: index into yawn_entry_path / yawn_flee_path / yawn_reposition_path
+0x13 s8  player_near_death    # 0x17F: 1 when the player's health < 10 (pick_action), forces the rear-up; cleared otherwise
+0x14 u16 death_fx_timer       # 0x180: death effect frame counter (up to 800) in yawn_die_run; spawns effects every 16 / 8 frames
+0x16 u8  wall_frames          # 0x182: frames against room geometry (yawn_post_move); >=0x97 forces a reposition
+0x17 u8  wall_reset_delay     # 0x183: 20 after each wall contact, counted down; at 0 clears wall_frames; grown form bite checks >=11
+0x18 u8  dust_timer           # 0x184: 0xF0 after a bite, counted down in yawn_state_check; spawns dust every 8 frames while non-zero
+0x19 u8  swallow_cooldown     # 0x185: 30 after a swallow, counted down in yawn_update; must be 0 before the next grab (state 0x40101)

@@ -1,0 +1,14 @@
+# SCD 0x12 room_action_reset (10 bytes) / 0x13 room_action_arm (4 bytes) records: rewrite the first
+# bytes of a RoomAction entry (0x13: only type and flags).
+struct ScdRoomActionMod
+noaddr
+macro SCD_ROOM_ACTION_MOD
+param scd_op_12_room_action_reset p
+param scd_op_13_room_action_arm p
+define
+0x01 u8 slot    # g_RoomActionTable index
+0x02 u8 type    # -> RoomAction.type
+0x03 u8 flags   # -> RoomAction.flags
+0x04 u16 arg0   # 0x12 only: -> RoomAction.arg0
+0x06 u16 arg1   # 0x12 only: -> RoomAction.arg1
+0x08 u16 arg2   # 0x12 only: -> RoomAction.arg2

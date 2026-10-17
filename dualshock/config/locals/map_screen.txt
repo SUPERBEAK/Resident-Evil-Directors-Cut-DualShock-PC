@@ -1,0 +1,38 @@
+# Map screen state block g_MapScreen (0x800BC548, 0x18 bytes): shared by the map tab browser
+# (menu_map_state_machine) and the full map display; the map_* functions get it as arg0. Layout and names
+# from the RE1 PC decomp's notes on its copy (MainMenu.cpp DAT_00ac9890; names only). Globals naming single
+# bytes of it: g_MapScreen_Area (+4), g_MapScreen_Floor (+6), g_MapScreen_AreaFloor0..3 (+8..+0xB),
+# D_800BC54B (+3), D_800BC54D (+5), D_800BC54F (+7), D_800BC557 (+0xF).
+struct MapScreen
+macro MAPSCR
+param map_tab_update ms
+param map_display_update ms
+param map_display_animate ms
+param menu_init_map_display ptr_800BC548
+define
+0x00 u8 state            # 0-8 open / display / close cycle
+0x01 u8 substate         # map_tab_update / map_display_update: 0 = load, 1 = run
+0x02 u8 blink_state      # "you are here" blink (0-2)
+0x03 u8 zoom_state       # zoom animation (0-9); cancel allowed from 7
+0x04 u8 layout           # current map layout (0-3) (g_MapScreen_Area)
+0x05 s8 area_group       # compared with g_MapFloorStage[area]
+0x06 s8 area             # current map / floor (index of g_MapFloorFiles) (g_MapScreen_Floor)
+0x07 s8 room             # current room: its CLUT entry (room * 6 + 0x10) blinks
+0x08 u8 room_idx[4]      # room shown per layout (g_MapScreen_AreaFloor0..3)
+0x0C u8 move_flags       # bit 0: a next room exists, bit 1: a previous one
+0x0D u8 layout_mask      # layouts available
+0x0E u8 arrow_anim       # floor-change arrow animation counter
+0x0F u8 mode             # map mode / variant (map_update_objective_highlight sets 1)
+0x10 u8 highlight_state  # area highlight animation
+0x11 u8 highlight_timer
+0x12 u8 countdown        # display cycle countdown
+0x13 u8 unused_13
+0x14 u8 exit_flag        # map exit
+0x15 u8 highlight_frame
+0x16 s16 area_mask       # areas known (11 bits; map_build_area_mask)
+
+# rawfield.py round (2026-10-16): the map screen block passed as arg0
+param map_tab_navigate ms
+param map_update_layout_state ms
+param map_display_load_textures ms
+param map_build_area_mask ms

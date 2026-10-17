@@ -1,0 +1,12 @@
+# More entity bases in the stage overlays (folded into entity.txt later): an enemy slot computed inline.
+struct Entity
+macro ENT
+fields Entity
+max 0x16C
+expr 0x18C\) \+ (0x800C52A4|ADDR_g_EnemiesList)\)?$
+# The yawn stores a JOINT pointer (the joint a body segment follows) in its entities' aim_target (yawn_init),
+# so aim_target is not an entity there: yawn.c is handled by config/locals/yawn_joint.txt.
+exclude shared/yawn\.c$
+# plant 42: its roots and its body clone (kept in aim_target) are entities
+source ^\s*\(?\s*(\(\w+ \*+\)\s*)?(PLANT42\(g_CurrentEntity\)->roots|g_CurrentEntity->aim_target|ENTITY_AS\(g_CurrentEntity, aim_target, void \*\))\s*\)?\s*$
+param cerberus_spawn_blood ent

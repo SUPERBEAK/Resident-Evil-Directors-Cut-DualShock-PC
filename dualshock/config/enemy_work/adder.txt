@@ -1,0 +1,9 @@
+# Adder (snake, stage 3) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from adder.c usage; meanings agree with the RE1 PC decomp's Adder.cpp header notes.
+struct AdderWork ADDER
+0x00 u16 path_flags            # 0x16C: bit 0 = api_entity_pathfind_update result bit 0 (clear line to player); gates turning in chase and the bite
+0x02 s16 player_touch         # 0x16E: api_check_entity_collision result (touching the player); triggers behavior 3 in adder_decide_ground, then cleared
+0x04 u16 player_distance      # 0x170: |dx|+|dz| to the player (adder_decide_action), 0x1387 when the player is on another floor
+0x06 s16 room_hit             # 0x172: api_check_room_collision result (adder_update); non-zero counts up wall_stuck_frames
+0x08 s16 collision_enabled    # 0x174: 1 = adder_update runs the collision block; cleared for hidden/ceiling snakes, set again on emerge
+0x0A s16 wall_stuck_frames    # 0x176: frames pinned against walls (adder_state_run); >= 61 forces behavior 2 and resets

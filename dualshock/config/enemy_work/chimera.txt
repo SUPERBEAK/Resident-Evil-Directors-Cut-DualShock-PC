@@ -1,0 +1,13 @@
+# Chimera (stage 5) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from chimera.c usage; the RE1 PC decomp's Chimera.cpp notes were checked for agreement.
+struct ChimeraWork CHIMERA
+0x00 s16 turn_step            # 0x16C: turn rate given to api_turn_toward_target in turn/turn_back (0x20 walking, 0x40 running), set by the brains
+0x02 s16 path_flags            # 0x16E: bit 0 = api_entity_pathfind_update result bit 0 (chimera_behavior_dispatch); gates turning, brains and ceiling idle time
+0x04 s16 player_touch         # 0x170: api_check_entity_collision result (chimera_update); claw/brain_b hit checks
+0x06 s16 attack_cooldown      # 0x172: 0x3C after swipe, 0x5A after grab/swoop, 0x28 after spit; counted down in chimera_state_run; gates re-attacks
+0x08 s16 shadow_locked        # 0x174: 0 = chimera_update resizes the shadow billboard by height; set to 1 when the death dissolve starts
+0x0A s16 room_hit             # 0x176: api_check_room_collision result (chimera_update)
+0x0C s16 wall_stuck_frames    # 0x178: frames touching walls (chimera_state_run); >= 21 makes the brains pick a turn and reset it
+0x0E s16 run_mode             # 0x17A: 1 = run (anim 2, speed 0xC8) instead of walk; set when far away or after turning with a clear line, cleared by most behaviors
+0x10 s16 grab_struggle_timer  # 0x17C: 0x5A when the grab holds the player; input subtracts 3, copied to the player's action_ticks_counter, released at < 0
+0x12 s16 aggressive           # 0x17E: 1 only for spawn behavior 3 (chimera_state_init, then a random variant); unlocks extra attacks (claw touch damage, follow-ups 5/0xC)

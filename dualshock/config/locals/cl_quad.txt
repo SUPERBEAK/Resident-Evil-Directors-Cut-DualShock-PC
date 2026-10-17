@@ -1,0 +1,13 @@
+# A 12-byte quad record of the computer lab screens (computer_draw_quads: frame pieces, door markers).
+struct ClQuad
+macro CL_QUAD
+define
+0x00 u16 x            # screen offset from the draw position
+0x02 u16 y
+0x04 u8  u            # texture position
+0x05 u8  v
+0x06 u16 w
+0x08 u16 h
+0x0A u8  flags        # 0xC0: semi-transparency mode (sprite attribute bits 22-23), 0x01: repeat downwards
+0x0B u8  count        # repeat count (0 = 1)
+param computer_draw_quads rec

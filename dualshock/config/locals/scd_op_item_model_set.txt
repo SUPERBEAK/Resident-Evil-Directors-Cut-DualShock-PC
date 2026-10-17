@@ -1,0 +1,27 @@
+# SCD 0x18 item_model_set record (26 bytes; PC cmd_item_model_set): a pick-up's room action entry
+# and its 3D model (g_ItemModelTable).
+struct ScdItemModelSet
+noaddr
+macro SCD_ITEM_MODEL_SET
+param scd_op_18_item_model_set p
+param scd_op_18_item_model_set p2
+param scd_op_18_item_model_set p4
+param scd_op_18_item_model_set p5
+param scd_op_18_item_model_set p6
+define
+0x01 u8 slot          # bits 0-6: g_RoomActionTable index; bit 7: model flag 0x40 (object +0xC)
+0x02 u16 x            # zone box (RoomAction.rec points here)
+0x04 u16 z
+0x06 u16 w
+0x08 u16 d
+0x0A u8 item_id       # the item (picks the handler: 4, 0xF for maps from 0x4E, 0xD from 0x54)
+0x0B u8 item_count    # its quantity (scd_op_4c)
+0x0C u8 model         # g_ItemModelTable / RDT +0x54 index -> RoomAction.arg1
+0x0D u8 parent        # 0xFF none, 0xFE the player, else g_OmodelTable index
+0x0E s16 pos_x        # model position (object +0x34..+0x3C) and sparkle offset
+0x10 s16 pos_y
+0x12 s16 pos_z
+0x14 u16 angle        # -> object +0x74
+0x16 u8 flag          # room item flag (0x800C86DC bit; set = still there) -> RoomAction.arg2
+0x17 u8 action_flags  # -> RoomAction.flags
+0x18 u16 flags        # bit 0 kept (-> RoomAction.arg0); 0x8000 sparkle billboard, 0x0F00 its anim, 0x00F0 its height

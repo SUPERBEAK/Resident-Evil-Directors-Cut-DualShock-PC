@@ -1,0 +1,64 @@
+# Local pointers to an entity (room objects from g_OmodelTable / g_ItemboxObject are entities too; the current one, the player, an enemy slot, an auto-aim target, a hunter's
+# npc_target, the tyrant's heart, a scripted victim). Fields: the Entity struct (re1_types.h), below the
+# enemy work area. The source must be the WHOLE right-hand side (an entity's ->joints etc. is not an entity).
+struct Entity
+macro ENT
+fields Entity
+max 0x16C
+source ^\s*\(?\s*(\((void|u8|s8|s32|u32|Entity) \*+\)\s*)?\(?(g_CurrentEntity|g_CurrentEntity_l|CURRENT_ENTITY_LIT|\*\((void|u8) \*\*\)0x800CAB14|\*\(s32 \*\)0x800CAB14|LIT\((void|u8) \*, g_CurrentEntity\)|LIT\(s32, g_CurrentEntity\)|&g_PlayerEntity|0x800C5124|ADDR_g_PlayerEntity|g_CurrentEntity->aim_target|g_PlayerEntity\.aim_target|g_PlayerAimTarget|ENTITY_AS\(g_CurrentEntity, aim_target, void \*\)|HUNTER\(g_CurrentEntity\)->npc_target|TYRANT\(g_CurrentEntity\)->heart|g_HunterScdVictim|g_TyrantScdVictim)\)?\s*\)?\s*$|^(?=.*(0x800C52A4|ADDR_g_EnemiesList\b))(?=.*0x18C)|^\s*\(\w+ \*+\)\s*0x800C52A4U?\s*$|^\s*LITP\(\w+, g_EnemiesList\)\s*$|^\s*(\(\w+ \*+\)\s*)?\(?\s*(\(\w+ \*+\)\s*)?&?g_OmodelTable(_m1)?\)?\[[^\]]+\]\s*$|^\s*(\(\w+ \*+\)\s*)?g_ItemboxObject\s*$
+# Parameters that point to an entity (offsets: 0x74 angle, 0x88 health, 0x8D joint_count, 0x98 joints,
+# 0x34-0x3C position, 0x163 death_event_id; the last three always get an entity at every call site):
+param weapon_post_hit_blood ent
+param weapon_post_hit_blood2 ent
+param weapon_post_hit_blood3 ent
+param weapon_post_hit_sparks ent
+param enemy_hit_reaction_zombie ent
+param chk_entity_slide ent
+param chk_entity_slide obj
+param weapon_hit_detect_knife ent
+param entity_apply_anim_vertex ent
+param is_facing_toward_entity other
+param effect_distance_to_player ent
+# Base EXPRESSIONS that are entities wherever they appear (localview `expr`): an auto-aim target, the tyrant's
+# heart, plant 42's roots, the scripted victims, a hunter's npc_target.
+expr ^\(?\s*(\(\w+ \*+\)\s*)?(g_CurrentEntity->aim_target|g_PlayerEntity\.aim_target|ENTITY_AS\(g_CurrentEntity, aim_target, void \*\)|TYRANT\(g_CurrentEntity\)->heart|PLANT42\(g_CurrentEntity\)->roots|HUNTER\(g_CurrentEntity\)->npc_target|g_TyrantScdVictim\w*|g_HunterScdVictim\w*)\s*\)?$
+param entity_ballistic_step obj
+param snap_player_to_grab_position player
+param web_spinner_update_webs g_CurrentEntity_l
+param entity_update_wander_turn g_CurrentEntity_l
+# weapon_damage.c: the hit entity / the player (0x800C5124) / the entity tested
+param effect_projectile_hit_check ent
+param apply_weapon_damage found
+param weapon_post_hit_shotgun ent
+param enemy_hit_reaction_basic ent
+param enemy_hit_reaction_blood ent
+param effect_distance_to_entity ent
+# The yawn stores a JOINT pointer (the joint a body segment follows) in its entities' aim_target (yawn_init),
+# so aim_target is not an entity there: yawn.c is handled by config/locals/yawn_joint.txt.
+exclude shared/yawn\.c$
+# parameters (tail of the main program)
+param scd_op_1b_enemy_set ent2
+param load_entity_emd ent
+param load_behavior_model q
+param npc_scd_08 g_CurrentEntity_l
+param entity_set_joints ent
+param entity_render_mirror e
+param rotate_entity g_CurrentEntity_u8p
+
+# rawfield.py round (2026-10-16): local copies of entity pointers that were raw byte-offset accesses
+param spiderweb_damaged p
+param entity_part_reset_offset w
+param npc_walk_choose_heading e
+param npc_idle_walk_02 e
+param player_next_aim_target p
+param check_entity_collision a
+param check_entity_collision b
+param chk_pl_reach_entity obj
+param scd_op_28_enemy_prop_set e
+param scd_op_33_player_prop_set w
+param enemy_hit_reaction_head ent
+param weapon_check_entity_in_cone ent
+param weapon_hit_detect_projectile obj
+param weapon_hit_detect_gun ent
+param entity_rotate_collision_points obj
+expr ^g_CurrentEntity_\w+$

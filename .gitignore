@@ -1,0 +1,18 @@
+# Your own copy of the game and the files extracted from it: never commit
+game_files/
+extracted/
+
+# Third-party tools, installed by tools/setup_tools.sh
+tools/external/
+
+# Scratch files
+temp/
+__pycache__/
+*.pyc
+work_*/
+
+# Editor IntelliSense data (absolute paths; generate with `make compile_commands` in dualshock/)
+dualshock/compile_commands.json
+
+# Optional reference material (other decompilations, saved format pages), see docs/tools.md
+reference/

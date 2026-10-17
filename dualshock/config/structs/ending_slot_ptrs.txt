@@ -1,0 +1,22 @@
+# Ending slots kept in their own globals (src/ending/ending.c): the two background halves, the picture slot and
+# the epilogue slots (each = an ending_slot_alloc result, g_EndingSlotCur). Fields: EndingSlot (ending_slot.txt).
+# Note: EndingSlot 0x14/0x16 are added per frame to g_EndingBoxB_x / g_EndingBoxA_y in ending_result_draw
+# (the picture curtains' speed; set from EndingPictureCue box_vel_x/y).
+struct EndingSlot
+view END_BG_A = ((EndingSlot *)g_EndingBgSlotA)          # left background half (x 0, width 0x100)
+base g_EndingBgSlotA
+view END_BG_B = ((EndingSlot *)g_EndingBgSlotB)          # right background half (x 0x100, width 0x40)
+base g_EndingBgSlotB
+view END_PIC = ((EndingSlot *)g_EndingPictureSlot)       # ending_picture_sequence_update's slot
+base g_EndingPictureSlot
+view END_EPI0 = ((EndingSlot *)g_EndingEpilogueSlots[0])  # epilogue slots [0]..[4] (void *g_EndingEpilogueSlots[5])
+base g_EndingEpilogueSlots[0]
+view END_EPI1 = ((EndingSlot *)g_EndingEpilogueSlots[1])
+base g_EndingEpilogueSlots[1]
+view END_EPI2 = ((EndingSlot *)g_EndingEpilogueSlots[2])
+base g_EndingEpilogueSlots[2]
+view END_EPI3 = ((EndingSlot *)g_EndingEpilogueSlots[3])
+base g_EndingEpilogueSlots[3]
+view END_EPI4 = ((EndingSlot *)g_EndingEpilogueSlots[4])
+base g_EndingEpilogueSlots[4]
+fields EndingSlot

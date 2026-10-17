@@ -1,0 +1,15 @@
+# Animation step tables (Entity.anim_header): one 4-byte entry per animation - frame count and the offset of
+# its frame data (the model file's "animation steps" section). yawn / plant42 step their animations by hand:
+# entry = header + animation_id, frame data = header + (frame_offset >> 2).
+struct AnimEntry
+macro ANIM_ENTRY
+stride 0x4
+define
+0x00 u16 frame_count
+0x02 u16 frame_offset
+param yawn_pose_init anim
+param yawn_anim_advance anim
+param yawn_anim_advance entry
+param plant42_joint_move base
+param plant42_joint_move entry
+param yawn_pose_init entry

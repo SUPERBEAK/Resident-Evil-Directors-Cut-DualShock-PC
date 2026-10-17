@@ -1,0 +1,12 @@
+# EMR (skeleton) section header of an entity's EMD, Entity.anim_header (load_entity_emd: the EMD section
+# table's 4th-last entry): the offsets of the armature table (EmrArmature records) and the animation frames,
+# the joint count and the frame size, then each joint's offset from its parent (3 shorts x, y, z per joint)
+# from +8 (entity_part_reset_offset copies one into Joint.transform.t).
+struct EmrHeader
+macro EMR
+param entity_set_joints ((void *) ENT(ent)->anim_header)   # (base text before the hand clean-up to EMR(ENT(ent)->anim_header))
+define
+0x00 u16 armature_offset  # entity_compute_joint_world_matrices: & 0xFFFC
+0x02 u16 frames_offset
+0x04 u8 joint_count       # u16 in the file; the code reads the low byte (-> Entity.joint_count)
+0x06 u16 frame_size

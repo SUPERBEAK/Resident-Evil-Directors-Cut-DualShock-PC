@@ -1,0 +1,8 @@
+# SCD 0x41 entity_posy_set record (4 bytes; PC cmd_entity_posy_set).
+struct ScdEntityPosySet
+noaddr
+macro SCD_ENTITY_POSY_SET
+param scd_op_41_entity_posy_set p
+define
+0x00 u16 head   # high byte: 0 = the player, else enemy slot
+0x02 u16 y      # -> entity +0x8E (player) / +0x82 (enemy)

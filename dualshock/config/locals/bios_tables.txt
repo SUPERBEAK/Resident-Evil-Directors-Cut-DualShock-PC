@@ -1,0 +1,12 @@
+# PS1 BIOS: the table of tables at 0x100 ({pointer, size} per kernel table) and a thread control
+# block (TCB, 0xC0 bytes) - task_scheduler_init sets each thread's saved status register.
+struct BiosToT
+macro BIOS_TOT
+define
+0x00 s32 excb         # exception control blocks
+0x04 s32 excb_size
+0x08 s32 pcb          # process control block
+0x0C s32 pcb_size
+0x10 s32 tcb          # thread control blocks (0xC0 each)
+0x14 s32 tcb_size
+param task_scheduler_init k

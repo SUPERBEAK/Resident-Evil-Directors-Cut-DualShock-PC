@@ -1,0 +1,20 @@
+# Cerberus work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from cerberus.c usage; cross-checked with the RE1 PC decomp's Cerberus.cpp field notes (names only).
+# Several fields are reused by different behaviors; the name follows the main use, the comment lists the others.
+# Type ties in the survey: 0x06 (s16 13 / u16 13) -> s16, 0x0E (s8 2 / u8 2) -> u8 (only bit tests read it).
+struct CerberusWork CERBERUS
+0x00 s32 player_dist          # 0x16C: |dx|+|dz| to the player, recomputed every frame in cerberus_behavior_run; range checks (0x1388, 0x1194, 0x9C4..)
+0x04 u16 turn_step            # 0x170: turn step per frame (rand&7+0x3D chase, rand&7+0x10 stalk, sign-flipped); also knockback direction for add_speed_xz in damaged/die
+0x06 s16 turn_delta           # 0x172: signed turn being applied (added to angle in patrol/strafe/skid; +-0x80 strafe, -1/probe result in wall slide)
+0x08 s16 ballistic_vel_y      # 0x174: initial vertical velocity for api_entity_ballistic_step (300/480/400 on entrance leaps)
+0x0A s16 ballistic_gravity    # 0x176: gravity for api_entity_ballistic_step (-0x28); chase_run also caches its swerve turn here (cleared in consider_attack)
+0x0C u16 probe_history        # 0x178: wall-probe bits: bit 0 this frame (cerberus_probe_ahead), bits 1-3 previous frames (<<1 &0xE), bit 4 = did not move
+0x0E u8  path_result          # 0x17A: api_entity_pathfind_update result (bit 0/bit 1 tested in chase_run)
+0x10 u16 aggro_counter        # 0x17C: chase +2 per blocked frame (>=0x10 -> skid), stalk counter (0x41), strafe frame count; leap/bite_player store the bite result here
+0x12 s16 phase_counter        # 0x17E: per-phase frame/step counter (lost-path frames ==6 -> give up, wall-follow steps clamped to 8, tumble land-sound latch)
+0x14 s16 swerve                # 0x180: reused: chase swerve countdown, consider_attack counter (<0xA), head_track yaw (+-0x100), tumble spin (+0x80 to 0x800), stumble joint_move result
+0x16 s16 blood_count          # 0x182: blood billboards still to spawn (3 on bite, 6 on maul); cerberus_spawn_blood decrements
+0x18 s8  alert_latch          # 0x184: 0 = still looking (api_entity_check_visual_range runs), 1 after leap/getup; bit 7 = already stumbled from a hit
+0x1A u16 beh_flags            # 0x186: behavior flags: init 1, patrol 4 or behavior_flags&1, entrance 5; bit 0 run, bit 1 hunting (stalk), bit 2 gave up (lost path)
+0x1C u16 ai_flags             # 0x188: AI flags: 0x80 active/woken, 0x20 hit reaction, 0x10 wall-follow dead end, 0x0C skid, 0x02 locked on, 0x01 re-probe
+0x1E s16 retarget_delay       # 0x18A: frames before chase_run turns straight at the target again (rand&3*2+8 in chase_turn, counted down)

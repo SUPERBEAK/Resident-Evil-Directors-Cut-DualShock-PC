@@ -1,0 +1,9 @@
+# Right computer arm (stage 5 lab, computer_arm_right_update and the arm_* steps) work area, entity 0x16C..
+# Layout from an analysis of computer_arms.c (all 16.16 fixed point). The left arm uses the same
+# bytes differently: config/enemy_work/computer_arm_left.txt (both structs live in computer_arms.c).
+struct ComputerArmRightWork ARM_RIGHT
+skip arm15_* arm_step_*15 arm_step_lever_* computer_arm_left_update
+0x00 s32 vel_x   # 0x16C: x velocity, 16.16 (arm_begin_reach: delta/15, arm_set_velocity: delta/frames)
+0x04 s32 vel_z   # 0x170: z velocity, 16.16 (arm_set_velocity, arm_integrate)
+0x08 s32 pos_x   # 0x174: x position accumulator, 16.16 (arm_state_init, arm_integrate)
+0x0C s32 pos_z   # 0x178: z position accumulator, 16.16 (arm_state_init, arm_integrate)

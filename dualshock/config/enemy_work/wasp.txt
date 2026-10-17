@@ -1,0 +1,15 @@
+# Wasp (stage 4) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from wasp.c usage; the RE1 PC decomp's Wasp.cpp header notes were checked for agreement.
+# Types at +0x00, +0x0E and +0x12 are ties in the survey (s16 and u16 used equally); s16 chosen.
+struct WaspWork WASP
+0x00 s16 chase_frames         # 0x16C: frames flying in wasp_state_run (+1 each); from 0x1D on it steers toward the player; cleared at init and when the hover attack starts
+0x02 u16 path_flags            # 0x16E: bit 0 = api_entity_pathfind_update result bit 0 (wasp_behavior_dispatch); needed for the sting, gates turning in victory
+0x04 s16 player_touch         # 0x170: api_check_entity_collision result (wasp_update); starts the hover attack
+0x0A u16 bob_speed            # 0x176: vertical bob step added/subtracted to pos_y; 0x23, +1 per frame, wraps back to 0x23 at 0x97
+0x0C u16 player_distance      # 0x178: |dx|+|dz| to the player; sets speed (dist/100 + 0xC8) and the attack/nest ranges
+0x0E s16 room_hit             # 0x17A: api_check_room_collision result (wasp_update), tested in wasp_state_run
+0x10 u16 climbing             # 0x17C: 1 = pos_y -= bob_speed (rise), 0 = sink; flipped at height limits in hover/victory
+0x12 s16 timer                # 0x17E: general countdown: nest spawn delay (0x5A), on-floor time when downed (0x1E; 0x14 marks a big wasp), death fade (0x14)
+0x14 s16 anim_done            # 0x180: api_joint_move result (wasp_animate); the sting waits for it
+0x16 u8  is_big               # 0x182: big-wasp flag (wasp_state_init): bigger billboard/shadow, more health, sting damage (is_big+1)*10, gibs on death
+0x18 u8  respawn_count        # 0x184: +1 each respawn from the nest (wasp_state_death); the 10th comes back as behavior 0x12, wraps at 11

@@ -1,0 +1,8 @@
+# Room action entries (RoomAction: defined by config/locals/scd_room_action.txt of the SCD pass - apply that
+# first; these could be `param` lines there) in the item pick-up / return events (src/main/enemy_path.c).
+struct RoomAction
+macro ROOM_ACTION
+fields RoomAction
+param room_event_item_pickup s
+param room_event_item_pickup g_pRoomActionEntry_u8p
+param room_event_item_return temp_s0

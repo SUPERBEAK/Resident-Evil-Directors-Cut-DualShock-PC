@@ -1,0 +1,20 @@
+# Tyrant work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from tyrant.c usage; cross-checked with the RE1 PC decomp's Tyrant.cpp field notes (names only).
+# 0x00 (0x16C) and 0x12 (0x17E) are also passed by address to api_entity_update_wander_turn (tyrant_behavior_walk).
+# Not accessed: 0x09..0x0B (inside saved_state), 0x0E..0x0F.
+struct TyrantWork TYRANT
+0x00 u8  room_hit             # 0x16C: OR of api_check_room_collision results (tyrant_update); address given to the wander turn
+0x01 u8  uv_scroll_step       # 0x16D: index into tyrant_uv_scroll_u/v_tbl for tyrant_scroll_body_uvs, wraps at 30 (tyrant_update)
+0x02 u8  hit_mask             # 0x16E: attack that already connected this swing: 1 swipe, 2 slash/rush, 4 thrust, 8 backhand/charge; 0x80 = impale/kill trigger (low health, close too long)
+0x03 u8  look_at_timer        # 0x16F: look-at countdown while flags bit 1 (3 at init, 8 on a hit); 0 = look at the claw joint, 1..3 = look off, >=4 = fixed look point
+0x04 void * heart             # 0x170: cloned heart entity (api_entity_clone in tyrant_init); tyrant_draw_heart switches g_CurrentEntity to it, rocket death moves it
+0x08 s32 saved_state          # 0x174: copy of the state word each frame (tyrant_update); restored by tyrant_state_hit
+0x0C u8  unused_178                # 0x178: only set to 3 in tyrant_init
+0x0D u8  flags                # 0x179: 1 draw ground shadow, 2 look-at live, 4 swing hit-sound played, 8 hidden/dead (skip heart, claw ghosts, health floor)
+0x10 u16 dir_control_flags    # 0x17C: copy of the room-collision direction word (0x1F800018) each frame; first arg of api_entity_update_wander_turn
+0x12 u8  wander_turn_state    # 0x17E: cleared in init; passed by address to api_entity_update_wander_turn
+0x13 u8  attack_cooldown      # 0x17F: frames before the think may pick an attack (90 at init; 10/13/15 after each attack), counted down in think_lab/think_roof
+0x14 u8  rocket_flag          # 0x180: bit 7 set in tyrant_think_roof when g_PlayerEntity.behavior_flags == 0xA (the PC decomp reads that byte as the equipped weapon, 10 = rocket launcher); never read here
+0x15 u8  special_timer        # 0x181: 210, counted down in think_roof, reset on hits/attacks; at 0 the next move becomes behavior 0xA/0xB (special attack)
+0x16 u8  close_frames         # 0x182: frames the player stays within 0xFA0 (tyrant_think); >=121 starts frenzy_timer and sets hit_mask 0x80; +20 on swipe
+0x17 u8  frenzy_timer         # 0x183: 60 when close_frames runs out; while non-zero the walk turns twice per frame and the close-range attack check is allowed

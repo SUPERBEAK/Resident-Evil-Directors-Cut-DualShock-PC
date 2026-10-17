@@ -1,0 +1,12 @@
+# Plant 42 roots (stage 4) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Own enemy entity (plant42_roots_update / plant42_roots_state_tbl); its layout has nothing in common with plant42's work area.
+# Phases (plant42_roots_move_a via plant42_roots_phase_tbl on entity 0x85): start -> rise -> shrink (fades) -> sink.
+struct Plant42RootsWork PLANT42_ROOTS
+0x00 s16 shake_velocity       # 0x16C: pos_y += it >> 8 each frame, then flips to -/+ shake_amplitude (plant42_roots_move_a); cleared in plant42_roots_phase_start
+0x02 u16 shake_amplitude      # 0x16E: 0 at start, +0x200/frame up to 0x1600 (plant42_roots_phase_rise), -0x70/frame in plant42_roots_phase_sink until <= 0
+0x04 s16 fade_count           # 0x170: CLUT fade steps left (6 at start, 1 when shrinking ends); each step calls api_clut_fade_add_delta and decrements
+0x06 s16 unused_172                # 0x172: only cleared in plant42_roots_init
+0x08 s32 home_x               # 0x174: pos_x saved in plant42_roots_init; plant42_roots_update forces pos_x back to it when behavior_flags != 0
+0x0C s32 home_z               # 0x178: pos_z saved in plant42_roots_init; restored like home_x
+0x10 s16 groan_timer          # 0x17C: 0x28 at init; counts down in plant42_roots_move_a, at 0 plays 3D SE 0x19 and reloads 12..26
+0x12 u16 sink_tick                # 0x17E: 2 at init, +1 every 4th frame in plant42_roots_phase_sink; never read in this file

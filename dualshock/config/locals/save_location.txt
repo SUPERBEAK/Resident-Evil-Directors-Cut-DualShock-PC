@@ -1,0 +1,8 @@
+# The stage / room bytes at the start of a save's game-state block (save +0xA00), read by save_get_area_index
+# to pick the area name.
+struct SaveLocation
+macro SAVE_LOC
+param save_get_area_index save_rec
+define
+0x00 u8 stage
+0x01 u8 room

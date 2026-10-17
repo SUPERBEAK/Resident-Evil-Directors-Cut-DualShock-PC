@@ -1,0 +1,15 @@
+# A GPU POLY_FT4 packet (0x28 bytes) as the door animation / SCD 0x32 texture-page code edits it.
+struct GpuPolyFt4
+macro POLY_FT4_P
+define
+0x00 u32 tag
+0x04 u8  r0
+0x05 u8  g0
+0x06 u8  b0
+0x07 u8  code
+0x0E u16 clut
+0x16 u16 tpage
+0x1E u16 pad1
+0x26 u16 pad2
+param door_op_order_tpage q
+param scd_op_32_obj_clut_set q

@@ -1,0 +1,19 @@
+# Crow work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from crow.c usage; cross-checked with the RE1 PC decomp's Crow.cpp field notes (names only).
+# Altitude is PS1 Y (negative = up). Type ties: 0x0E (s16/u16/u8 one use each) -> u16.
+# 0x16 (0x182) is address-only (passed to api_entity_swerve_around_obstacle); typed s16 = the swerve angle that callee keeps there.
+struct CrowWork CROW
+0x00 s16 bank_turn_rate       # 0x16C: turn step for the banking turn (0x80 +-0x20/0x40 random, crow_beh_bank_turn); used by crow_anim_turn
+0x02 s16 path_flags           # 0x16E: bit 0 = api_entity_pathfind_update result (crow_behavior_dispatch); gates the turn in descend/ascend/peck
+0x04 s16 player_touch         # 0x170: api_check_entity_collision result vs the player (crow_update); non-zero starts the attack / recoil check
+0x06 s16 climb_limit_y        # 0x172: altitude the ascend climbs to (-(rand*1000+4500) + altitude_bias); passing it ends crow_beh_ascend
+0x08 s16 descend_limit_y      # 0x174: altitude the descend sinks to (altitude_bias*2 - (rand*1000+1500)); crow_beh_dive reuses it for its drop step
+0x0A s16 vert_speed           # 0x176: vertical speed added to/subtracted from pos_y (200..500 ramp, reset to 200 at the floor/ceiling clamp)
+0x0C u16 player_dist          # 0x178: |dx|+|dz| to the player (crow_state_run); sets flight speed (dist/100+200) and range checks
+0x0E u16 room_hit             # 0x17A: api_check_room_collision result (crow_update); non-zero counts wall_hit_frames and drives the swerve
+0x10 u16 wall_hit_frames      # 0x17C: frames spent against room geometry; >=6 turns towards player, >=0x1F swerves and resets
+0x12 s16 unused_17E                # 0x17E: set to 100 in crow_state_init, never read
+0x16 s16 swerve_angle         # 0x182: only passed by address (with 0x184) to api_entity_swerve_around_obstacle (crow_state_run), which keeps its swerve angle here
+0x18 s8  swerve_latch        # 0x184: cleared in init; passed by address (with 0x182) to api_entity_swerve_around_obstacle
+0x1A s8  grab_struggle        # 0x186: grab struggle counter (100, minus 9 per button press / 1 per frame); <0 frees the player
+0x1E s16 altitude_bias        # 0x18A: altitude offset for the flight limits: 0, or -400 when behavior_flags bit 0

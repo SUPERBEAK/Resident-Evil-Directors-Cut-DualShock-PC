@@ -1,0 +1,9 @@
+# The current door-animation command (DoorOp, config/locals/door_op.txt) read straight through the
+# command entry's script pointer (src/main/door.c: loop_push, activate, cam_matrix, *_add_vel, buffer_advance).
+struct DoorOp
+view DOOR_IP = ((DoorOp *)DOOR_CMD->ip)
+base DOOR_CMD->ip
+base ((u8 *) DOOR_CMD->ip)
+view DOOR_IPF = ((DoorOp *)DOOR_CMD_FIELD(ip))     # door_op_buffer_advance reads ip in the exact form
+base DOOR_CMD_FIELD(ip)
+fields DoorOp

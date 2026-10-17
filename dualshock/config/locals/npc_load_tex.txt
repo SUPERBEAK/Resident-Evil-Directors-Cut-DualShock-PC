@@ -1,0 +1,9 @@
+# Character NPCs (entity id >= 0x20) while their models load: load_entity_emd stores where the EMD's texture
+# went in VRAM (CLUT row, tpage cursor) in entity bytes 0x16C / 0x16E; load_behavior_model reads them back
+# (as bytes) for its own TMD's texture relocation. The same bytes later belong to NpcWork (npc.c).
+struct NpcLoadTex
+macro NPC_LOAD_TEX
+param load_entity_emd obj
+define
+0x16C s16 clut_row    # g_VramClutRowCursor
+0x16E s16 tpage       # g_VramTpageCursor

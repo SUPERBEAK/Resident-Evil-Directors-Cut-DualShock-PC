@@ -1,0 +1,31 @@
+# Room action (AOT) entry: one 12-byte element of g_RoomActionTable (0x800BC728, 24 entries), filled by
+# SCD 0x0C door_set / 0x0D room_action_set / 0x18 item_model_set, edited by 0x12/0x13, probed by
+# check_room_actions (RoomActionEntry there), whose handler (g_RoomCheckActions[type]) gets the entry as arg0.
+# check_desk / scd_op_4c read entries through a function-local RoomAction view (g_RoomActionTable_l[i].arg1 ...).
+struct RoomAction
+macro ROOM_ACTION
+param scd_op_0d_room_action_set action
+param scd_op_12_room_action_reset action
+param scd_op_13_room_action_arm action
+param scd_op_18_item_model_set ent
+param door_try_enter act
+param display_msg_room_action act
+param include_key act
+param set_key_flag act
+param room_action_stairs_zone_x act
+param room_action_stairs_zone_z act
+param create_room_event act
+param set_ladder_zone act
+param pickup_key_event act
+param check_typewriter act
+param slope_height_update act
+param check_itembox_state g_pRoomActionEntry_u8p
+param check_typewriter_state g_pRoomActionEntry_u8p
+define
+0x00 u8 type     # g_RoomCheckActions handler index (0 = none; door_set writes 1, item_model_set 4/0xD/0xF)
+0x01 u8 flags    # probe mask tested against check_room_actions arg1; 0x40 = test the entity position, bit 7 = off
+0x02 u16 arg0    # handler word 0: door number (door_set), message id, stairs axis/direction, event slot, lock flag
+0x04 u16 arg1    # handler word 1: message arg, item model index (item_model_set), stairs anim x / step length, event script
+0x06 u16 arg2    # handler word 2: room item flag (item_model_set), stairs anim z / step height (s16), desk camera
+0x08 void * rec  # the SCD record + 2 (zone x, z, w, d first; see ScdZone)
+expr ^g_pRoomActionEntry(_\w+)?$

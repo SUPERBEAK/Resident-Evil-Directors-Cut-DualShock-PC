@@ -1,0 +1,9 @@
+# Typed aliases of computer lab state pointers (src/main/computer_lab.c), with the existing structs:
+# g_ClLogoCur_s8p = g_ClLogoCur (ClLogoSlot, cl_logo_slot.txt); CL_LOGO->parent = the slot's parent slot
+# (PC ClLogoSlot.parent).
+struct ClLogoSlot
+view CL_LOGO_S = ((ClLogoSlot *)g_ClLogoCur_s8p)
+base g_ClLogoCur_s8p
+view CL_LOGO_PARENT = ((ClLogoSlot *)CL_LOGO->parent)
+base CL_LOGO->parent
+fields ClLogoSlot

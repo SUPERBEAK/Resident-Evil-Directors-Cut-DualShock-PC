@@ -1,0 +1,59 @@
+# Skeleton joints (entity->joints points to an array, 0x7C bytes per joint). Names from the RE1 PC decomp's
+# JointStruct (names only); types = what the PS1 code uses.
+struct Joint
+macro JOINT
+# (not a FIELD of a joint: `x = JOINT(a + n * 0x7C)->anim_slot` is a TMD object, not a joint)
+source ^(?!.*->(anim_slot|anim_object|anim_field|data_ptr))(.*joints|.*, 0x98\)|.*\* 0x7C|.*0x7C \*)
+stride 0x7C
+define
+0x00 u8 flags            # bit 0x40 tested before hit checks; bit 0x10 = skip rotation (PC)
+0x01 u8 index            # joint number
+0x02 u8 fx_frame
+0x03 u8 fx_state            # joint_setup_attack_effect stores its arg1 here (PC pad_03)
+0x04 SVECTOR rotation    # rotation angles
+0x0C s32 anim_field      # animation sub-struct base (PC)
+0x10 void * data_ptr
+0x14 s32 anim_slot
+0x18 void * anim_object
+0x1C s32 dobj_id
+0x20 s32 scale_flag      # set to 1 (PC)
+0x24 MATRIX transform    # joint transform (relative to the parent)
+0x44 MATRIX world        # world-space matrix; world.t = the joint's position in the room
+0x64 s32 coord_param
+0x68 s32 coord_super
+0x6C s32 coord_sub
+0x70 s16 vel_x           # severed/detached part: velocity (PC; upper byte of vel_x = bounce flag)
+0x72 s16 vel_y
+0x74 s16 vel_z
+0x76 s16 rot_delta_x     # severed/detached part: spin per frame
+0x78 s16 rot_delta_y
+0x7A s16 rot_delta_z
+# Parameters that point to a joint (offsets 0x38-0x40 transform.t, 0x58-0x60 world.t, 0x70-0x7A velocity/spin;
+# zombie_head_bounce_physics is called with joints + 0xF8 = joint 2):
+param player_clip_state_1_fall p
+param player_clip_state_2_bounce p
+param yawn_chain_follow parent
+param yawn_chain_follow joint
+param yawn_chain_align parent
+param yawn_chain_align joint
+param tyrant_limb_update joint
+param tyrant_limb_launch joint
+param joint_severed_limb_step joint
+param zombie_head_bounce_physics part
+param joint_path_anim_step joint
+param joint_setup_attack_effect joint
+param joint_enable_special_effect joint
+param model_scroll_selected_uvs joint
+# Joint arrays reached through fixed expressions: the player's joints (g_PlayerJoints = g_PlayerEntity.joints)
+# and the current entity's; entity_update_weapon_joint's joint 3 * arg0 + 5:
+expr ^\(\((void|u8) \*\) (g_PlayerEntity\.joints|CURRENT_ENTITY_LIT->joints)\)$|^g_PlayerJoints_voidp$
+param entity_update_weapon_joint tip
+# model.c entity_part_reset_offset: the joint whose offset (transform.t) is reset from the skeleton
+param entity_part_reset_offset a2
+
+# rawfield.py round (2026-10-16): local copies of the player's joints
+param load_equipped_weapon_animation obj
+param player_climb_sequence obj
+param weapon_fire_camera_spark obj
+param player_clip_state_0_spawn q
+param player_clip_state_0_spawn p

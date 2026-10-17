@@ -1,0 +1,23 @@
+# The SCD record a room action entry points to (RoomAction.rec = record + 2): the trigger zone box first,
+# then the opcode's own bytes. Item records (SCD 0x18) carry the item id/count at +8/+9 (scd_op_4c:
+# "+8 item, +9 qty"; include_key / pickup_key_event read +8).
+struct ScdZone
+macro SCD_ZONE
+param room_action_stairs_zone_x zone
+param room_action_stairs_zone_z zone
+param slope_height_update zone
+param slope_height_update zone2
+param scd_op_4c_item_record_transfer rec
+define
+0x00 u16 x           # zone corner x (room_action_stairs_zone_x: pos_x - x < w / 2)
+0x02 u16 z           # zone corner z
+0x04 u16 w           # zone width (x)
+0x06 u16 d           # zone depth (z)
+0x08 u8 item_id      # item records (SCD 0x18 +0xA): the item
+0x09 u8 item_count   # item records (SCD 0x18 +0xB): its quantity (scd_op_4c moves it to/from a state byte)
+0x14 u8 picked_flag  # pickup_key_event: flag number in the picked-up bank 0x800C86DC
+param pickup_key_event ROOM_ACTION(act)->rec
+param slope_height_update ROOM_ACTION(act)->rec
+param include_key ROOM_ACTION(act)->rec
+# SCD 0x4C item_record_transfer reads it through the table: .rec of a RoomAction view of g_RoomActionTable.
+expr ^g_RoomActionTable_l\[.*\]\.rec$

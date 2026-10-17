@@ -1,0 +1,23 @@
+# The record of an item pick-up's room action (RoomAction.rec = the SCD 0x18 item_model_set record + 2, see
+# ScdItemModelSet of the SCD pass: same fields 2 bytes earlier), read by room_event_item_return
+# (src/main/enemy_path.c). The base exists once config/locals/room_action_items.txt is applied.
+struct RoomItemRec
+# (a macro over the local `act` of room_event_item_return, the room action being returned to)
+view ITEM_REC = ((RoomItemRec *)ROOM_ACTION(act)->rec)
+base ROOM_ACTION(act)->rec
+define
+0x00 u16 x            # zone box
+0x02 u16 z
+0x04 u16 w
+0x06 u16 d
+0x08 u8 item_id       # the item
+0x09 u8 item_count    # its quantity
+0x0A u8 model         # g_ItemModelTable index
+0x0B u8 parent        # 0xFF none, 0xFE the player, else g_OmodelTable index
+0x0C s16 pos_x        # model position
+0x0E s16 pos_y
+0x10 s16 pos_z
+0x12 u16 angle
+0x14 u8 flag          # room item flag (0x800C86DC bit; set = still there)
+0x15 u8 action_flags
+0x16 u16 flags

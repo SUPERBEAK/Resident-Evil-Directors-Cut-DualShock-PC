@@ -1,0 +1,8 @@
+# SCD 0x3C player_dist_test record (6 bytes; PC cmd_player_dist_test); read through g_ScdIp.
+struct ScdPlayerDistTest
+noaddr
+macro SCD_PLAYER_DIST_TEST
+param scd_op_3c_player_dist_test g_ScdIp
+define
+0x02 s16 target     # low byte: 0 enemy slot, 1 g_OmodelTable, 2 g_ItemModelTable; high byte: index
+0x04 u16 distance   # passes if the player is at most this far away (xz)

@@ -1,0 +1,11 @@
+# Ending credits text pages (src/ending/ending.c), PS1-only. g_EndingTextPagePtr: current 6-byte record of
+# ending_text_page_tbl (ending_text_page_update); 0x800E5DD4: header of the packed text block being unpacked
+# (ending_text_next_block; g_EndingTextCursor = 0x800E5DC4 points to it).
+struct EndingTextPage
+view END_PAGE = ((EndingTextPage *)g_EndingTextPagePtr)
+base g_EndingTextPagePtr
+define
+0x00 u16 show_frame    # g_EndingStrFrame reached: flip to this page and fade it in
+0x02 u16 hide_frame    # g_EndingStrFrame reached: fade it out, next record
+0x04 u16 x             # text layer x (END_TEXT->x = x << 16)
+0x06 u16 last          # 0xFFFF = last page

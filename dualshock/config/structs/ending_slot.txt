@@ -1,0 +1,39 @@
+# Ending screen slots (g_EndingSlots: pictures, text, timer, saves), src/ending/ending.c. Names from the RE1 PC
+# decomp's EndSlot + TextureDesc (names only); types = what the PS1 code uses most.
+struct EndingSlot
+view END_SLOT = ((EndingSlot *)g_EndingSlotCur)        # slot being set up (ending_slot_alloc result)
+base g_EndingSlotCur
+view END_DRAW = ((EndingSlot *)g_EndingDrawCursor)     # slot being drawn (ending_result_draw / ending_draw_text)
+base g_EndingDrawCursor
+view END_TEXT = ((EndingSlot *)g_EndingTextSlot)       # the text layer slot
+base g_EndingTextSlot
+define
+0x00 s16 active          # 0 = free (ending_slot_alloc searches for it)
+0x02 u16 type            # 1 screen colour, 2 sprite, 3 timer, 5 saves (PC)
+0x04 s16 ot_pri           # always 3 (PC)
+0x06 u16 vram_x
+0x08 u16 vram_y
+0x0C s32 x               # 16.16 screen X before centring (-0xA0)
+0x10 s32 y               # 16.16 screen Y before centring (-0x78)
+0x14 u16 box_vel_x
+0x16 u16 box_vel_y
+0x18 s16 fade_vel        # fade speed
+0x1A u16 fade_level      # fade level
+0x20 s32 tex_flags       # texture descriptor (PC TextureDesc) from here on
+0x24 u16 tex_screen_x
+0x26 s16 tex_screen_y
+0x28 s16 tex_width
+0x2A s16 tex_height
+0x2C s16 tex_page        # PS1 texture page
+0x2E s8  tex_u
+0x2F u8  tex_v
+0x30 s16 clut_x
+0x32 s16 clut_y
+0x34 s8  color_r
+0x35 s8  color_g
+0x36 s8  color_b
+0x38 s16 pivot_x
+0x3A s16 pivot_y
+0x3C s16 scale_x         # 4.12 fixed point (0x1000 = 1.0)
+0x3E s16 scale_y
+0x40 s32 rotate

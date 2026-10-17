@@ -1,0 +1,13 @@
+# A CLUT fade entry (g_ClutFadeEntries, 4 x 10 bytes; names as screen.c's PalFade).
+struct ClutFadeEntry
+macro CLUT_FADE
+define
+0x00 u8  x0
+0x01 u8  active
+0x02 u8  row
+0x03 u8  dr           # colour change per step
+0x04 u8  dg
+0x05 u8  db
+0x06 u16 start
+0x08 u16 count
+param clut_fade_add_delta r

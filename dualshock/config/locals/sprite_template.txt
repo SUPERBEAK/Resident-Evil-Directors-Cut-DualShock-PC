@@ -1,0 +1,14 @@
+# A 16-byte sprite template (g_DieScreenImages[4], g_DieScreenTextImage, g_WaveImage) that sprite_load_template
+# copies into the scratchpad GsSPRITE (0x1F800380): attribute, x/y and w/h as words, u/v, clut row.
+struct SpriteTemplate
+macro SPR_TPL
+param sprite_load_template tpl
+define
+0x00 u32 attribute
+0x04 s16 x
+0x06 s16 y
+0x08 u16 w
+0x0A u16 h
+0x0C u8 u
+0x0D u8 v
+0x0E u16 clut_y   # -> GsSPRITE cy (cx = 0)

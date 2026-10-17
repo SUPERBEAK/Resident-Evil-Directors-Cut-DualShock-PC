@@ -1,0 +1,15 @@
+# Three halfwords inside a door order entry (g_DoorOrderTable, 0x80 each; PC DoorOrderEntry): its rotation
+# (+0x68), velocity (+0x70) or rotation velocity (+0x76), or one TMD vertex of its model (order_vert_add).
+struct DoorVec
+macro DOOR_VEC
+define
+0x00 u16 x
+0x02 u16 y
+0x04 u16 z
+param door_op_order_vel vel
+param door_op_order_rot rot
+param door_op_order_rotvel rotvel
+param door_op_order_pos_add_vel vel
+param door_op_order_rot_add_vel rot
+param door_op_order_rot_add_vel rotvel
+param door_op_order_vert_add vert

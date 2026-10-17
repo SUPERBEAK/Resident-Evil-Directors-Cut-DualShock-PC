@@ -1,0 +1,13 @@
+# Local copies of the web thread being updated in web_spinner_update_webs (WsWeb, config/structs/ws_web.txt).
+struct WsWeb
+macro WS_WEB
+fields WsWeb
+param web_spinner_update_webs p1
+param web_spinner_update_webs p3
+param web_spinner_update_webs p4
+param web_spinner_update_webs p7
+param web_spinner_update_webs p10
+param web_spinner_update_webs p11
+param web_spinner_update_webs p12
+param web_spinner_update_webs p14
+param web_spinner_update_webs g_CurrentEntity_l

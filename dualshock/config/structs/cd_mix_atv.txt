@@ -1,0 +1,10 @@
+# The CdMix attenuation block g_CdMixAtv (PS1 SDK CdlATV layout: CD left -> SPU left, CD left -> SPU right,
+# CD right -> SPU right, CD right -> SPU left), set by the movie player before CdMix.
+struct CdMixAtv
+view CD_MIX = ((CdMixAtv *)&g_CdMixAtv)
+base &g_CdMixAtv
+define
+0x00 u8 val0
+0x01 u8 val1
+0x02 u8 val2
+0x03 u8 val3

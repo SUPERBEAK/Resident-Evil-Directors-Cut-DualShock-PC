@@ -1,0 +1,13 @@
+# One entry of a pad vibration list (g_VibrationSmallList / g_VibrationLargeList: 32 x 10 bytes; the write
+# pointers g_VibrationSmallListPtr / g_VibrationLargeListPtr). Fields from pad_vibration_update_list.
+struct VibrationEntry
+macro VIB
+expr ^g_Vibration(Small|Large)ListPtr_s8p$
+param pad_vibrate_small p
+define
+0x00 u8 active
+0x01 u8 vol      # motor level (small motor: on/off)
+0x02 u16 delay   # frames before it starts
+0x04 u16 count   # frames it lasts
+0x06 s16 step    # ramp per frame (<< 7)
+0x08 u16 acc     # ramp accumulator (vol = acc >> 7)

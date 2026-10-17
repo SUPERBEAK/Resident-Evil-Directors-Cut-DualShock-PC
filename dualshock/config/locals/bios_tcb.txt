@@ -1,0 +1,12 @@
+# PS1 BIOS thread control block (0xC0 bytes; saved registers of a thread).
+struct BiosTcb
+macro BIOS_TCB
+define
+0x00 s32 status
+0x04 s32 mode
+0x88 s32 epc
+0x8C s32 hi
+0x90 s32 lo
+0x94 s32 sr           # status register
+0x98 s32 cause
+param task_scheduler_init q

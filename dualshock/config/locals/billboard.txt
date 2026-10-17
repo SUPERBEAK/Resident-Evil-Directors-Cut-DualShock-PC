@@ -1,0 +1,11 @@
+# Billboard records (re1_types.h; every entity's shadow at 0xE4) passed to the billboard functions.
+struct Billboard
+macro BILLBOARD
+fields Billboard
+param billboard_adj_size bb
+param billboard_set_rect bb
+
+# rawfield.py round (2026-10-16)
+param billboard_init bb
+param billboard_set_color bb
+param billboard_draw obj

@@ -1,0 +1,15 @@
+# Local copies of g_InteractiveScreenStatePtr (InteractiveScreen, config/structs/interactive_screen.txt) in the
+# computer lab keyboard code.
+struct InteractiveScreen
+macro ISCR
+fields InteractiveScreen
+param computer_keyboard_input p
+param computer_draw_keyboard q
+param cl_menu_wait_close obj
+
+# rawfield.py round (2026-10-16): local copies of g_InteractiveScreenStatePtr
+param cl_boot_flash p
+param cl_boot_flash q
+param cl_menu_confirm_exit q
+param cl_finish_shrink_h p
+expr ^g_InteractiveScreenStatePtr(_\w+)?$

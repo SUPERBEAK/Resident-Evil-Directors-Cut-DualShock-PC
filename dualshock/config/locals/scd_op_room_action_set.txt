@@ -1,0 +1,18 @@
+# SCD 0x0D room_action_set record (18 bytes; PC cmd_room_action_set): builds a RoomAction entry.
+struct ScdRoomActionSet
+noaddr
+macro SCD_ROOM_ACTION_SET
+param scd_op_0d_room_action_set p
+param scd_op_0d_room_action_set q
+define
+0x01 u8 slot    # g_RoomActionTable index
+0x02 u16 x      # zone box (RoomAction.rec points here)
+0x04 u16 z
+0x06 u16 w
+0x08 u16 d
+0x0A u8 type    # -> RoomAction.type
+0x0B u8 flags   # -> RoomAction.flags
+0x0C u16 arg0   # -> RoomAction.arg0
+0x0E u16 arg1   # -> RoomAction.arg1
+0x10 u16 arg2   # -> RoomAction.arg2
+param scd_op_0d_room_action_set LIT(void *, g_ScdIp)

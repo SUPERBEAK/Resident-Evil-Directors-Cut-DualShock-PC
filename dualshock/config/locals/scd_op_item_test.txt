@@ -1,0 +1,11 @@
+# Two-byte SCD records with an item id: 0x10 used_item_test, 0x11 picked_item_test,
+# 0x1D equipped_item_test, 0x2C item_remove.
+struct ScdItemOp
+noaddr
+macro SCD_ITEM_OP
+param scd_op_10_used_item_test p
+param scd_op_11_picked_item_test p
+param scd_op_1d_equipped_item_test p
+param scd_op_2c_item_remove p
+define
+0x01 u8 item_id   # compared with g_UsedItemId / g_PickedItemId / the equipped slot; 0x2C: removed from the inventory

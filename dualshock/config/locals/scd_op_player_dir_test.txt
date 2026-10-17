@@ -1,0 +1,8 @@
+# SCD opcode 0x3F player_dir_test (6 bytes): true when the player's angle lies in [angle_from, angle_to].
+struct ScdOpPlayerDirTest
+macro SCD_DIR_TEST
+define
+0x00 u8  opcode
+0x02 u16 angle_from
+0x04 u16 angle_to
+param scd_op_3f_player_dir_test p

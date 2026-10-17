@@ -1,0 +1,24 @@
+# Camera switch zone: one 0x14-byte record of the RDT camera switch list (RDT +0x48, g_CameraSwitchZones,
+# walked by *(void **)0x800CAB0C; PC CAM_SWITCH_ZONE). Only the SCD cut handlers' local pointers here.
+struct CamSwitchZone
+macro CAM_ZONE
+stride 0x14
+param scd_op_09_cut_lock_set zones
+param scd_op_09_cut_lock_set zone
+param scd_op_0a_cut_restore zones
+param scd_op_0a_cut_restore zone
+define
+0x00 u16 cam_to      # camera switched to on entry (scd_op_3a writes it)
+0x02 u16 cam_from    # camera this zone belongs to (the cut handlers search the first zone of the current cut)
+0x04 u16 x0          # quad corners (XZ plane)
+0x06 u16 z0
+0x08 u16 x1
+0x0A u16 z1
+0x0C u16 x2
+0x0E u16 z2
+0x10 u16 x3
+0x12 u16 z3
+# display_room_camera_bg: the first zone and the walking pointer (0x800CAB0C = g_CameraSwitchZones; +0x16 =
+# the next zone's cam_from):
+param display_room_camera_bg zones
+param display_room_camera_bg cur

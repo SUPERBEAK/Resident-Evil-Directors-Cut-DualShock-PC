@@ -1,0 +1,13 @@
+# Pointers to a PS1 SDK VECTOR (x, y, z, pad longs) used as such: a position triple, e.g. an entity's or a
+# room object's matrix translation (pos_x/pos_y/pos_z at +0x34) picked by SCD 0x3C player_dist_test.
+# No `define`: the SDK type is used as is.
+struct VECTOR
+macro VEC
+param scd_op_3c_player_dist_test pos
+0x00 s32 vx
+0x04 s32 vy
+0x08 s32 vz
+0x0C s32 pad
+param boundary_get_cell pos
+param collision_push_circle pos
+param check_weapon_line_of_sight target

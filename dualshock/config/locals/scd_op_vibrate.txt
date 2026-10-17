@@ -1,0 +1,11 @@
+# SCD 0x4F vibrate_small / 0x50 vibrate_large records (6 bytes; PS1 only):
+# pad_vibrate_small(duration, delay) / pad_vibrate_large(duration, strength, delay).
+struct ScdVibrate
+noaddr
+macro SCD_VIBRATE
+param scd_op_4f_vibrate_small p
+param scd_op_50_vibrate_large p
+define
+0x00 u16 head       # 0x50: high byte = strength
+0x02 u16 duration
+0x04 u16 delay

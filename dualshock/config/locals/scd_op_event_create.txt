@@ -1,0 +1,7 @@
+# SCD 0x14 event_create record (4 bytes; PC cmd_scd_event_create).
+struct ScdEventCreate
+noaddr
+macro SCD_EVENT_CREATE
+param scd_op_14_event_create p
+define
+0x02 u16 event   # low byte: event slot (>= 8: first free), high byte: g_RoomEventScripts index

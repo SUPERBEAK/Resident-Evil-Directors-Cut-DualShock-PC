@@ -1,0 +1,16 @@
+# Effect animation frame: a 4-byte record of an ESP sprite's frame list (EspSpriteInfo + 8; Effect.vram_info
+# = the list, Effect.vram_info_backup = the current frame): the sprite's UV record, how long it shows, its size.
+struct EffectFrame
+macro EFF_FRAME
+param effect_behavior_rand_frame EFFECT->vram_info_backup
+param effect_behavior_set_frame EFFECT_AT(off3, frame_cur, s32)
+param effect_ground_splat EFFECT_AT(off3, frame_cur, s32)
+param effect_behavior_splash_timer EFFECT_AT(off5, frame_cur, s32)
+define
+0x00 u8 uv_index   # -> Effect.uv_data_backup = uv_data + uv_index * 4 (u, v, x/y pivot)
+0x01 u8 delay      # -> Effect.frame_delay
+0x02 u8 w          # sprite width (effect_draw_mirror_reflection)
+0x03 u8 h          # sprite height
+
+# rawfield.py round (2026-10-16): the current frame record, read through the effect's own field
+expr ^EFFECT->vram_info_backup$

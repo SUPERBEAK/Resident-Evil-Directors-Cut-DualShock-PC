@@ -1,0 +1,16 @@
+# Door-animation script commands with byte arguments (src/main/door.c): bytevar_set/add b1 = variable,
+# b2 = value; delta_add b2 = camera delta component, b3 = signed delta; order_rotvel b1 = order,
+# b2..b4 = signed x, y, z rotation speed; sfx b1..b3 = play_sfx arguments (PC DoorSystem.cpp).
+struct DoorOpBytes
+macro DOOR_OPB
+define
+0x00 u8 opcode
+0x01 u8 b1
+0x02 u8 b2
+0x03 u8 b3
+0x04 u8 b4
+param door_op_bytevar_set op
+param door_op_bytevar_add op
+param door_op_delta_add op
+param door_op_order_rotvel op
+param door_op_sfx op

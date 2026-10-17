@@ -1,0 +1,790 @@
+// Main-program globals, second round (2026-10-16). Applied: high/medium; LOW ones commented.
+// 2026-10-16 (array pass): the element symbols NAME_N of one array (g_KeyConfig_1, g_PlayerAnimFunctions_07,
+// g_SelectPanels_1_vx, zombie_sca_info_ptr_1, ...) were removed from the symbol files again: the code writes
+// NAME[N] / NAME[i].field now. The lines below stay as the record of what each element is.
+// 2026-10-17 (element-field pass): the NAME_N_Field symbols (g_MapSprites_0_X, g_DoorOrderTable_0_Pos, g_Tasks_1_State,
+// g_EffectPool_0_*, ...) were removed as well: the code writes NAME[N].field, or a function-local alias
+// `extern T NAME_N_Field __asm__("NAME+0xOFF")` where the -O2 code addressed the field as its own symbol.
+D_800B24D8 = g_ClColorR; // u8, high: computer_lab_init sets R/G/B = 0x80; computer_fade_step ramps all three; computer_draw_windows reads .r/.g/.b = PC s_colR
+D_800B24DC = g_ClColorG; // u8, high: second of the three fade colour bytes = PC s_colG
+D_800B24E0 = g_ClColorB; // u8, high: third fade colour byte = PC s_colB
+D_800B24F4 = g_ClWindow0AnimCmd; // u8, high: g_ClWindows[0]+0x10 (0 idle, 1 open, 0x81 close) = PC s_win[0].animCmd
+D_800B24F6 = g_ClWindow0Alpha; // s16, high: g_ClWindows[0]+0x12, cl_menu_to_command sets 0x80 = PC s_win[].alpha
+D_800B24F8 = g_ClWindow0Visible; // s16, high: g_ClWindows[0]+0x14 = PC s_win[].visible
+D_800B24FA = g_ClWindow0Big; // s16, high: g_ClWindows[0]+0x16, cleared per window in computer_lab_init = PC s_win[].big
+D_800B2500 = g_ClWindow1Enabled; // u8, high: g_ClWindows[1]+0 = PC s_win[1].enabled
+D_800B2510 = g_ClWindow1AnimCmd; // u8, high: g_ClWindows[1]+0x10 (menu window open/close)
+D_800B251C = g_ClWindow2Enabled; // u8, high: g_ClWindows[2]+0
+D_800B252C = g_ClWindow2AnimCmd; // u8, high: g_ClWindows[2]+0x10
+D_800B2538 = g_ClKeyboardFlags; // u8, high: g_ClWindows[3]+0 = keyboard window; bit7 = cursor moved (computer_keyboard_input sets, computer_draw_keyboard consumes) = PC s_win[3].enabled
+D_800B253E = g_ClPadRepeatLatch; // u16, high: computer_keyboard_input stores g_PadTrigger&0xF000 and compares with held dpad = PC s_padRepeatLatch
+D_800B2548 = g_ClKeyboardAnimCmd; // u8, high: g_ClWindows[3]+0x10
+D_800B254A = g_ClKeyboardAlpha; // s16, high: g_ClWindows[3]+0x12, used as draw colour in computer_draw_keyboard
+D_800B254E = g_ClKeyboardBig; // s16, high: g_ClWindows[3]+0x16
+D_800B2552 = g_ClPadRepeatTimer; // u8, high: key-repeat countdown (15 first, then 8) in computer_keyboard_input = PC s_padRepeatTimer
+D_800B2554 = g_ClCurWindow; // ClWindow*, high: iterator over g_ClWindows (stride 0x1C) in cl_windows_update / cl_window_anim_begin / cl_window_anim_step
+D_800B2559 = g_ClText0WinIdx; // u8, high: g_ClTextFields[0]+1 = PC s_text[0].winIdx
+D_800B255A = g_ClText0X; // s16, high: g_ClTextFields[0]+2 = PC s_text[0].x
+D_800B255C = g_ClText0Y; // s16, high: g_ClTextFields[0]+4 = PC s_text[0].y
+D_800B255E = g_ClText0Buf; // u8[9], high: g_ClTextFields[0]+6 text buffer (strcmp JOHN/ADA/MOLE; typer reads [line*18+i]) = PC s_text[0].text
+D_800B255F = g_ClText0Buf_1; // u8, medium: s_text[0].text[1] (cl_finish_start writes chars)
+D_800B2560 = g_ClText0Buf_2; // u8, medium: s_text[0].text[2]; also base of typer char lookup D_800B2560[line*18+i]
+D_800B2561 = g_ClText0Buf_3; // u8, medium: s_text[0].text[3]
+D_800B2562 = g_ClText0Buf_4; // u8, medium: s_text[0].text[4]
+D_800B2567 = g_ClText0Masked; // u8, high: g_ClTextFields[0]+0xF draw '*' = PC s_text[].masked
+D_800B256A = g_ClText1Enabled; // u8, high: g_ClTextFields[1]+0 (0x12 stride) = PC s_text[1].enabled
+D_800B256B = g_ClText1WinIdx; // u8, high: g_ClTextFields[1]+1
+D_800B256C = g_ClText1X; // s16, high: g_ClTextFields[1]+2
+D_800B256E = g_ClText1Y; // s16, high: g_ClTextFields[1]+4
+D_800B2579 = g_ClText1Masked; // u8, high: g_ClTextFields[1]+0xF (password field masked) set by cl_login_to_password
+D_800B257D = g_ClCaretWinIdx; // u8, high: after g_ClInputEnabled = PC s_caretWinIdx
+D_800B257E = g_ClCaretBaseX; // s16, high: = PC s_caretBaseX
+D_800B2580 = g_ClCaretBaseY; // s16, high: = PC s_caretBaseY
+D_800B2582 = g_ClCaretMode; // u8, high: 0 = char caret, 1 = menu bar (cl_menu_setup 1, cl_command_setup 0) = PC s_caretMode
+D_800B2585 = g_ClTextRecIdx; // u8, high: text field index (computer_text_begin arg) = PC s_textRecIdx
+D_800B2586 = g_ClBlinkCounter; // u8, high: ++ in computer_draw_caret, cleared on input = PC s_blinkCounter
+D_800B2587 = g_ClBlinkHold; // u8, high: set 0x14 and counted down in computer_draw_keyboard = PC s_blinkHold
+D_800B2591 = g_ClTyperState; // u8, high: g_ClTyper+1 = PC s_typer.state
+D_800B25A2 = g_ClTyperLine; // s16, high: g_ClTyper+0x12 = PC s_typer.line
+D_800B25A4 = g_ClTyperPtr; // u8* (ClTyper*), high: = &g_ClTyper, set by computer_typer_update; +4 charIdx, +0x10 timer, +0x12 line
+D_800B25AC = g_ClPendingCamDelay; // u16, high: counted down in computer_camera_step = PC s_pendingCamDelay
+D_800B25C4 = g_ClSavedRoomLights_1; // u8[20], high: g_ClSavedRoomLights[1] (RDT light +0x20)
+D_800B25D8 = g_ClSavedRoomLights_2; // u8[20], high: g_ClSavedRoomLights[2] (RDT light +0x34)
+D_800B25EC = g_ClSavedAmbientR; // s32, medium: saved ambient (0) restored by cl_finish_restore_room = PC s_savedAmbient[0]
+D_800B25F0 = g_ClSavedAmbientG; // s32, medium: = PC s_savedAmbient[1]
+D_800B25F4 = g_ClSavedAmbientB; // s32, medium: = PC s_savedAmbient[2]
+D_800B25F8 = g_ClLogoSlots; // ClLogoSlot[9] (0x30 each), high: computer_logo_alloc/update iterate 9 x 0x30 = PC s_logoSlots
+D_800B27A8 = g_ClLogoCur; // ClLogoSlot*, high: current logo slot for every computer_logo_* step (185 uses); +1 behaviour, +2 sub, +8/+C pos, +0x2C angle
+D_800BC518 = g_ClIntroLogoState; // u8, high: 0 -> init slots, ++; computer_logo_wordmark_shrink sets 2 = end; cl_boot_logo waits for 2 = PC s_introLogoState
+D_800967D8 = computer_logo_behaviour_tbl; // fnptr[4], high: hub/wedge_a/wedge_b/wordmark indexed by slot +1 = PC s_logoBehaviours
+D_800967E8 = computer_logo_hub_step_tbl; // fnptr[6], high: hub_init..hub_end indexed by +2 = PC s_logoHubSteps
+D_80096800 = computer_logo_wedge_a_step_tbl; // fnptr[5], high: wedge_a_init/seed/spin/spin_move_out/retire
+D_80096814 = computer_logo_wedge_b_step_tbl; // fnptr[5], high: wedge_b_init/wait_gap/spin/spin_move_out/retire
+D_80096828 = computer_logo_wordmark_step_tbl; // fnptr[5], high: wordmark_init/wipe_in/wait_ring/hold/shrink
+D_80096720 = cl_boot_step_tbl; // fnptr[4], high: cl_boot_zoom_start/zoom_wide/zoom_tall/flash, dispatched by cl_boot_step_and_draw_monitor
+D_80096730 = cl_login_stage_tbl; // fnptr[3], high: cl_login_init/steps_input/steps_check, dispatched by cl_stage_login
+D_8009673C = cl_login_input_step_tbl; // fnptr[6], high: wait_open/typing/to_password/typing/submit/wait_close (cl_login_steps_input)
+D_80096754 = cl_login_check_step_tbl; // fnptr[5], high: type_line/next_line/validate/rejected/accepted (cl_login_steps_check)
+D_80096768 = cl_menu_step_tbl; // fnptr[9], high: cl_menu_open/select/to_command/confirm_exit/close/wait_close/arm_settle/blink... (cl_menu_input_and_step)
+D_8009678C = cl_command_stage_tbl; // fnptr[3], high: cl_command_setup/wait_input/steps (cl_stage_command)
+D_80096798 = cl_command_step_tbl; // fnptr[6], high: cl_cmd_close_windows/after_close/wait_typing/validate/rejected/accepted (cl_command_steps)
+D_800967B0 = cl_unlock_step_tbl; // fnptr[3], high: cl_cmd_unlock/unlock_hold/unlock_prompt (cl_stage_unlocked)
+D_800967BC = cl_finish_step_tbl; // fnptr[3], high: cl_finish_start/shrink_v/shrink_h (cl_finish_step_and_draw)
+D_800967C8 = computer_typer_step_tbl; // fnptr[4], high: computer_typer_begin/press/wait/finish indexed by g_ClTyper.state (PC cl_typer switch)
+D_80096318 = g_ClArmForKey; // u8[], medium: = PC ComputerLab s_armForKey (PC name kept as-is per brief; note s_ here is not a string): key code -> robot arm pose in computer_typer_press
+D_80096174 = passcode_panel_state_tbl; // fnptr[3], high: passcode_panel_init/update/finish (display_passcode_panel)
+D_80096180 = passcode_panel_update_tbl; // fnptr[4], high: wait_message/input/toggle/animation_update (passcode_panel_update)
+D_80096190 = passcode_panel_anim_tbl; // fnptr[3], high: animation_start/step/finish (passcode_panel_animation_update)
+D_8009683C = lab_slides_state_tbl; // fnptr[3] (+8 words of slide rect data after), high: lab_slides_start/update/finish indexed by g_InteractiveScreenState[0]
+D_80096C54 = menu_tab_func_tbl; // fnptr[4], high: menu_tab_map/file/radio/exit (menu_handle_input)
+D_80096C64 = menu_item_action_tbl; // fnptr[3], high: menu_item_use_item/view_model/move_item = USE/CHECK/COMBINE (menu_item_submenu)
+D_80096C70 = menu_item_use_tbl; // fnptr[9], high: menu_item_use_none/.../if_flag/red_book/heal by item use type (menu_item_use_item)
+D_80096C94 = menu_item_combine_tbl; // fnptr[8], high: menu_use_ammo_combine_a/b/qty_merge/set_flag/set_mode/ammo_transfer_a/b (menu_item_check_combine)
+D_80096CF8 = npc_walk_behavior_tbl; // fnptr[4], high: npc_walk_behavior_00..03 (npc_state9_pathfind)
+D_80095448 = player_fire_state_tbl; // fnptr[11], high: player_fire_start/shoot_weapon/end_click/reraise_start/reraise/hold_start/hold/nop/reverse_start/reverse/loop indexed by action_state (player_behavior_14_autoaim)
+D_8009561C = reload_fx_tbl; // fnptr[] (first 8 bytes are a u8 table, so valid index >= 2), medium: reload_fx_beretta/shotgun/colt/colt/default... indexed by player +2 in player_behavior_18_reload
+D_800CF688 = g_pScdEventCurrent; // ScdEventEntry*, high: = PC g_pScdEventCurrent (directly after the SCD branch stack, before the 8-entry event table 0x800CF68C); room_events_check sets &table[i], all scd_event_* read pc/sp/cnt through it
+D_800BC9A4 = g_RoomInitScd; // u8*, high: RDT+0x60 (PC RDT.initialization_scd) stored by rdt_load_and_relocate, run once by room_init
+D_800BE4EC = g_RoomMainScd; // u8*, high: RDT+0x64 (PC RDT.scd_opcodes, per-frame room script)
+D_800BC9AC = g_RoomEventScripts; // u8**, high: RDT+0x68 event script table, relocated in place; scd_event_entry_init reads [index] = PC g_RoomEventScripts
+D_80095E24 = g_RoomRdtSharedTable; // u8[stage][room], medium: nonzero = room uses one RDT for both scenarios (no +(flags>>23)&1 scenario offset) in rdt_load_and_relocate
+D_800BC27C = g_OmodelTable_m1; // Entity*[], medium: = g_OmodelTable - 4 (1-based index n = count..1 when clearing in rdt_load_and_relocate); alias, not a separate variable
+D_800BB93C = g_ItemModelTable_m1; // u8*[], medium: = g_ItemModelTable - 4, same 1-based clearing loop
+D_800BC5A9 = g_MainMenuState; // u8, high: = PC g_MainMenuState 0x00ae9f11 (0 init, 1 status, 2 msg wait, 3 itembox, 4 model view, 5 map anim, 6 model view2, 7 exit anim, 8 exit wait); menu_handle_input / menu_exit_cleanup
+D_800BC5AB = g_MenuFlags; // u8, medium: PC 0x00ae9f13; bitfield: 0x80 close request (use_if_flag/red_book/radio), 0x20/0x10 health bar redraw, 8 combine, 4 model, 2, 1
+D_800BC5AC = g_CurrentMenuFramesDataPtr; // u8*, medium: = PC g_CurrentMenuFramesDataPtr 0x00ae9f14; sprite/frame record cursor (itembox_draw, menu_pop_sprite_record, item_viewer_check_angle)
+D_800BC5B1 = g_MenuCharacterFlags; // u8, medium: PC 0x00ae9f19 character type flags (bit0 chris/jill, bit1 rebecca/barry)
+D_800BC5B2 = g_TotalInventorySlots; // u8, high: = PC g_totalInventorySlots 0x00ae9f1a (6 Chris / 8 Jill)
+D_800BC5B4 = g_ItemboxScrollDir; // s8, medium: PC 0x00ae9f1c (+-1, +-3) scroll direction in itembox_update; itembox_draw tests < 0
+D_800BC5B6 = g_MenuModelLoaded; // u8, medium: PC 0x00ae9f1e model loaded flag (0x80 loaded, low bits model/image id) in menu_load_item_model
+D_800BC5B7 = g_MenuHasMap; // u8, medium: PC 0x00ae9f1f map available flag
+D_800BC5BA = g_ItemActionMenuState; // u8, high: PC 0x00ae9f22 item action submenu state (0 init, 1 confirm, 2 use/view, 3 return, 4 combine msg wait)
+D_800BC5BD = g_ItemMoveSrcCursor; // u8, high: PC 0x00ae9f25 item move: original cursor position
+D_800BC5C0 = g_ItemMoveAnim; // u8[3], medium: PC 0x00ae9f28..2a: [0] busy, [1]/[2] slide animation counters (+-3) in menu_item_move_item
+D_800BC5C6 = g_HealthBarAnimState; // u8, high: PC 0x00ae9f2e (0 init, 1 scroll in, 2 init out, 3 scroll out)
+D_800BC5C7 = g_HealthStatus; // u8, high: PC 0x00ae9f2f (0 danger, 1 caution, 2-3 fine, 4 poison); menu_draw_health_bar 17 uses
+D_800BC5C8 = g_EkgColorR; // u8[3], high: PC 0x00ae9f30..32 EKG line colour RGB
+D_800BC5CB = g_EkgColor2R; // u8, high: PC 0x00ae9f33 secondary EKG colour R
+D_800BC5CC = g_EkgColor2G; // u8, high: PC 0x00ae9f34
+D_800BC5CD = g_EkgColor2B; // u8, high: PC 0x00ae9f35
+D_800BC5CE = g_EkgPrimaryX0; // s16, medium: PC 0x00ae9f36 EKG scroll position (EKG_P_X0)
+D_800BC5D0 = g_EkgPrimaryX1; // s16, medium: PC 0x00ae9f38
+D_800BC5D2 = g_EkgSecondaryX0; // s16, medium: PC 0x00ae9f3a (EKG_S_X0)
+D_800BC5D4 = g_EkgSecondaryX1; // s16, medium: PC 0x00ae9f3c
+D_800BC5D8 = g_EkgWavePrimary; // u8*, medium: PC 0x00ae9f40 EKG wave data pointer
+D_800BC5DC = g_EkgWaveSecondary; // u8*, medium: PC 0x00ae9f44
+D_800BC5E0 = g_HealthBarFaceAnim; // u8, medium: PC 0x00ae9f48 face animation index
+D_800BC5E3 = g_ItemViewerObjCount; // u8, high: PC 0x00ae9f4b item model object count (item_viewer_draw_model)
+D_800BC5E4 = g_ViewerSpinInputX; // s16, high: PC g_viewerSpinInput[0] 0x00ae9f4c
+D_800BC5E6 = g_ViewerSpinInputY; // s16, high: PC g_viewerSpinInput[1]
+D_800BC5E8 = g_ViewerSpinInputZ; // s16, high: PC g_viewerSpinInput[2]
+D_800BC5EC = g_ViewerObjRot; // s16[2][4], high: PC g_viewerObjRot 0x00ae9f54 (per-object rotation, 8-byte stride; item_viewer_draw_model)
+D_800BC5EE = g_ViewerObjRot0Y; // s16, high: g_viewerObjRot[0][1]
+D_800BC5F6 = g_ViewerExamineSpin; // s16, high: PC 0x00ae9f5e = g_viewerObjRot[1][1], examine spin accumulator
+D_800BC5FE = g_ViewerRotY; // s16, high: PC g_viewerRot[1] 0x00ae9f66 (turntable yaw)
+D_800BC600 = g_ViewerRotZ; // s16, high: PC g_viewerRot[2] 0x00ae9f68
+D_800BC62C = g_ViewerMatrices; // u8[3][0x50], medium: PC g_viewerMatrices 0x00ae9f94 (sub-object Sca matrices)
+D_800BC6D4 = g_ViewerBaseM02; // s16, high: PC 0x00aea03c base matrix (Sca[2].localMatrix at 0x800BC6D0) m[0][2]
+D_800BC6D6 = g_ViewerBaseM10; // s16, high: base matrix m[1][0]
+D_800BC6DA = g_ViewerBaseM12; // s16, high: PC 0x00aea042 m[1][2]
+D_800BC6DC = g_ViewerBaseM20; // s16, high: m[2][0]
+D_800BC6E0 = g_ViewerBaseM22; // s16, high: PC 0x00aea048 m[2][2]
+D_800BC6E4 = g_ViewerZoom; // s32, high: PC 0x00aea04c root Sca translation x = viewer zoom (intro -0xAF00 -> 0x1980); 16 uses
+D_800BC6E8 = g_ViewerTransY; // s32, high: PC 0x00aea050
+D_800BC6EC = g_ViewerTransZ; // s32, high: PC 0x00aea054
+D_800CF628 = g_SndVabId0; // s8, high: SsVabOpenHeadSticky result of sound_load_bank0 (-1 = none, set in sound_init); bank 0 (data at 0x800F6400)
+D_800CF629 = g_SndVabId1; // s8, high: bank 1 VAB id (sound_load_bank1, data 0x800F5400)
+D_800CF62A = g_SndVabIdRoom; // s8, high: bank 2 = room SE bank from RDT+0x8C (sound_load_room_bank); used by footsteps/entity SE
+D_800CF62B = g_SndVabId3; // s8, high: bank 3 VAB id (weapon/door sounds per PC docs AudioLoadBank3; data 0x800F7400)
+D_800CF62C = g_SndVabIdBgm; // s8, high: bank 4 = room BGM VAB, passed to SsSepOpen in bgm_sep_open (PC docs AudioLoadBank4)
+D_800BE5A4 = g_SndVabHead0; // u8*, high: VAB header of bank 0 (sound_load_bank0) = SE attribute data for type 0
+D_800BE628 = g_SndVabHead1; // u8*, high: bank 1 header (sound_load_bank1 / sound_load_bank1_from_memory)
+D_800BE62C = g_SndVabHeadRoom; // u8*, high: RDT+0x8C room sound bank header (sound_load_room_bank); 12 uses
+D_800BE630 = g_SndVabHead3; // u8*, high: bank 3 header (sound_load_bank3)
+D_800BE634 = g_SndVabHeadBgm; // u8*, high: bank 4 header at 0x800F8400 (bgm_load_bank)
+D_800BE638 = g_SndKeyOnMask; // u32, high: |= 1 << voice for each SE started (func_800885B4 returns the voice); SpuSetKey(0, mask) in sound_keys_off; trimmed by sound_poll_voice_status
+D_800BE9B8 = g_SpuKeyStatus; // char[24], high: SpuGetAllKeysStatus buffer in sound_poll_voice_status
+D_800BC33C = g_SndPanVolL; // s16, high: left volume computed by sound_calc_pan_volume (distance/500 falloff, min 30, max 0x7F); passed to the SE voice start
+D_800BC33E = g_SndPanVolR; // s16, high: right volume, same
+D_800BAE34 = g_SndMasterVol; // SndVolume{s16 l,r}, high: SsGetMVol in sound_fade_start, stepped by g_SndFadeStep and SsSetMVol in sound_fade_update
+D_800CF62D = g_SndFadeStep; // s8, high: per-frame master volume delta set by sound_fade_start(arg0)
+D_800BAE38 = g_SndBank1PreloadPtr; // u8*, medium: = g_LoadPointer at room_init; cursor over preloaded bank-1 data (sound_preload_bank1 / sound_load_bank1_from_memory)
+D_800968DC = g_SndBank0HedFiles; // u16[], medium: CD file index of bank-0 .HED per arg (sound_load_bank0 first load)
+D_800968FC = g_SndBank0VbFiles; // u16[], medium: matching .VB file indices (each = HED+1)
+D_8009691C = g_SndBank1HedFiles; // u16[], medium: bank-1 HED file indices (sound_load_bank1)
+D_8009693C = g_SndBank1VbFiles; // u16[], medium: bank-1 VB file indices (= HED+1)
+D_8009695C = g_SndBank3HedFiles; // u16[], medium: bank-3 HED file indices (sound_load_bank3)
+D_8009696C = g_SndBank3VbFiles; // u16[], medium: bank-3 VB file indices
+D_80096868 = g_BgmBankFiles; // u16[58], medium: SEP/BGM bank file indices (0x191...) indexed by the stage room BGM config (bgm_load_bank)
+D_800B27B0 = g_BgmFileSize; // s32, medium: file size from g_CdFileTable in bgm_load_bank
+D_800B27B4 = g_BgmFileTail; // u8*, medium: buf + size - 8/-0xC (offsets of the appended SEQ/VB parts)
+D_800B27B8 = g_BgmSepData; // u8*, medium: 0x800F8400 + offset; passed to bgm_sep_open (SsSepOpen data)
+D_800B27C0 = g_BgmVabBody; // u8*, medium: VB body pointer passed to SsVabTransBody in bgm_load_bank
+D_800CF870 = g_RoomBgmConfig; // u8*, high: PC docs DAT_800cf870 room -> BGM config byte table; update_room_bgm cur = [g_RoomId]
+D_800CF631 = g_PrevBgmState; // u8, high: update_room_bgm copies g_BgmState here, compared with g_TargetBgmState bits 0x10/0x20 (follows g_TargetBgmState 0x800CF630)
+D_801FEC04 = g_StageRoomBgmTable; // u8*, high: PC docs 0x801fec04 per-room sound/BGM config table registered by the stage overlay; [room*4 + (cfg&7)]
+D_800BB918 = g_XaFilter; // CdlFILTER {u8 file, chan}, high: voice_play_clip sets file=1, chan=clip channel; CdControlB(CdlSetfilter 0xD, &g_XaFilter) in xa_stream_start
+D_800BB919 = g_XaFilterChan; // u8, high: CdlFILTER.chan of g_XaFilter (channel counted from the clip table 0x8000 bits)
+D_800BEA30 = g_XaStartLoc; // CdlLOC, high: CdIntToPos(clip start sector) in voice_play_clip; CdlSetloc(0x15)/CdlReadS(0x1B) param in xa_stream_start
+D_800BC59C = g_XaStartSector; // s32, high: voice file LBA + clip offset*16 + channel (voice_play_clip), pairs with g_XaEndSector
+D_800BAE28 = g_XaStartRetries; // s32, high: retry counter (< 5) in xa_stream_start, reset by voice_play_clip
+D_800BC2D4 = g_XaFrameCounter; // u32, high: frames since start; xa_state_wait_start gives up after 0xB5, xa_state_playing polls getloc when (n & 0x1FF) != 0x100
+D_800B239C = g_XaSyncResult; // u8[8], medium: CdControlB(CdlNop 1) status result read by xa_state_wait_start (bit 0x20 = reading -> state 2)
+D_800B23A4 = g_XaGetlocResult; // u8[8], high: CdControlB(CdlGetlocP 0x11) result; +5 = absolute CdlLOC -> g_CdCurrentSector (xa_state_playing)
+D_800B2398 = g_XaFadeVolIn; // s32, medium: CdSync result, then the loop volume when fading in/out at stream start (xa_state_wait_start)
+D_800B23B4 = g_XaFadeVolOut; // s32, medium: fade-out loop volume g_XaVolume..0 in xa_state_playing (16 uses)
+D_800BEC05 = g_CdMixVolumeLR; // u8, high: g_CdMixVolume (CdlATV) val1 = CD left -> SPU right (xa_apply_mix)
+D_800BEC06 = g_CdMixVolumeRR; // u8, high: g_CdMixVolume val2 = CD right -> SPU right
+D_800BEC07 = g_CdMixVolumeRL; // u8, high: g_CdMixVolume val3 = CD right -> SPU left
+D_800B28A5 = g_CdMixAtvLR; // u8, high: g_CdMixAtv val1 (cd_set_mix_volume / cd_set_stereo; 0 when stereo)
+D_800B28A6 = g_CdMixAtvRR; // u8, high: g_CdMixAtv val2
+D_800B28A7 = g_CdMixAtvRL; // u8, high: g_CdMixAtv val3 (mono: = val2)
+D_800B27C8 = g_StrCdSyncResult; // u8[8], medium: CdSync(1, result) buffer in str_close
+D_800B27D8 = g_StrVlcBuf_1; // u_long*, high: g_StrVlcBuf[1] (g_StrVlcBuf at 0x800B27D4 is [2]; str_open stores arg5 -> [0], arg6 -> here)
+D_800B2840 = g_StrFrameHeaderFrameCount; // u32, high: g_StrFrameHeader (StHEADER at 0x800B2838) +8 frameCount; copied to g_StrCurrentFrame, end test in str_decode_next_frame
+D_800B285E = g_StrSliceRectY; // s16, high: g_StrSliceRect (RECT 0x800B285C).y = arg1
+D_800B2860 = g_StrSliceRectW; // s16, high: g_StrSliceRect.w = 16 (or 24 for 24-bit)
+D_800B2862 = g_StrSliceRectH; // s16, high: g_StrSliceRect.h = frame height
+D_800B2868 = g_StrSliceSize; // s32, high: DecDCTout size in words (h*8, or (h*48)/4 for 24-bit)
+D_800B286C = g_StrSliceIndex; // s32, high: ++ per slice in str_dct_out_callback, reset per frame
+D_800B2870 = g_StrSliceCount; // s32, high: width >> 4 slices per frame
+D_800B287C = g_StrPrevFrame; // u32, high: previous frame number; str_decode_next_frame ends the movie if the frame goes backwards
+D_800B2880 = g_StrWidth; // s32, high: frame width (from g_StrFrameHeader)
+D_800B2884 = g_StrHeight; // s32, high: frame height
+D_80096E50 = g_StrSkipDecode; // s32, medium: (flags>>1)&1 at open; arg0 0x400 sets / 0x800 clears; when 0 str_decode_next_frame starts DecDCTin/out
+D_800BAEBC = StCdIntrFlag; // s32, high: PsyQ movie-library flag: str_dct_out_callback "if (StCdIntrFlag) { StCdInterrupt(); StCdIntrFlag = 0; }" (standard libpress/StCd sample pattern)
+D_800B28A8 = g_StrGetlocResult; // u8[8], high: CdControlB(CdlGetlocP 0x11) result in str_open
+D_800B28AD = g_StrGetlocPos; // CdlLOC, high: g_StrGetlocResult+5 absolute position -> CdPosToInt in str_open
+D_800B2888 = g_CdSeekLoc; // CdlLOC, high: CdIntToPos(LBA of file 0) then CdlSetloc in cd_seek_file0_pause
+D_800B28C4 = g_StrPcFrameBuf_1; // u8*, high: g_StrPcFrameBuf[1] = arg0 + half size (str_pc_set_buffers)
+D_800B28C8 = g_StrPcStartFrame; // u32, medium: str_pc_open reads frames until header frame >= this (str_pc_init arg1)
+D_800B28CC = g_StrPcEndFrame; // u32, high: str_pc_next_frame / str_pc_read_frame stop at frame >= this
+D_800B28D0 = g_StrPcOpenCallback; // void(*)(void), medium: str_pc_init arg3, called by str_pc_open and str_pc_next_frame
+D_800B28D4 = g_StrPcFrameCallback; // void(*)(void), medium: str_pc_init arg4, called by str_pc_next_frame
+D_800B28D8 = g_StrPcSectorHeaders; // struct[2] (0x20 stride, 0x14 bytes read = StHEADER), high: PCread target per buffer; returned by str_pc_get_frame
+D_800B28E0 = g_StrPcSectorHeaders_0_Frame; // u32, high: g_StrPcSectorHeaders[0]+8 frame number (alias)
+D_800B2900 = g_StrPcSectorHeaders_1_Frame; // u32, medium: g_StrPcSectorHeaders[1]+8 (cleared in str_pc_init)
+D_800B2918 = g_StrPcBufIndex; // s32, high: toggled 0/1 per frame (str_pc_next_frame), indexes frame buffers/headers
+D_800B2924 = g_StrPcSubHeader; // u32[2], medium: 8-byte CD-XA sub-header read with PCread (masked & 0xFF0000)
+D_800B2928 = g_StrPcSubHeader_1; // u32, medium: g_StrPcSubHeader[1]
+D_800B23D0 = g_CardSwEvTimeout; // s32, high: OpenEvent(SwCARD 0xF4000001, EvSpTIMOUT 0x100) in memcard_init_events
+D_800B23D4 = g_CardSwEvNew; // s32, high: OpenEvent(SwCARD, EvSpNEW 0x2000)
+D_800B23D8 = g_CardSwEvError; // s32, high: OpenEvent(SwCARD, EvSpERROR 0x8000)
+D_800B23E0 = g_CardHwEvTimeout; // s32, high: OpenEvent(HwCARD 0xF0000011, EvSpTIMOUT)
+D_800B23E4 = g_CardHwEvError; // s32, high: OpenEvent(HwCARD, EvSpERROR)
+D_800B23B8 = g_MemcardSavedStatusFlags; // u32, high: g_StatusFlags & 6 saved by memcard_screen_open, OR-ed back by memcard_screen_close
+D_800B23C0 = g_MemcardInfoTimeout; // s32, medium: set when memcard_wait_sw_event() == 1 (EvSpTIMOUT = no card) after _card_info in memcard_screen; returned by memcard_check_changed (card removed). Earlier LOW proposal: g_MemcardNewCard
+D_800B23C4 = g_MemcardInfoPending; // s32, medium: set by memcard_check_changed after _card_info, cleared each memcard_screen frame
+D_800B23C8 = g_MemcardBusy; // s32, medium (= earlier LOW proposal; 1 while waiting for card detection): memcard_screen flag (15 writes): 1 = re-detect cards / wait for input next frame
+D_800BCB40 = g_MemcardFileList; // struct[15] (0x16 each: name...), high: memcard_list_files(slot, list, "BASLUS-00551*"); memcard_read_saves reads entry c
+D_800BCB4C = g_MemcardFileList_0_SlotChar; // char, high: g_MemcardFileList[0]+0xC = save number digit of the file name (memcard_build_slot_map: c - '0')
+D_800BCC8A = g_MemcardFileCount; // u8, high: right after 15 x 0x16 entries; count of save files found
+D_80091858 = s_McSave; // u8[] game text "       SAVE", high: memcard_draw_menu title
+D_80091864 = s_McLoad; // u8[] "       LOAD", high
+D_80091870 = s_McMemoryCard1; // u8[] "MEMORY CARD 1", high
+D_80091880 = s_McMemoryCard2; // u8[] "MEMORY CARD 2", high
+D_80091890 = s_McDoNot; // u8[] "DO NOT", high
+D_80091898 = s_McSaveOnCard1Or2; // u8[] "SAVE ON CARD 1 OR 2?", high
+D_800918B0 = s_McLoadFromCard1Or2; // u8[] "LOAD FROM CARD 1 OR 2?", high
+D_800918C8 = s_McCheckingMemoryCards; // u8[] "CHECKING MEMORY CARD/S", high
+D_800918E0 = s_McOverwrite; // u8[] "OVERWRITE?", high
+D_800918EC = s_McYes; // u8[] "YES", high
+D_800918F0 = s_McNo; // u8[] "NO", high
+D_800918F4 = s_McFormattingIsRequired; // u8[] "FORMATTING IS REQUIRED", high
+D_8009190C = s_McFormatThisCard; // u8[] "FORMAT THIS CARD", high
+D_80091920 = s_McDoNotFormatThisCard; // u8[] "DO NOT FORMAT THIS CARD", high
+D_80091938 = s_McUseMemoryCard; // u8[] "USE MEMORY CARD", high
+D_80091948 = s_McDontUseMemoryCard; // u8[] "DON'T USE MEMORY CARD", high
+D_80091960 = s_McNoData; // u8[] "NO DATA", high
+D_80091968 = s_McDoNotPullOut; // u8[] "DO NOT PULL OUT THE MEMORY CARD", high
+D_80091988 = s_McNowSaving; // u8[] "NOW SAVING...", high
+D_80091998 = s_McDoNotPullOut2; // u8[] "DO NOT PULL OUT THE MEMORY CARD" (second copy, used while loading), high
+D_80091BDC = g_McErrorMsgX; // s16[7], high: x position per error message (print_formatted_text(x[ret], ..., msgs[ret]))
+D_80091BEC = g_McErrorMsgs; // u8*[7], high: "FAILED TO FORMAT THE CARD", "ACCESS ERROR", "TOO MANY FILES", "THERE IS NO FILE", "MEMORY CARD IS NOT INSERTED", "FAIL IN SAVE", "FORMATTING IS REQUIRED"
+D_80091C08 = g_McAreaNames; // u8*[7], high: save-slot location text ("M.Room 1F", "M.Hall 1F", "Courtyard Room B1"...) indexed by save_get_area_index (memcard_draw_file_list)
+D_80091C24 = s_McChrisLabel; // u8[9] "Chris/00/", high: copied to the slot line for Chris saves
+D_80091C30 = s_McJillLabel; // u8[9] "Jill /00/", high: Jill saves
+D_80091B48 = g_McAreaTitlesSjis; // char[7][0x15] Shift-JIS, high: fullwidth "Mansion..."/"Courtyard"/"Guardhouse" titles copied into the card file header (memcard_build_file_title)
+D_80091C5A = g_McRenameSrcPort; // char[], high: "00:" part of the source path "bu00:..." (port digit patched, file name strcpy at +3); rename(&[-2], dst) in memcard_rename_file
+D_80091C76 = g_McRenameDstPort; // char[], high: same for the destination path
+D_80091680 = g_KeyCfgSlotX; // s16[12], medium: x per pad-diagram slot (keyconfig_draw_frame/layout)
+D_80091698 = g_KeyCfgSlotY; // s16[6], medium: y per slot pair (index >> 1)
+D_800916A4 = g_KeyCfgCursorMove; // u8[12][4]?, medium: next cursor slot per direction (keyconfig_input)
+D_800916E4 = g_KeyCfgButtonCodes; // u8[8], medium: button code (>>8) -> index lookup in keyconfig_button_to_index
+D_800916EC = g_KeyCfgSlotBits; // u16[12], medium: pad bit of each diagram slot (keyconfig_draw_layout / keyconfig_input)
+D_80091718 = g_KeyCfgActionSlots; // u8[8], medium: g_KeyConfig indices that are remappable (keyconfig_input swap / draw_button_list)
+D_80091768 = g_KeyCfgActionNamesA; // u8*[8], high: "NO USE","FORWARD","BACK","R.TURN","L.TURN","ACTION","DASH","GET READY"
+D_80091788 = g_KeyCfgActionNamesB; // u8*[9], high: same list with "SEARCH"/"ATTACK" in place of ACTION
+D_80091818 = g_KeyCfgViewerLabels; // u8*[8], high: "UPPER ATTACK","ITEM R.TURN","LOWER ATTACK","ITEM L.TURN","SELECT","EXPAND ITEM","CANCEL","SHRINK ITEM"
+D_80091838 = g_KeyCfgViewerLabelX; // u8[8], medium: x per label (0x1A/0xB2/0x32...)
+D_80091840 = g_KeyCfgButtonOrder; // u16[12], medium: pad button codes in display order (keyconfig_draw_button_list / input)
+D_800BC958 = g_PadBuf1; // u8[0x22], high: PadInitDirect first buffer (port 1); [0] == 0xFF = no pad (pad_update, pad_get_raw_buttons)
+D_800BC95A = g_PadBuf1Btn0; // u8, high: port-1 button byte 0 (<< 8 into the raw word 0x800CF844)
+D_800BC95B = g_PadBuf1Btn1; // u8, high: port-1 button byte 1
+D_800BC95E = g_PadBuf1StickX; // u8, high: port-1 analog byte +6 (ax in pad_update; turn-speed level = ax/8)
+D_800BC95F = g_PadBuf1StickY; // u8, high: port-1 analog byte +7 (ay)
+D_800BC97C = g_PadBuf2; // u8[0x22], high: PadInitDirect second buffer (port 2), [0] == 0xFF = none
+D_800BC97E = g_PadBuf2Btn0; // u8, high: port-2 button byte (<< 24 into the raw word)
+D_800BC97F = g_PadBuf2Btn1; // u8, high: port-2 button byte (<< 16)
+D_800BC4B6 = g_AnalogTurnLevel; // u8, high: 0..10 from the analog stick (ax/8, 10 = full/digital); indexes g_AnalogTurnSpeedTbl
+D_800952C0 = g_AnalogTurnSpeedTbl; // u8[11], high: 0,0x10..0x69 turn speed per level -> g_PlayerTurnSpeedRun/Walk/Back in pad_update
+D_800BCB38 = g_PadActAlignState; // s32, medium: DualShock actuator setup state 0/1/2 (PadSetActAlign) in pad_update
+D_80093954 = g_PadActAlign; // u8[6], high: {0,1,0xFF,0xFF,0xFF,0xFF} actuator align data for PadSetActAlign (state 6)
+D_800B2488 = g_PadTypePrev; // u8, high: previous g_PadType; change restarts the actuator setup (pad_update)
+D_800CF84E = g_PadHeldRawHi; // u16, high: high half of the raw word 0x800CF844 (port-2 buttons / analog bits)
+D_800CF852 = g_PadTriggerHi; // u16, high: high half of the newly-pressed raw word
+D_800952B8 = g_VibrationSmallListPtr; // u8*, high: data = &g_VibrationSmallList (pad_vibrate_small, pad_vibration_reset)
+D_800952BC = g_VibrationLargeListPtr; // u8*, high: data = &g_VibrationLargeList (pad_vibrate_large/_ramp)
+D_8009532C = g_KeyConfigPresets; // u16*[4], high: 3 preset tables (D_800952CC/EC/30C) + &g_KeyConfig (custom); pad_update / keyconfig_draw_layout index by g_KeyConfigType & 3
+D_800C887E = g_KeyConfig_1; // u16, medium: g_KeyConfig[1] = pad code for action bit 1 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8880 = g_KeyConfig_2; // u16, medium: g_KeyConfig[2] = pad code for action bit 2 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8882 = g_KeyConfig_3; // u16, medium: g_KeyConfig[3] = pad code for action bit 3 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8884 = g_KeyConfig_4; // u16, medium: g_KeyConfig[4] = pad code for action bit 4 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8886 = g_KeyConfig_5; // u16, medium: g_KeyConfig[5] = pad code for action bit 5 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8888 = g_KeyConfig_6; // u16, medium: g_KeyConfig[6] = pad code for action bit 6 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C888A = g_KeyConfig_7; // u16, medium: g_KeyConfig[7] = pad code for action bit 7 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C888C = g_KeyConfig_8; // u16, medium: g_KeyConfig[8] = pad code for action bit 8 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C888E = g_KeyConfig_9; // u16, medium: g_KeyConfig[9] = pad code for action bit 9 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8890 = g_KeyConfig_10; // u16, medium: g_KeyConfig[10] = pad code for action bit 10 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8892 = g_KeyConfig_11; // u16, medium: g_KeyConfig[11] = pad code for action bit 11 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8894 = g_KeyConfig_12; // u16, medium: g_KeyConfig[12] = pad code for action bit 12 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8896 = g_KeyConfig_13; // u16, medium: g_KeyConfig[13] = pad code for action bit 13 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C8898 = g_KeyConfig_14; // u16, medium: g_KeyConfig[14] = pad code for action bit 14 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C889A = g_KeyConfig_15; // u16, medium: g_KeyConfig[15] = pad code for action bit 15 of g_PadHeld (pad_update ORs 1<<i when raw & g_KeyConfig[i]); set by pad_set_default_bindings(_b)
+D_800C300C = g_SysFlags_1; // u32, high: g_SysFlags[1] (g_SysFlags = 0x800C3008), cleared by room_state_reset = PC "g_SysFlags[1] = 0" (PC docs: room_state_reset clears 0x800c300c/0x800c8670)
+D_800C8670 = g_FwdPosActionId; // u8, high: = PC g_fwdPosActionId (0x00be9830): 1-based room action index hit by the forward probe point (check_room_actions / check_action_object), cleared by room_state_reset
+D_800C8671 = g_EntityPosActionId; // u8, medium: next byte (PC 0x00be9831): action index hit by the entity-position test (flags & 0x40 branch)
+D_800C8454 = g_DeathState; // u8, high: PC docs "2-state death counter at 0x800c8454" (0 -> timeout_death_fade_out, 1 -> wait fade -> die_state); cleared by initialize_game
+D_800C8459 = g_SkipCdChecksum; // u8, medium (same name as the earlier LOW proposal): set around special loads (load_room_bg_image, save header load); cd_verify_file_checksum is skipped while set; cleared by cd_init
+D_800C845C = g_DispBufferY; // u8, medium: main: 0xF0 when g_ActiveBuffer == 0 else 0 (y of the drawing buffer)
+D_800C845D = g_Fade2MaskR; // u8, high: colour mask of the second fade box (0/0xFF from SCD 0x1C bit 2), main: g_FadeBox.r = shade & mask
+D_800C845E = g_Fade2MaskG; // u8, high: SCD 0x1C bit 1
+D_800C845F = g_Fade2MaskB; // u8, high: SCD 0x1C bit 0
+D_800C8668 = g_Fade2BlendMode; // u8, high: SCD 0x1C high byte; main: fade box attribute = mode << 28 | 0x40000000 (the cheat's 16-bit write at 0x800C8668 targets g_CharacterModelId 0x800C8669)
+D_800C8663 = g_PrevRoomId; // u8, high: room_transition_load stores the old g_RoomId; init_room sets 0x1F; update_room_bgm / build_enemy_snap compare with it
+D_800C866C = g_PickupQtyA; // u8, high: = PC g_pickupQtyA = 7 (shotgun shells, SCD 0x4C restores) in set_initial_items
+D_800C866D = g_PickupQtyB; // u8, high: = PC g_pickupQtyB = 240 (flamethrower fuel)
+D_800C866E = g_PickupQtyC; // u8, high: = PC g_pickupQtyC = 240
+D_800C867E = g_SavedHealth; // s16, high: PC docs DAT_800c867e health (title overlay sets per mode, "health mirror" of player +0x88); initialize_game copies to D_800C51AC
+D_800C868A = g_PartnerEquippedSlot; // u8, high: room_init swaps it with g_EquippedSlot when switching to/from the partner (Rebecca) inventory
+D_800C868E = g_SavePlayerZ; // u16, high: save_store_player_state stores player pos_z (0x800C5160), initialize_game restores
+D_800C8690 = g_SavePlayerAngle; // u16, high: save_store_player_state stores g_PlayerEntity.angle, initialize_game restores
+D_800C8692 = g_SavePlayerCollisionFlags; // u8, high: save_store_player_state stores g_PlayerEntity.collision_flags
+D_800C8790 = g_RebeccaItemSlots; // u8[6][2] (id, qty), high: = PC g_RebeccaItemSlots; set_initial_items gives Beretta (2, or 4 in ADVANCED) x15 (D_800C8791 = qty); room_init points g_ItemSlotsPointer here for the partner
+D_800C8791 = g_RebeccaItemSlots_0_Qty; // u8, high: = 0xF
+D_800C86E0 = g_RoomItemsFlags_1; // u32, high: g_RoomItemsFlags[1] (all = -1 at new game, PC roomItemsFlagsInit)
+D_800C86E4 = g_RoomItemsFlags_2; // u32, high
+D_800C86E8 = g_RoomItemsFlags_3; // u32, high
+D_800C86EC = g_RoomItemsFlags_4; // u32, high
+D_800C86F0 = g_RoomItemsFlags_5; // u32, high: 0xFFF7FFFF (PC init byte 0xf7)
+D_800C86F4 = g_RoomItemsFlags_6; // u32, high
+D_800C86F8 = g_RoomItemsFlags_7; // u32, high
+D_800B2490 = g_SavedPlayerHealth; // s16, medium: player health restored by room_init when switching back from the partner
+D_800B2494 = g_SavedPlayerCollisionFlags; // u8, medium: player collision_flags restored by room_init
+D_800BE9B4 = g_FoundItemSlot; // u8*, high: get_item_slot result (&inventory[i*2], or dummy 0x800C3020 when not found); room_event_item_return clears it
+D_800CAB20 = g_RoomLoadBase; // u8*, high: init_room saves g_LoadPointer, room_init resets g_LoadPointer to it
+D_800BABD8 = g_DoorView; // GsRVIEW2 (+ s32 deltas), high: door camera; GsSetRefView2 in door_anim_loop, set by door_op_cam_matrix, += deltas in door_op_matrix_add_delta, zeroed in door_anim_init
+D_800BABF8 = g_DoorViewDelta; // s16[], medium: per-component camera deltas loaded by door_op_delta_load / added by door_op_delta_add
+D_800BC4C0 = g_DoorObjTable; // GsDOBJ5*, medium: door model object array (door_anim_init: TMD +4/+8), GsLinkObject5 in door_op_order_setup
+D_800BCB34 = g_DoorPacketArea; // u8*, medium: GsPresetObject packet cursor (= 0x801DD0F8 at door_anim_init)
+D_800BCB30 = g_DoorAnimType; // u8, medium: door record +0xB & 0x3F (room_transition_load); bit 0x20 tested/cleared by door_anim_init
+D_800BEA3A = g_DoorCmdTable_0_Depth; // u16, high: g_DoorCmdTable[0]+2 loop depth (PC g_doorCmdCur +2)
+D_800BEA3C = g_DoorCmdTable_0_Script; // u8*, high: g_DoorCmdTable[0]+4 script pointer (= first .DOR script, door_anim_init)
+D_801D10EC = g_DoorFile; // u8*[] (header of the loaded door file at 0x801D10EC), high: [0..] script offsets (door_op_activate / door_anim_init)
+D_801D10F0 = g_DoorFileOrders; // s32, medium: door file header +4 (order/model records, 0x1C stride; door_op_order_setup)
+D_801D10F4 = g_DoorFileTim; // s32, medium: door file header +8 = offset of the TIM (load_texture_from_table: D_801D10F4 + 0x801D10EC)
+D_800B9D44 = g_DoorOrderTable_0_Tpage; // struct, medium: g_DoorOrderTable[0]+0xC (door_op_order_tpage)
+D_800B9D68 = g_DoorOrderTable_0_Pos; // s32[3]+vel, high: g_DoorOrderTable[0]+0x30 position (door_op_order_pos / pos_add_vel; +0x40 = velocity)
+D_800B9DA0 = g_DoorOrderTable_0_Rot; // s16[3], high: g_DoorOrderTable[0]+0x68 rotation (door_op_order_rot / rot_add_vel)
+D_800B9DA8 = g_DoorOrderTable_0_Vel; // s16[3], high: g_DoorOrderTable[0]+0x70 (door_op_order_vel / vel_add)
+D_800B9DAE = g_DoorOrderTable_0_RotVel; // s16[3], high: g_DoorOrderTable[0]+0x76 (door_op_order_rotvel / rotvel_add)
+D_800B9DB4 = g_DoorOrderTable_0_Vert; // struct, high: g_DoorOrderTable[0]+0x7C vertex animation (door_op_order_vert_set / vert_add)
+D_800BE968 = g_PacketArea; // u8*[2], high: GPU packet work area per buffer (main passes [g_ActiveBuffer] to the GsSetWorkBase-like func_8006A0D0); swapped for door anim / die screen
+D_800BE96C = g_PacketArea_1; // u8*, high: second buffer's packet area
+D_800939CC = g_MapTabFiles; // u16[4], medium: CD file per map tab image (map_tab_load_map)
+D_800939D4 = g_MapFloorFiles; // u16[12], medium: CD file per map floor image (map_display_load_textures [floor])
+D_800939F4 = g_MapAreaRoomCount; // u8[5], medium: rooms per map area (loops testing g_RoomFlags visited bits; map_build_area_mask)
+D_800939FC = g_MapAreaFloors; // s8[4][4], medium: floor ids per area (0xFF = none); map_update_layout_state / menu_init_map_screen
+D_80093A0C = g_MapFloorArea; // u8[6], medium: floor -> area (menu_init_map_screen); first byte used as the start floor
+D_80093A18 = g_MapFloorStage; // u8[12], medium: floor -> stage index for g_StageRoomFlagBase (map_display_load_textures / animate)
+D_80093A2C = g_MapBrowserSprites; // GsSPRITE[5], high: GsSortFastSprite in map_draw_browser; colour 0x80/0x40 by selection
+D_80093A40 = g_MapBrowserSprites_0_R; // u8, high: g_MapBrowserSprites[0].r (map_display_update colour cycle)
+D_80093A41 = g_MapBrowserSprites_0_G; // u8, high
+D_80093A42 = g_MapBrowserSprites_0_B; // u8, high
+D_80093AEF = g_MapTabSprites_0_V; // u8, medium: GsSPRITE at 0x80093AE0 +0xF (v = area*16+0x48); map_draw_browser draws D_80093AEF-0xF, +0x15, +0x39, +0x5D
+D_80093B13 = g_MapTabSprites_1_V; // u8, medium: second tab sprite .v
+D_80093B36 = g_MapTabSprites_2_U; // u8, medium: third sprite .u
+D_80093B5A = g_MapTabSprites_3_U; // u8, medium: fourth sprite .u
+D_80093B70 = g_MapSprites; // GsSPRITE[7], high: map_display_draw GsSortSprite(&g_MapSprites[i]); [6] = room marker
+D_80093B74 = g_MapSprites_0_X; // s16, high
+D_80093B76 = g_MapSprites_0_Y; // s16, high
+D_80093B78 = g_MapSprites_0_W; // u16, high
+D_80093B8C = g_MapSprites_0_ScaleX; // s16, high: zoom 1..0x1000 (x3 / /2 animation) in map_display_animate
+D_80093B8E = g_MapSprites_0_ScaleY; // s16, high
+D_80093B98 = g_MapSprites_1_X; // s16, high
+D_80093B9A = g_MapSprites_1_Y; // s16, high
+D_80093B9C = g_MapSprites_1_W; // u16, high
+D_80093BB0 = g_MapSprites_1_ScaleX; // s16, high
+D_80093BB2 = g_MapSprites_1_ScaleY; // s16, high
+D_80093BBC = g_MapSprites_2_X; // s16, high
+D_80093BBE = g_MapSprites_2_Y; // s16, high
+D_80093BC0 = g_MapSprites_2_W; // u16, high
+D_80093BD4 = g_MapSprites_2_ScaleX; // s16, high
+D_80093BD6 = g_MapSprites_2_ScaleY; // s16, high
+D_80093BE2 = g_MapSprites_3_Y; // s16, high: (+0x1C... map_display_draw sets y; sprite = D_80093BE2 - 6)
+D_80093BEB = g_MapSprites_3_V; // u8, medium
+D_80093C06 = g_MapSprites_4_Y; // s16, medium
+D_80093C0F = g_MapSprites_4_V; // u8, medium
+D_80093C2A = g_MapSprites_5_Y; // s16, medium
+D_80093C33 = g_MapSprites_5_V; // u8, medium
+D_800B2418 = g_MapBlinkColor; // u16, medium: 15-bit CLUT colour (level>>3 | 0x8000) uploaded with LoadImage to 1x1 at y 0x1FF (map_display_animate)
+D_800B241C = g_MapBlinkTimer; // s32, medium: 8/10 frame countdown of the marker blink
+D_800B2420 = g_MapBlinkLevel; // u8, medium: 0x50..0xA0 ping-pong brightness
+D_800BE900 = g_MapUploadRect; // RECT, high: VRAM rect for map TIM/CLUT uploads (0x140,0x188,0x80,0x70 / 1x1 colour)
+D_800BE904 = g_MapUploadRect_WH; // u32, medium: RECT w/h half (0x880080 in map_tab_load_map)
+D_800BC54C = g_MapScreen_Area; // u8, medium: g_MapScreen+4 current area
+D_800BC54E = g_MapScreen_Floor; // u8, medium: +6 current floor (index of g_MapFloorFiles)
+D_800BC550 = g_MapScreen_AreaFloor0; // u8, medium: +8 selected floor of area 0 ((arg0+area)[8])
+D_800BC551 = g_MapScreen_AreaFloor1; // u8, medium: +9
+D_800BC552 = g_MapScreen_AreaFloor2; // u8, medium: +0xA
+D_800BC553 = g_MapScreen_AreaFloor3; // u8, medium: +0xB
+D_80092598 = g_FilePageArchive; // struct{s32 sectorOff; s32 size}[], medium: page position inside archive file 0x9E: [n].sectorOff added to the entry's LBA, [n].size (+4 = D_8009259C) becomes its size (file_load_page)
+D_8009259C = g_FilePageArchive_0_Size; // s32, medium: g_FilePageArchive[n].size (+4) -> g_CdFileTable_9E_Size
+D_80092708 = g_FilePageChecksums; // u8[48], medium: per-page checksum byte written into the CD file table entry 0x9E (.sum) by file_load_page
+D_80092738 = g_FileBookTexFiles; // u16[2], medium: book texture file ids (0x8B/0x8C) for file_load_texture
+D_8009273C = g_FilePageFiles; // u16[46], medium: page image file ids (file_reader_draw -> file_load_page)
+D_80092798 = g_FileReaderFrameFile; // u16, medium: reader frame texture file (0x9F)
+D_8009279C = g_FilePageCount; // u8[16], high: pages per file (file_reader_input max, file_reader_draw last-page test)
+D_800927AC = g_FileNameX; // u8[16], medium: x offset of the file name text (file_book_draw draw_item_name)
+D_800927BC = g_FileTexRects; // RECT[], medium: VRAM rects for file textures (0x140,0x100 ...); tim_upload in file_load_texture/page
+D_800927D4 = g_FileClutRect; // RECT, medium: LoadImage(&rect, 0x801E112C) CLUT upload
+D_800927DC = g_FileClutRow; // s16, medium: CLUT y = row + 0x1E0 / 0x1E1
+D_80092A00 = g_FileReaderPageSprite_X; // GsSPRITE+4, medium: file_reader_draw sets x/y/tpage/cy then GsSortFastSprite(&this - 4)
+D_80092B64 = g_FilePageStart; // u8[16], high: first page index of each file in g_FilePageFiles (file_reader_draw)
+D_80092B74 = g_FileBookTable; // u8[2][16], high: file ids per book slot (0xFE separator, 0xFF none), [book][page*8+i]; filled by pickup_screen_init_table; file_is_collected tests
+D_80092B94 = g_PickupFadeBox; // GsBOXF, high: GsSortBoxFill in pickup_fade_update
+D_80092BA0 = g_PickupFadeBox_R; // u8, high: g_PickupFadeBox.r (+0x20 / -0x20 steps)
+D_80092BA1 = g_PickupFadeBox_G; // u8, high
+D_80092BA2 = g_PickupFadeBox_B; // u8, high
+D_80097344 = g_CdFileTable_9E_Size; // u32, high: g_CdFileTable (0x80096E54, 8-byte entries) entry 0x9E .size; file_load_page temporarily patches entry 0x9E (page archive) to the page's offset/size then load_file_blocking(0x9E)
+D_80097348 = g_CdFileTable_9E_Lba; // u16, high: entry 0x9E .lba (+= page sector offset, restored after the load)
+D_8009734A = g_CdFileTable_9E_LbaHi; // u8, high: entry 0x9E .lbaHi
+D_8009734B = g_CdFileTable_9E_Sum; // u8, high: entry 0x9E .sum = per-page checksum from D_80092708
+D_80092B75 = g_FileBookTable_1; // u8, medium: g_FileBookTable flat index 1 (set by pickup_screen_init_table)
+D_80092B76 = g_FileBookTable_2; // u8, medium: g_FileBookTable flat index 2 (set by pickup_screen_init_table)
+D_80092B77 = g_FileBookTable_3; // u8, medium: g_FileBookTable flat index 3 (set by pickup_screen_init_table)
+D_80092B78 = g_FileBookTable_4; // u8, medium: g_FileBookTable flat index 4 (set by pickup_screen_init_table)
+D_80092B79 = g_FileBookTable_5; // u8, medium: g_FileBookTable flat index 5 (set by pickup_screen_init_table)
+D_80092B7A = g_FileBookTable_6; // u8, medium: g_FileBookTable flat index 6 (set by pickup_screen_init_table)
+D_80092B7B = g_FileBookTable_7; // u8, medium: g_FileBookTable flat index 7 (set by pickup_screen_init_table)
+D_80092B7C = g_FileBookTable_8; // u8, medium: g_FileBookTable flat index 8 (set by pickup_screen_init_table)
+D_80092B7D = g_FileBookTable_9; // u8, medium: g_FileBookTable flat index 9 (set by pickup_screen_init_table)
+D_80092B7E = g_FileBookTable_10; // u8, medium: g_FileBookTable flat index 10 (set by pickup_screen_init_table)
+D_80092B7F = g_FileBookTable_11; // u8, medium: g_FileBookTable flat index 11 (set by pickup_screen_init_table)
+D_80092B80 = g_FileBookTable_12; // u8, medium: g_FileBookTable flat index 12 (set by pickup_screen_init_table)
+D_80092B81 = g_FileBookTable_13; // u8, medium: g_FileBookTable flat index 13 (set by pickup_screen_init_table)
+D_80092B82 = g_FileBookTable_14; // u8, medium: g_FileBookTable flat index 14 (set by pickup_screen_init_table)
+D_80092B83 = g_FileBookTable_15; // u8, medium: g_FileBookTable flat index 15 (set by pickup_screen_init_table)
+D_80092B84 = g_FileBookTable_16; // u8, medium: g_FileBookTable flat index 16 (set by pickup_screen_init_table)
+D_80092B85 = g_FileBookTable_17; // u8, medium: g_FileBookTable flat index 17 (set by pickup_screen_init_table)
+D_80092B86 = g_FileBookTable_18; // u8, medium: g_FileBookTable flat index 18 (set by pickup_screen_init_table)
+D_80092B87 = g_FileBookTable_19; // u8, medium: g_FileBookTable flat index 19 (set by pickup_screen_init_table)
+D_80092B88 = g_FileBookTable_20; // u8, medium: g_FileBookTable flat index 20 (set by pickup_screen_init_table)
+D_80092B89 = g_FileBookTable_21; // u8, medium: g_FileBookTable flat index 21 (set by pickup_screen_init_table)
+D_80092B8A = g_FileBookTable_22; // u8, medium: g_FileBookTable flat index 22 (set by pickup_screen_init_table)
+D_80092B8B = g_FileBookTable_23; // u8, medium: g_FileBookTable flat index 23 (set by pickup_screen_init_table)
+D_80092B8C = g_FileBookTable_24; // u8, medium: g_FileBookTable flat index 24 (set by pickup_screen_init_table)
+D_80092B8D = g_FileBookTable_25; // u8, medium: g_FileBookTable flat index 25 (set by pickup_screen_init_table)
+D_80092B8E = g_FileBookTable_26; // u8, medium: g_FileBookTable flat index 26 (set by pickup_screen_init_table)
+D_80092B8F = g_FileBookTable_27; // u8, medium: g_FileBookTable flat index 27 (set by pickup_screen_init_table)
+D_80092B90 = g_FileBookTable_28; // u8, medium: g_FileBookTable flat index 28 (set by pickup_screen_init_table)
+D_80092B91 = g_FileBookTable_29; // u8, medium: g_FileBookTable flat index 29 (set by pickup_screen_init_table)
+D_80092B92 = g_FileBookTable_30; // u8, medium: g_FileBookTable flat index 30 (set by pickup_screen_init_table)
+D_80092B93 = g_FileBookTable_31; // u8, medium: g_FileBookTable flat index 31 (set by pickup_screen_init_table)
+D_80096E58 = g_CdFileTable_0_Lba; // u16, high: g_CdFileTable[0]+4 lba low (cd_get_file_lba reads [n*8]; load_and_schedule_overlay)
+D_80096E5A = g_CdFileTable_0_LbaHi; // u8, high: g_CdFileTable[0]+6 lba high byte (cd_get_file_lba)
+D_80096E5B = g_CdFileTable_0_Sum; // u8, high: g_CdFileTable[0]+7 checksum compared by cd_verify_file_checksum
+D_800BC873 = g_OptionsMenuSel; // u8, high: options cursor 0..3 (wraps), also the key config preset (keyconfig_update = g_KeyConfigType & 3; 4 = custom) ; options_menu 9 uses
+D_800BC874 = g_KeyConfigCursor; // u8, high: selected pad-diagram slot 0..11 (g_KeyCfgSlotX/Y), odd = right column (keyconfig_draw_frame)
+D_800BC875 = g_KeyConfigListSel; // u8, medium: selected row in the action/button list (*16 y offset)
+D_800BC87D = g_OptionsControllerState; // u8, medium: (x & 3) == 1 / bit 0x80 tested by options_update_controller_image
+D_800B2480 = g_OptionsControllerImage; // u8 state block, medium: passed to options_update_controller_image; [0] = 0xFF at start
+D_800BC8A0 = g_OptionsDrawMode; // DR_MODE[2], high: SetDrawMode(&x, 0, 0, tpage 0x300/0xC0 by GetGraphType) in options_menu
+D_800BC8AC = g_OptionsDrawMode_1; // DR_MODE, high: second buffer
+D_800B9D10 = g_OptionsFromTitle; // u8, medium: 1 when options_menu is entered with no game task (g_Tasks[1] state 0): reloads sound bank 3 and on exit loads overlay 0x15E; 0 = in-game (task_suspend)
+D_801FECA4 = g_Tasks_1_State; // u16/u32, high: g_Tasks[1].state (0x801FEC24 + 0x80); options_menu tests == 0 (no game running)
+D_801FED44 = g_Tasks_2_TextSize; // s32, high: g_Tasks[2] +0x20 = EXE header t_size copied by load_stage_overlay; stage_overlay_load sets g_LoadPointer = t_size + 0x80105400 (end of the stage overlay)
+D_800BC598 = g_TaskCur; // Task*, high: task_scheduler_init/update iterate 0x801FEC24/ECA4/ED24 through it
+D_800B2428 = g_TaskSleepRa; // u32, high: task_sleep stores $ra here (inline asm) then copies it to g_CurrentTask->func (+4) = resume address
+D_800CF830 = g_MainGp; // u32, high: GetGp() in task_scheduler_init; load_stage_overlay writes it to the task context (+0x44 gp)
+D_8009697C = g_StageOverlayFiles; // s16[], high: CD file of the stage overlay per g_StageId (stage_overlay_load -> load_stage_overlay(2, file))
+D_800B9D21 = g_LabSlidesAnimState; // u8, high: +1 = PC g_labSlidesAnimState (phase 0-3); lab_slides_draw/update/start
+D_800B9D24 = g_LabSlidesScrollX; // s32, high: +4 = PC g_labSlidesScrollX (passcode panel: cursor X)
+D_800B9D28 = g_LabSlidesScrollY; // u32, high: +8 = PC g_labSlidesScrollY (passcode panel: cursor Y)
+D_800B9D30 = g_LabSlidesSlideIndex; // u8, high: +0x10 = PC g_labSlidesSlideIndex (overlaid with timerA)
+D_800B9D31 = g_LabSlidesLoopDone; // u8, high: +0x11 = PC g_labSlidesLoopDone
+D_800B9D32 = g_LabSlidesMsgId; // u8, high: +0x12 = PC g_labSlidesMsgId (overlaid with timerB)
+D_800B9D33 = g_LabSlidesCountdown; // u8, high: +0x13 = PC g_labSlidesCountdown
+D_800B24B0 = g_LabSlidesState; // s32, high: = PC g_labSlidesState (0x007d9120, right before g_passcodePanelActive like here); check_and_display_interactive_screen / interactive_screen_reset
+D_800BA398 = g_View; // GsRVIEW2, high: GsSetRefView2(&g_View) in display_die_screen / main_menu; .vpx..; vpy also used as listener height by sound_calc_pan_volume
+D_800BA39C = g_View_Vpy; // s32, high: g_View.vpy
+D_800BA3A0 = g_View_Vpz; // s32, high: g_View.vpz
+D_800BA3A4 = g_View_Vrx; // s32, high: g_View.vrx
+D_800BA3A8 = g_View_Vry; // s32, high: g_View.vry
+D_800BA3AC = g_View_Vrz; // s32, high: g_View.vrz
+D_800BA3B0 = g_View_Rz; // s32, high: g_View.rz
+D_800BA3B4 = g_View_Super; // GsCOORDINATE2*, high: g_View.super (0 = WORLD)
+D_800BB8E4 = g_ViewerLights_0_Vy; // s32, high: g_ViewerLights[0].vy (GsF_LIGHT 16 bytes; main_menu sets light directions)
+D_800BB8E8 = g_ViewerLights_0_Vz; // s32, high
+D_800BB8F0 = g_ViewerLights_1_Vx; // s32, high
+D_800BB8F4 = g_ViewerLights_1_Vy; // s32, high
+D_800BB8F8 = g_ViewerLights_1_Vz; // s32, high
+D_800BB900 = g_ViewerLights_2_Vx; // s32, high
+D_800BB904 = g_ViewerLights_2_Vy; // s32, high
+D_800BB908 = g_ViewerLights_2_Vz; // s32, high
+D_80092BA4 = g_DieScreenImages; // struct[4] (16 bytes), medium: update_image_fading(&x[k], 0x1000) in display_die_screen
+D_80092BE4 = g_DieScreenTextImage; // struct (16 bytes), medium: separate faded image after the loop (display_die_screen)
+D_800BAF48 = g_DemoData; // u8[0x994], high: demo header + input stream; +0 room id
+D_800BAF49 = g_DemoData_StageId; // u8, high: -> g_StageId
+D_800BAF4A = g_DemoData_HeldItems; // u8, high: -> g_TotalHeldItems
+D_800BAF4B = g_DemoData_EquippedSlot; // u8, high: -> g_EquippedSlot
+D_800BAF4C = g_DemoData_PlayerId; // u8, high: -> player id / g_SavePlayerId / g_CharacterModelId
+D_800BAF4E = g_DemoData_PosX; // s16, high: -> player position_vx
+D_800BAF50 = g_DemoData_PosZ; // s16, high: -> player position_vz
+D_800BAF52 = g_DemoData_Angle; // s16, high: -> player angle
+D_800BAF5C = g_DemoData_PrevRoomId; // u8, high: -> g_PrevRoomId (0x800C8663); inventory (0x18 bytes) follows at +0x18
+D_800BB8D8 = g_DemoSavedKeyConfigType; // s16, high: g_KeyConfigType saved before the demo, restored by attract_demo_watchdog
+D_80092BF4 = g_ImageFade; // struct (16 bytes), medium: update_image_fading(&x, level) in image_update
+D_80092FCC = g_ItemMaxQty; // u8[][4], high: = PC g_ItemMaxQty (record byte 0, overlaps g_ItemImageLookupTable by one byte like on PC); ammo stack size in weapon_reload_from_stack / menu_use_ammo_*
+D_80092FCE = g_ItemCombineIdx; // u8 (record byte 2), high: combine-table index (PC docs lookup record [2]); < 0 = not combinable; indexes g_ItemCombinePtrs / g_ItemImageTypeTable
+D_80092F0C = g_ItemCombinePtrs; // u8*[38], high: = PC g_ItemCombinePtrs (DC: 38 entries); menu_item_check_combine / menu_item_apply_combine
+D_80092FA4 = g_ItemImageTypeTable; // u8[38+], high: = PC g_ItemImageTypeTable: combine index -> ITEM_MIX.PIX row (menu_item_combine_refresh)
+D_800930CB = g_ItemHealTable; // u8[], high: = PC g_ItemHealTable (indexed by item id) read by menu_item_use_heal
+D_80093100 = g_ItemUseTypeRanges; // u8[10], medium: ascending item-id thresholds; menu_item_use_item finds i with id >= tbl[i] to pick the use handler (menu_item_use_tbl)
+D_80093118 = g_ItemExamineMessages; // u8[16], high: message ids of the examine texts (item_viewer_check_examine / examine_spin -> set_message_display); PC: g_ItemHealTable +0x51 examine messages
+D_80093128 = g_ItemExamineCombos; // struct[4] (12 bytes), high: = PC g_ItemExamineCombos (item_viewer_check_examine: (e & 0xF) * 0xC)
+D_80093158 = g_ItemExamineTypes; // u8[16], high: = PC g_ItemExamineTypes (item_viewer_check_examine e = tbl[id])
+D_80092CAA = g_ItemModelFiles; // s16[77], high: CD file of each item model (menu_load_item_model, indexed by image idx); PC g_ItemModelFileNames equivalent
+D_80092C40 = g_ItemboxFrameRecs; // u16[][4], medium: sprite frame records pushed in itembox_draw (walked back to D_80092C40-0x3C)
+D_80092C64 = g_ItemboxFrameRecs2; // u16[][4], medium: second record list (itembox_draw)
+D_80092C9C = g_ViewerArrowX; // u16[4], medium: arrow x positions (item_viewer_draw_arrows)
+D_80096C1C = g_InvSlotPosX; // s16[][2], high: inventory slot x (0xD0/0x100); menu_draw_inventory / menu_draw_cursor / menu_item_move_item
+D_80096C1E = g_InvSlotPosY; // s16, high: inventory slot y (D_80096C1E[slot*2]) used by menu_item_move_item / menu_draw_cursor
+D_80095360 = g_DefaultScaInfo; // void*[3] + data, medium: entity +4 (sca_info) default: initialize_game / scd_op_1b_enemy_set store it; setup_character_data picks [(id & 1) * 2]
+D_800953EC = g_FireVibrationTbl; // s16[][..], medium: per-weapon pad vibration params (pad_vibrate_small/large/_ramp) in player_behavior_13_gun_hold_input; D_800953F0/F2/F4 are the other columns
+D_80095474 = g_WeaponFireEndFrame; // u8[12], medium: per-weapon last firing anim frame (player_shoot_weapon: frame > tbl[w] ends the shot unless the fire button is held)
+D_80095480 = g_WeaponFireHitTbl; // struct{s32 hitMode; u8 frame, se1, se2, pad}[], medium: per weapon: at anim frame apply_weapon_damage(hitMode) + two sound_play_se_3d (player_shoot_weapon)
+D_800954C8 = g_WeaponMuzzleFlashFx; // struct{u8 frame, fxA, fxB; s16 x,y,z}[], medium: billboard effect at the hand joint at a given frame (player_shoot_weapon; npc_scd_08 for NPC shooters)
+D_80095644 = g_AutoAimPitchTbl; // s16[], medium: pitch limits per target (auto_aim_pitch_update reads [i] + player y); D_80095646/48/4A are its next entries
+D_80095654 = g_ScdAnimChainTbl; // u8[][2], medium: [anim][0] + 1 -> next behaviour byte, [anim][1] -> next anim id (scd_event_state1_anim, player_scd_behavior_01)
+D_80095A20 = g_EkgWaveTable; // u8*[20], high: EKG wave data per health level -> g_EkgWavePrimary (menu_draw_health_bar)
+D_80095A70 = g_EkgColorTable; // u8[5][3], high: EKG line RGB per g_HealthStatus (menu_draw_health_bar -> g_EkgColorR..)
+D_800CF857 = g_MessageFastForward; // u8, medium: set_message_display arg0 & 0x80 (0x80 for item descriptions); when set update_message_display speeds up with the confirm button held
+D_800CF858 = g_MessageId; // s16, medium: message id stored by set_message_display / set_item_description_message, re-shown by handle_message_post_action
+D_800CF864 = g_MessageReturnPtr; // u8*, high: code 6 saves the text position before inserting an item name, code 7 resumes at +2 (update_message_display)
+D_800CF869 = g_MessageCharDelay; // u8, high: frames per character (4 at 60 fps / 2 at 30 fps, g_VSyncMode)
+D_800CF86A = g_MessageCharTimer; // u8, high: countdown to the next character, reloaded from g_MessageCharDelay
+D_800CF86B = g_MessageColor; // u8, medium: current text colour/attr, taken from g_MessageNextColor at each page
+D_800CF86C = g_MessageNextColor; // u8, medium: set by text code 5 (p[1])
+D_800CF86D = g_SndFadeActive; // u8, medium: sound_fade_start(step, flag) sets it; die_state waits until it is 0; main tests it; cleared by init_sound_and_fade_state
+D_800CF878 = g_EffectTexPage; // u8/s16, medium: VRAM texture page cursor in setup_effect_sprite_textures (0x18 while uploading, restored after)
+D_800CF87C = g_EffectTexPos; // s16[2], medium: x/y cursor for effect sprite TIM uploads
+D_800CF880 = g_EffectClutPos; // s16[2], medium: CLUT x/y cursor (0, 4)
+D_800CF834 = g_BgImageMode; // s32, medium: set_bg_image_buffer_params arg2; 1 = bg_image_upload / update_screen_with_borders special path; load_global_assets sets 1 then 0
+D_800CF838 = g_BgImageBufA; // u8*, medium: set_bg_image_buffer_params arg0
+D_800CF83C = g_BgImageBufB; // u8*, medium: set_bg_image_buffer_params arg1
+D_800CF63C = g_FmvBuffer; // u8*, high: PC docs DAT_800cf63c (= g_LoadPointer at SCD 0x29 / prologue 0x800cab1c), passed to fmv_play by main
+D_801FEC0C = g_pLightMatrix; // MATRIX*, high: overlay-API slot = &g_LightMatrix (initialize_game); MulMatrix0 in player_update_detached_joint
+D_801FEC10 = g_DeadMoveValue; // MATRIX*, medium: = PC g_deadMoveValue (pointer; its +0x14 translation is the blood-spray/seed origin used by enemies, npc_idle_walk_02/03, knife swing); overlay-API slot, = &g_IdentityMatrix at initialize_game
+D_801FEC14 = g_pWorldScreenMatrix; // MATRIX*, high: = &g_WorldScreenMatrix (initialize_game); CompMatrix in player_update_detached_joint
+D_80096E84 = g_CdFileTable_6_Size; // u32, high: g_CdFileTable[6].size (0x80096E54 + 6*8) used as data offset by load_shoot_direction_data (low 2 bits = flags)
+D_80096E8C = g_CdFileTable_7_Size; // u32, high: g_CdFileTable[7].size, same use
+D_800945B8 = g_StringTablePtrs; // u8*[], medium: print_string_table_entry p = tbl[arg0] (1 entry -> D_800945B4), just before g_OverlayApiTableSrc
+D_80095234 = g_RoomActionFxIndex; // s32, medium: cycling index 0..5 in room_action_effect
+D_80095238 = g_RoomActionFxX; // s32[6], medium: x offsets for room_action_effect
+D_80095250 = g_RoomActionFxZ; // s32[6], medium: z offsets for room_action_effect
+D_80091E60 = g_SpiderWebScaInfo; // void*[2], medium: entity +4 (sca info) per character (player id & 1) in spiderweb_init
+D_80091F94 = g_BehaviorModelFiles; // u16[][..], medium: CD file ids per behaviour model (load_behavior_model [t][k])
+D_80091FDC = g_WeaponAnimFiles; // u16[4][13], high: weapon animation file per character (id & 3) and weapon (load_equipped_weapon_animation)
+D_8008FA0A = g_WeaponHitRecords_Dmg; // s16 (alias), medium: g_WeaponHitRecords (0x8008FA04) +6 = dmg field, read as [mode*0x78 + enemy*0xC] in weapon_post_hit_blood2
+D_80096CB4 = g_RoomTexFiles; // s16[34], medium: texture file per index D_800BE509 (load_texture_from_table)
+D_80096D08 = g_NpcWalkSwapNearDist; // u16 (stride 4), medium: per walk behaviour: if player distance < this switch to g_NpcWalkSwapNearNext (npc_walk_behavior_swap)
+D_80096D0A = g_NpcWalkSwapFarDist; // u16 (stride 4), medium: if distance >= this switch to g_NpcWalkSwapFarNext
+D_80096D18 = g_NpcWalkSwapNearNext; // u8 (stride 2), medium
+D_80096D19 = g_NpcWalkSwapFarNext; // u8 (stride 2), medium
+D_80096D2C = g_NpcScaInfoJill; // struct (12 bytes), medium: entity +4 set by npc_char_init_jill
+D_80096D38 = g_NpcScaInfoBarry; // struct, medium: npc_char_init_barry
+D_80096D44 = g_NpcScaInfoRebecca; // struct, medium: npc_char_init_rebecca
+D_80096D50 = g_NpcScaInfoWesker; // struct, medium: npc_char_init_wesker
+D_80096D5C = g_NpcScaInfoKennethCorpse; // struct, medium: npc_char_init_kenneth_corpse
+D_80096D68 = g_NpcScaInfoForestCorpse; // struct, medium: npc_char_init_forest_corpse
+D_80096D74 = g_NpcScaInfoRichard; // struct, medium: npc_char_init_richard
+D_80096D80 = g_NpcScaInfoEnrico; // struct, medium: npc_char_init_enrico
+D_800BC2CE = g_MirrorRangeMin; // s16, high: scd_op_0f_mirror_set a; mirror_point_visible tests (v - min) < (max - min)
+D_800BC2D0 = g_MirrorRangeMax; // s16, high: scd_op_0f_mirror_set b
+D_800BC2D8 = g_ItemModelLastRec; // u8*, medium: previous SCD 0x18 record; reuse check of model/texture (+0/+4) in scd_op_18_item_model_set
+D_800BC2DC = g_OmodelLastRec; // u8*, medium: previous SCD 0x1F record, same reuse check in scd_op_1f_omodel_set
+D_800BC3D1 = g_ScreenShakeAmp; // s8, high: +-1 random y offset of apply_screen_shake (GsSetOffset(..., amp + 0x78)); read by update_screen_with_borders
+D_800BC3D8 = g_CollisionShapeFuncs; // fnptr[6], high: per boundary shape type handler (check_room_collision / _two_point call [type](...)); filled by room_setup_collision_callbacks
+D_800BC3DC = g_CollisionShapeFuncs_1; // fnptr, high: = collision_push_rect
+D_800BC3E4 = g_CollisionShapeFuncs_3; // fnptr, high: = collision_push_circle
+D_800BC3E8 = g_CollisionShapeFuncs_4; // fnptr, high: = collision_flag_set
+D_800BC3EC = g_CollisionShapeFuncs_5; // fnptr, high: = collision_push_rect
+D_800BA354 = g_DoorSndBank; // u8, high: door record +9, passed to sound_load_bank0 in room_transition_load
+D_800BE508 = g_DoorAnimId; // u8, medium: door record +8 (door model/script id); target of g_DoorShortVars (door script variable)
+D_800BE509 = g_DoorTexIndex; // u8, high: door record +0xA, index into g_RoomTexFiles (load_texture_from_table)
+D_800BE598 = g_DoorNextStageRoom; // u8, high: door record +0xD: room = & 0x1F, stage = (>> 5) - 1 (room_transition_load)
+D_800BEA28 = g_PushObject; // Entity*, medium: object found by update_room_objects; player_behavior_10_push tests +1 & 0x40
+D_800BEC00 = g_ClimbObject; // Entity*, medium: object chosen by check_climb_object (height +0x74 compared)
+D_800BB9A2 = g_RoomSpriteDepth; // u16, medium: g_RoomSpriteActive (0x800BB9A0) +2 = depth (draw_room_spr z = depth >> 2)
+D_800BAC20 = g_SsSeqTable; // char[SS_SEQ_TABSIZ], high: SsSetTableSize(&table, 1, 3) in sound_init (PsyQ libsnd seq attribute table)
+D_800BCCD0 = g_StatusScreen; // u8[0x14], medium: +0 state of the status/file screen
+D_800BCCD2 = g_StatusScreen_NextMenu; // u8, medium: next menu mode (2, 0xD) set on exit
+D_800BCCD9 = g_StatusScreen_Closing; // u8, medium: set to 1 once exit was requested (cancel), blocks re-entry
+D_800BC5A1 = g_ItemModelCount; // u8, high: = PC g_ItemModelCount: number of item models set this room (scd_op_18_item_model_set ++, room_init = 0)
+D_800B2498 = g_ItemModelTpage; // u8, high: g_VramTpageCursor saved for tmd_relocate_texture in scd_op_18_item_model_set
+D_800B249C = g_ItemModelClutRow; // u8, high: g_VramClutRowCursor saved (scd_op_18_item_model_set)
+D_800B24A4 = g_OmodelTpage; // u8, high: same for scd_op_1f_omodel_set
+D_800B24A8 = g_OmodelClutRow; // u8, high: same; also passed to clut_fade_add
+D_800B2460 = g_FmvLastId; // s32, medium: fmv_play remembers the movie id (special case for movie 1 / Jill after 0xA16 frames)
+D_800B2468 = g_DeskItemSlot; // u8*, medium: get_item_slot(0x3D) result in check_desk_state
+D_800B246C = g_ItemboxLidStep; // s16, medium: lid angle step (+= g_ItemboxLidAccel, subtracted from object +0x76) in check_itembox_state
+D_800B2470 = g_ItemboxLidAccel; // s16, medium: +1 / -1
+D_800B2474 = g_ItemboxObject; // Entity*, high: item box room object (g_OmodelTable[entry+4]) animated by check_itembox_state
+D_800B2478 = g_TypewriterSaveArg; // u16, medium: room action entry +2, memcard_screen(0, ..., arg + 1, 2) in check_typewriter_state
+D_800BE9DC = g_PlayTimeVSync; // s32, high: VSync(-1) at the last play-time update; g_PlayTime += VSync(-1) - this (check_typewriter_state, game_start)
+D_8009619C = g_ClLabLights; // RDT_Light[3] (0x14 each), high: copied over the room lights (RDT +0xC/+0x20/+0x34) by computer_lab_init = PC s_labLights
+D_800961B0 = g_ClLabLights_1; // RDT_Light, high: s_labLights[1]
+D_800961C4 = g_ClLabLights_2; // RDT_Light, high: s_labLights[2]
+D_800961D8 = g_ClRowsLogin; // ClRow[3] (0x10), high: login window rows (cl_login_init computer_window_setup(0, ..., 3 rows)) = PC s_rowsLogin (non-const)
+D_80096200 = g_ClRowsLogin_2_Width; // s16, high: s_rowsLogin[2].width (+0x28): 0 at login, 0xC for the password line (cl_login_to_password)
+D_80096214 = g_ClRowsPanelA; // ClRow[3], high: window 2 in cl_menu_setup = PC s_rowsPanelA
+D_80096244 = g_ClRowsSide; // ClRow[3], high: window 1 in cl_menu_setup = PC s_rowsSide
+D_80096274 = g_ClRowsMenu; // ClRow[4], high: window 0 in cl_menu_to_command = PC s_rowsMenu
+D_800962B4 = g_ClRowsPanelB; // ClRow[4], high: window 2 in cl_command_setup = PC s_rowsPanelB
+D_800962FC = g_ClRowsUnlockPrompt; // ClRow[1], medium: window in cl_cmd_unlock_prompt (no PC name)
+D_8009630C = g_ClUnlockPromptQuads; // ClQuad[], medium: computer_draw_quads(-0x38, -0x40, 3, 1, x, 0xA) in cl_cmd_unlock_prompt
+D_80096344 = g_ClFrameQuads; // (renamed s_frameQuads_1 in globals_main_3.txt) // ClQuad[8], medium: 9-slice frame quads rewritten per window in computer_draw_windows = PC s_frameQuads
+D_80096398 = g_ClKeyboardFrame; // ClQuad[10], high: computer_draw_quads(..., x, 9) in computer_draw_keyboard = PC s_keyboardFrame
+D_80096404 = g_ClMsgPictures; // ClQuad[4], high: indexed by g_ClMsgFlags & 3 (computer_draw_status) = PC s_msgPictures
+D_80096428 = g_ClStatusBanners; // ClQuad[6], high: indexed by g_ClStatusIdx (computer_draw_status) = PC s_statusBanners
+D_80096488 = g_ClStripA; // ClQuad[2], high: g_ClMsgFlags & 0x10 strip (cl_login_accepted / computer_draw_status) = PC s_stripA
+D_800964A0 = g_ClStripB; // ClQuad[3], high: & 0x20 strip, countdown (cl_menu_countdown) = PC s_stripB
+D_800964C4 = g_ClDoorOrigin0; // u8[2], high: door 0 marker origin (PC s_doorOrigin[0]; "two bytes before each quad list")
+D_800964C8 = g_ClDoorMarker0; // ClQuad[], high: door 0 released marker (PC s_doorMarker[0])
+D_80096540 = g_ClDoorOrigin1; // u8[2], high: door 1 origin (PC s_doorOrigin[1])
+D_80096544 = g_ClDoorMarker1; // ClQuad[], high: door 1 marker (PC s_doorMarker[1])
+D_800966AC = g_ClDoorPictureFrame; // ClQuad[], medium: computer_draw_door_picture frame (4 quads, and -0xC per row)
+D_800966DC = g_ClDoorPictureQuads; // ClQuad[], medium: computer_draw_door_picture big picture per door index
+D_80096160 = g_PasscodePanelAnimTiles; // u8[], medium: tile index sequence cleared/lit by passcode_panel_animation_step (index into g_PasscodePanelTiles)
+D_800C88A4 = g_OrderingTables_0_Org; // GsOT_TAG*, high: g_OrderingTables[0].org = 0x800CA998
+D_800C88B4 = g_OrderingTables_1_Length; // u32, high: [1].length = 4
+D_800C88B8 = g_OrderingTables_1_Org; // GsOT_TAG*, high: [1].org = 0x800CA9D8
+D_800C88CC = g_OtMain_0_Org; // GsOT_TAG*, high: g_OtMain[0].org
+D_800C88DC = g_OtMain_1_Length; // u32, high
+D_800C88E0 = g_OtMain_1_Org; // GsOT_TAG*, high
+D_800C88F4 = g_OtBg_0_Org; // GsOT_TAG*, high: g_OtBg[0].org
+D_800C8904 = g_OtBg_1_Length; // u32, high
+D_800C8908 = g_OtBg_1_Org; // GsOT_TAG*, high
+D_800C3012 = g_ClearColorG; // u8, high: per g_ClearColorR comment (GsSortClear(R, 0x800C3012, 0x800C3013)); reset_clear_color / main_menu
+D_800C3013 = g_ClearColorB; // u8, high: clear colour blue (item_viewer_update / book_to_medal change it)
+D_800BC562 = g_SndPanVol_0_R; // s16, high: g_SndPanVol[0][1] (0x800BC560 s16[3][2]); 0x5F default; SsSepSetVol(sep, 0, L, R)
+D_800BC564 = g_SndPanVol_1_L; // s16, high: g_SndPanVol[1][0]
+D_800BC566 = g_SndPanVol_1_R; // s16, high
+D_800BC568 = g_SndPanVol_2_L; // s16, high
+D_800BC56A = g_SndPanVol_2_R; // s16, high
+D_800BC572 = g_ClutFadeEntries_0_Row; // u8, high: g_ClutFadeEntries[n] (10-byte) +2 row = arg + 0xF6 in clut_fade_add
+D_800BC72C = g_RoomActionTable_0_Arg1; // u16, high: g_RoomActionTable (12-byte entries) +4 (check_desk: item model index)
+D_800BC72E = g_RoomActionTable_0_Arg2; // u16, high: +6 (check_desk: g_RoomItemsFlags bit)
+D_800BC730 = g_RoomActionTable_0_Record; // u8*, high: +8 record pointer (scd_op_4c_item_record_transfer reads rec +8 item, +9 qty)
+D_800BE95C = g_CdReadBusy; // s32, medium: set to 1 by cd_read_file when a read starts
+D_800BEBF8 = g_CdReadLoc; // CdlLOC, high: CdIntToPos(g_CdCurrentSector) then CdlSetloc (CdControlB 2) in cd_read_file
+D_800C5431 = g_EnemySlot1_Id; // u8, high: enemy slot 1 (0x800C52A4 + 0x18C) +1 id; compared with 0x13 (effect_projectile_hit_check, knife swing)
+D_800C5432 = g_EnemySlot1_BehaviorFlags; // u8, high: enemy slot 1 +2 (computer lab arm entity commands, 23 uses; existing note in g_EnemiesList_0_BehaviorFlags comment)
+D_800C54A4 = g_EnemySlot1_Angle; // u16, medium: enemy slot 1 +0x74 angle (npc_idle_walk_03)
+D_800C54B4 = g_EnemySlot1_State; // u8, medium: enemy slot 1 +0x84 state (effect_projectile_hit_check sets 3)
+D_800C54B8 = g_EnemySlot1_Health; // s16, medium: enemy slot 1 +0x88 health (-= 5)
+D_800C54BA = g_EnemySlot1_HitState; // s8, medium: enemy slot 1 +0x8A hit_state (= 9)
+D_80092FCF = g_ItemExamineIdx; // u8 (record byte 3), high: item record +3 (globals_main g_ItemImageTable note: +2 = examine flag index); g_ItemExamineMessages index, alt-name flag (message_item_name_lookup)
+D_80093960 = g_FadeBox_X; // s16, medium: g_FadeBox (0x8009395C GsBOXF) .x = -0xA0 / 0 (center_screen_origin)
+D_80093962 = g_FadeBox_Y; // s16, medium: g_FadeBox.y = -0x78 / 0
+D_800CAA18 = g_PlayerAnimFunctions; // fnptr[52], high: PC g_playerAnimFunctions[52]; slot offsets match PC exactly (+0x00 attack_recoil, +0x60 multi_attack, +0x88 dispatch_4b1a90, +0xA0 simple_recovery); main player_state_anim_window0/1/2 call through bases +0/+0x4C/+0x98 indexed by player+0x85
+D_800CAA34 = g_PlayerAnimFunctions_07; // fnptr slot [7], high: stage entries store player_anim_crawling (PC [7])
+D_800CAA78 = g_PlayerAnimFunctions_24; // fnptr slot [24], high: player_anim_multi_attack (PC [24])
+D_800CAA84 = g_PlayerAnimFunctions_27; // fnptr slot [27], high: player_anim_set_attacked_flag (PC [27])
+D_800CAA88 = g_PlayerAnimFunctions_28; // fnptr slot [28], high: player_anim_dispatch_4c10b0 (PC [28])
+D_800CAA90 = g_PlayerAnimFunctions_30; // fnptr slot [30], high: player_anim_poison_death (PC [30])
+D_800CAA94 = g_PlayerAnimFunctions_31; // fnptr slot [31], high: player_anim_limb_physics (PC [31])
+D_800CAAA0 = g_PlayerAnimFunctions_34; // fnptr slot [34], high: player_anim_dispatch_4b1a90 (PC [34])
+D_800CAAB8 = g_PlayerAnimFunctions_40; // fnptr slot [40], high: player_anim_simple_recovery (PC [40])
+D_800CAAC8 = g_PlayerAnimFunctions_44; // fnptr slot [44], high: player_anim_hunter_decapitation (PC [44] = dispatch_4c2ac8)
+D_800CAAD0 = g_PlayerAnimFunctions_46; // fnptr slot [46], high: player_anim_limb_bounce (PC [46] = dispatch_4ba360)
+D_800CAADC = g_PlayerAnimFunctions_49; // fnptr slot [49], high: player_anim_death_billboard (PC [49])
+D_800CAAE0 = g_PlayerAnimFunctions_50; // fnptr slot [50], high: player_anim_enemy_interact (PC [50])
+D_800CAAE4 = g_PlayerAnimFunctions_51; // fnptr slot [51], high: player_anim_death_alt (PC [51])
+D_801FE930 = api_GsSetProjection; // overlay API slot #12, high: API table slot 12 = func_800698E0, a 2-insn wrapper of SetGeomScreen (libgs GsSetProjection); ending calls it with 0x82 / 0x1A4
+D_801FE9A8 = api_set_bg_image_buffer_params; // overlay API slot #42, high: slot 42 = set_bg_image_buffer_params (0x80051894)
+D_801FE9D8 = api_billboard_reserve; // overlay API slot #54, high: slot 54 = billboard_reserve (0x8003FFE8); zombie_init calls it with 2
+// LOW D_800B2584 = g_ClCaretMenuWidth; // u8, low: loop count in computer_draw_caret menu-bar mode; 5 (menu) / 4 (command)
+// LOW D_800BC5AA = g_MenuItemResult; // u8, low: PC 0x00ae9f12; result/action of the item submenu (1/4/5 in menu_item_move_item, 2 menu_use_set_flag, 3 menu_use_set_mode, 0xFF heal)
+// LOW D_800BC5B0 = g_MenuCursorTimer; // u8, low: PC 0x00ae9f18; counter in menu_handle_input/itembox_update, bit 0x20 blinks the cursor in menu_draw_cursor
+// LOW D_800BC5B5 = g_MenuScrollStep; // u8, low: PC SUBMENU_STATE_ID 0x00ae9f1d item box scroll step 0..15; also reused as last-loaded texture id by file_load_texture/file_load_page/map_tab_load_map
+// LOW D_800BC5BE = g_MenuRepeatTimer; // u8[2], low: PC 0x00ae9f26; [0] key-repeat countdown (0xF), [1] held direction mask in itembox_update; flag byte in menu_item_move_item
+// LOW D_800BC5E1 = g_ItemViewerSubState; // u8, low: PC 0x00ae9f49; viewer sub-step (5 in item_viewer_action_display, 0 on enter/exit)
+// LOW D_800B27C4 = g_SndFadeDoneDelay; // s32, low: set to 30 when the master fade reaches 0 (sound_fade_update)
+// LOW D_80096930 = g_SndBank1PreloadHedFiles; // u16[], low: HED file list for sound_preload_bank1
+// LOW D_80096950 = g_SndBank1PreloadVbFiles; // u16[], low: VB file list for sound_preload_bank1 (= HED+1)
+// LOW D_800B27BC = g_BgmVabHeadDst; // u8*, low: 0x800F8400 destination of the copied VAB head (mem_copy from g_LoadPointer)
+// LOW D_800B23AC = g_XaGetlocFail; // s32, low: cleared after a successful getloc in xa_state_playing
+// LOW D_800B2920 = g_StrPcHasSubHeader; // s32, low: set by str_pc_open from the first 8 bytes; when set str_pc_read_frame reads an 8-byte sub-header per sector
+// LOW D_800B2948 = g_StrPcFrameSectors; // s32, low: last count stored by str_pc_read_frame
+// LOW D_80091C3C = g_McSaveDoneAnim; // u8[30], low: per-frame values (>>1) of the save-complete animation (memcard_save_done_anim)
+// LOW D_80091674 = g_KeyCfgFrameX; // s16[6], low: x of the highlight boxes (keyconfig_draw_frame)
+// LOW D_80091704 = g_KeyCfgActionOrderA; // u8[8], low: action order list for preset type A (keyconfig_draw_action_list / input)
+// LOW D_8009170C = g_KeyCfgActionOrderB; // u8[12], low: action order list for type B (0xFE end)
+// LOW D_800917AC = g_KeyCfgActionNameXA; // u8[8], low: x advance per action name (list A)
+// LOW D_800917B4 = g_KeyCfgActionNameXB; // u8[9], low: x advance per action name (list B)
+// LOW D_800BC9B0 = g_EntityPartPool; // u8[] (6-byte records), low: per-entity +8 records; player gets the first, scd_op_1b_enemy_set allocates SCD byte5 * 6 for each enemy
+// LOW D_800BC358 = g_EntityPartPoolCur; // u8*, low: allocation cursor of g_EntityPartPool
+// LOW D_800BC4A4 = g_EntityPartPoolRoomBase; // u8*, low: cursor value after the player's record; room_transition_load resets the cursor to it
+// LOW D_800BE4FC = g_DoorAnimFrame; // s32, low: cleared by door_anim_init
+// LOW D_800BEA40 = g_DoorCmdTable_0_Wait; // s32, low: g_DoorCmdTable[0]+8, cleared by door_op_clear_entry
+// LOW D_800BEA60 = g_DoorCmdTable_0_Loop; // u16, low: g_DoorCmdTable[0]+0x28, cleared by door_op_clear_entry / door_anim_init
+// LOW D_80093A12 = g_MapFloorArea2; // u8[6], low: second floor table (start floor for the other layout, menu_init_map_display)
+// LOW D_80093A24 = g_MapAreaFloorCount; // u8[4], low: floor count per area (map_update_layout_state)
+// LOW D_80093A28 = g_MapAreaFloorOffset; // u8[4], low: tab y offset per area (map_draw_browser)
+// LOW D_800BC54B = g_MapScreen_Timer; // u8, low: g_MapScreen+3; cancel allowed when >= 7 (menu_map_state_machine)
+// LOW D_800BC54D = g_MapScreen_PlayerArea; // u8, low: +5, compared with g_MapFloorStage[floor] in map_display_animate
+// LOW D_800BC54F = g_MapScreen_Blink; // u8, low: +7 (blink palette slot x*6+0x10)
+// LOW D_800BC557 = g_MapScreen_Layout; // u8, low: +0xF set to 1 by map_update_objective_highlight; selects the start layout in menu_init_map_display
+// LOW D_800927C4 = g_FileTexRects_0_Mode; // s32, low: per-rect upload parameter passed to tim_upload
+// LOW D_800927E4 = g_FileBookSprite_X; // s16, low: book sprite field (file_book_draw)
+// LOW D_800927E6 = g_FileBookSprite_Y; // s16, low
+// LOW D_80092804 = g_FileBookSprites; // GsSPRITE[], low: attribute word of the book page sprites (file_book_draw)
+// LOW D_8009294C = g_FileBookSprites2_X; // s16, low
+// LOW D_8009294E = g_FileBookSprites2_Y; // s16, low
+// LOW D_8009297A = g_FileBookSprites2_1_U; // u8/u16, low
+// LOW D_8009299E = g_FileBookSprites2_2_U; // u8, low
+// LOW D_800929B4 = g_FileBookSprites3; // GsSPRITE, low: attribute
+// LOW D_800929B8 = g_FileBookSprites3_X; // s16, low
+// LOW D_800929BA = g_FileBookSprites3_Y; // s16, low
+// LOW D_800929C2 = g_FileBookSprites3_U; // u8, low
+// LOW D_800929D8 = g_FileBookSprites4; // GsSPRITE, low
+// LOW D_800929DC = g_FileBookSprites4_X; // s16, low
+// LOW D_800929DE = g_FileBookSprites4_Y; // s16, low
+// LOW D_800929E6 = g_FileBookSprites4_U; // u8, low
+// LOW D_80092B06 = g_FileReaderArrowSprite_U; // u8, low: file_reader_draw sets [0]/[0x24] = page*8 (two arrow sprites)
+// LOW D_80092B40 = g_FileReaderBar; // GsSPRITE, low: file_reader_draw
+// LOW D_80092B54 = g_FileReaderBar_R; // u8, low
+// LOW D_80092B55 = g_FileReaderBar_G; // u8, low
+// LOW D_80092B56 = g_FileReaderBar_B; // u8, low
+// LOW D_800BC87A = g_KeyConfigRepeat; // u8, low: cleared by keyconfig_update / options_menu (g_KeyConfigWork repeat byte)
+// LOW D_800BC87C = g_OptionsMenuFlag; // u8, low: cleared at options_menu start
+// LOW D_800BC8B8 = g_OptionsMenuFadeTile; // u8, low: cleared after the draw modes (fade tiles per g_OptionsMenu comment)
+// LOW D_800952B0 = g_OptionsBoxTbl; // ptr/data, low: box table read by options_menu_draw_boxes
+// LOW D_80092BFC = g_ImageFade_Active; // u8/s16, low: +8 set 1 by image_update
+// LOW D_80092BFE = g_ImageFade_Level; // s16, low: +0xA set 0x40
+// LOW D_80092C01 = g_ImageFade_State; // u8, low: +0xD cleared
+// LOW D_80092CA4 = g_ViewerArrowUV; // u16[3], low: arrow texture coordinate per state (item_viewer_draw_arrows)
+// LOW D_80096A94 = g_InvFrameRects; // u16[][4]?, low: inventory frame sprite rects (menu_draw_inventory)
+// LOW D_80096AC4 = g_InvPanelRects; // data, low: menu_draw_inventory
+// LOW D_80096AFC = g_InvSlotFrameRectsA; // data[32 words], low: slot frame rects (menu_draw_inventory; 0x4E variant)
+// LOW D_80096B7C = g_InvSlotFrameRectsB; // data[32 words], low: same layout with y 0x30 (variant B)
+// LOW D_80096BFC = g_InvBgRects; // data, low: menu_draw_inventory background rects
+// LOW D_800953E4 = g_LadderStepFrames; // u8[4], low: frame numbers compared with player +0xBE.. in player_behavior_0b_ladder
+// LOW D_800953E8 = g_AimHoldEnabled; // u8, low: constant 1 tested by player_behavior_12_gun_aim / knife_aim
+// LOW D_800953F0 = g_FireVibrationTbl_RampEnd; // s16, low: column of g_FireVibrationTbl (ramp arg)
+// LOW D_800953F2 = g_FireVibrationTbl_RampStep; // s16, low: column
+// LOW D_800953F4 = g_FireVibrationTbl_RampStart; // s16, low: column
+// LOW D_80095488 = g_WeaponFireHitTbl_1_Mode; // s32, low: g_WeaponFireHitTbl[1].hitMode passed directly to apply_weapon_damage
+// LOW D_80095540 = g_WeaponShellFx; // same struct[], low: second effect (rotation 0x555, offset by 300 per side) at player +0x20 coords (player_shoot_weapon / npc_scd_08)
+// LOW D_8009559C = g_WeaponMuzzleSmokeFx; // same struct[], low: third effect at the hand joint; handle kept in scratch 0x1F80000C/10
+// LOW D_80095594 = g_WeaponShellFxPosX; // s16, low: fixed x used for one weapon's second effect
+// LOW D_80095596 = g_WeaponShellFxPosY; // s16, low
+// LOW D_80095598 = g_WeaponShellFxPosZ; // s16, low
+// LOW D_80095646 = g_AutoAimPitchTbl_1; // s16, low
+// LOW D_80095648 = g_AutoAimPitchTbl_2; // s16, low
+// LOW D_8009564A = g_AutoAimPitchTbl_3; // s16, low
+// LOW D_80095A7C = g_EkgLabelWaveA; // u8[8], low: wave index list for the status label (menu_ekg_draw_status_label)
+// LOW D_80095A84 = g_EkgLabelWaveB; // u8[12], low: second list
+// LOW D_80095A90 = g_EkgLabelFrameA; // u8[8], low: label frame per index
+// LOW D_80095A98 = g_EkgLabelFrameB; // u8[12], low
+// LOW D_80091F90 = g_EmdSharedMask; // u32, low: bitmask of model ids tested (mask >> id) & 1 in load_entity_emd
+// LOW D_80098D10 = g_ScrollUvModelIds; // u16[7], low: model/object ids whose UVs scroll (model_scroll_selected_uvs)
+// LOW D_801E1314 = g_ItemModelNobj; // s32, low: object count from the loaded item model header (item_viewer_update -> g_MenuWork.nobj)
+// LOW D_80096D8C = g_NpcScaInfo41; // struct, low: npc_char_init_41 (also indexed as a table by npc_idle_walk_00)
+// LOW D_800BC394 = g_SightBoundaryCur; // u16*, low: current boundary record list (RDT+0x4C) scanned by room_check_sight_blocked
+// LOW D_800BCCD1 = g_StatusScreen_FadeDone; // u8, low: 0 -> wait for pickup_fade_update (menu_update_status_screen)
+// LOW D_800BCCD3 = g_StatusScreen_Mode; // u8, low: (mode - 1) >= 2 test in menu_file_state_machine
+// LOW D_800BCCD7 = g_StatusScreen_Flag7; // u8, low: set 1/0 in menu_update_status_screen
+// LOW D_800BCCE0 = g_StatusScreen_Sel; // u8, low: compared with the mode when confirm is pressed
+// LOW D_800BCCD4 = g_StatusScreen_x4; // u8/s16, low: g_StatusScreen +0x4, only cleared by menu_reset_status_state
+// LOW D_800BCCD5 = g_StatusScreen_x5; // u8/s16, low: g_StatusScreen +0x5, only cleared by menu_reset_status_state
+// LOW D_800BCCD6 = g_StatusScreen_x6; // u8/s16, low: g_StatusScreen +0x6, only cleared by menu_reset_status_state
+// LOW D_800BCCD8 = g_StatusScreen_x8; // u8/s16, low: g_StatusScreen +0x8, only cleared by menu_reset_status_state
+// LOW D_800BCCDA = g_StatusScreen_x10; // u8/s16, low: g_StatusScreen +0xA, only cleared by menu_reset_status_state
+// LOW D_800BCCDC = g_StatusScreen_x12; // u8/s16, low: g_StatusScreen +0xC, only cleared by menu_reset_status_state
+// LOW D_800BCCDE = g_StatusScreen_x14; // u8/s16, low: g_StatusScreen +0xE, only cleared by menu_reset_status_state
+// LOW D_800BCCE1 = g_StatusScreen_x17; // u8/s16, low: g_StatusScreen +0x11, only cleared by menu_reset_status_state
+// LOW D_800BCCE2 = g_StatusScreen_x18; // u8/s16, low: g_StatusScreen +0x12, only cleared by menu_reset_status_state
+// LOW D_800BCCE3 = g_StatusScreen_x19; // u8/s16, low: g_StatusScreen +0x13, only cleared by menu_reset_status_state
+// LOW D_80096338 = s_frameQuadsSrc; // ClQuad data, low: window frame data read by computer_draw_windows (PC s_frameQuads area)
+// LOW D_80096130 = g_PasscodePanelInitData; // data, low: source block read by passcode_panel_init (with D_8009613C/48/54)
+// LOW D_8009613C = g_PasscodePanelInitData_1; // data, low
+// LOW D_80096148 = g_PasscodePanelInitData_2; // data, low
+// LOW D_80096154 = g_PasscodePanelInitData_3; // data, low
+// LOW D_800C3025 = g_EffectPool_0_x1; // alias, low: g_EffectPool[0] +0x1 (declared alias only; code uses the struct form)
+// LOW D_800C3029 = g_EffectPool_0_x5; // alias, low: g_EffectPool[0] +0x5 (declared alias only; code uses the struct form)
+// LOW D_800C302B = g_EffectPool_0_x7; // alias, low: g_EffectPool[0] +0x7 (declared alias only; code uses the struct form)
+// LOW D_800C302C = g_EffectPool_0_x8; // alias, low: g_EffectPool[0] +0x8 (declared alias only; code uses the struct form)
+// LOW D_800C302E = g_EffectPool_0_xA; // alias, low: g_EffectPool[0] +0xA (declared alias only; code uses the struct form)
+// LOW D_800C3030 = g_EffectPool_0_xC; // alias, low: g_EffectPool[0] +0xC (declared alias only; code uses the struct form)
+// LOW D_800C3034 = g_EffectPool_0_x10; // alias, low: g_EffectPool[0] +0x10 (declared alias only; code uses the struct form)
+// LOW D_800C3036 = g_EffectPool_0_x12; // alias, low: g_EffectPool[0] +0x12 (declared alias only; code uses the struct form)
+// LOW D_800C3038 = g_EffectPool_0_x14; // alias, low: g_EffectPool[0] +0x14 (declared alias only; code uses the struct form)
+// LOW D_800C3043 = g_EffectPool_0_x1F; // alias, low: g_EffectPool[0] +0x1F (declared alias only; code uses the struct form)
+// LOW D_800C3044 = g_EffectPool_0_x20; // alias, low: g_EffectPool[0] +0x20 (declared alias only; code uses the struct form)
+// LOW D_800C3090 = g_EffectPool_0_x6C; // alias, low: g_EffectPool[0] +0x6C (declared alias only; code uses the struct form)
+// LOW D_800C3094 = g_EffectPool_0_x70; // alias, low: g_EffectPool[0] +0x70 (declared alias only; code uses the struct form)
+// LOW D_800C3098 = g_EffectPool_0_x74; // alias, low: g_EffectPool[0] +0x74 (declared alias only; code uses the struct form)
+// LOW D_800C309C = g_EffectPool_0_x78; // alias, low: g_EffectPool[0] +0x78 (declared alias only; code uses the struct form)

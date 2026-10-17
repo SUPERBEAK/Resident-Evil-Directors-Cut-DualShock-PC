@@ -1,0 +1,27 @@
+# A task (thread) slot of the scheduler (src/main/task.c): 3 slots of 0x80 bytes at 0x801FEC24, the current one
+# at *(void **)0x800CF82C (g_CurrentTask). States from task_scheduler_update / task_sleep / task_exit / task_chain
+# (PC TaskScheduler / Task_* names). 0x14..0x4F is the copy of the 0x3C-byte overlay header that
+# load_stage_overlay / load_and_schedule_overlay read from the start of the overlay file (0x801D08FC).
+# The 0x3C bytes copied to +0x14 are the overlay's PS-X EXE header EXEC struct:
+# +0x14 ovl_entry = pc0, +0x18 = gp0, +0x1C ovl_load_addr = t_addr, +0x20 = t_size.
+struct TaskSlot
+macro TASK
+source ^\s*(\*\(void \*\*\)0x800CF82C|LIT\(void \*, g_CurrentTask\))\s*$
+expr ^(\*\(void \*\*\)0x800CF82C|LIT\(void \*, g_CurrentTask\))$
+define
+0x00 u16 state        # 0 free, 1 sleeping, 2 start (OpenTh), 4 resume, 0x7F running; |0x40 suspended
+0x02 s16 sleep_count  # task_sleep(frames): frames left
+0x04 s32 func         # entry function (state 2) / resume address saved by task_sleep
+0x08 s32 thread       # OpenTh handle (ChangeTh / CloseTh)
+0x0C s32 tcb        # task_scheduler_init: thread control block address
+0x10 s32 stack        # initial stack pointer (OpenTh sp)
+0x14 s32 ovl_entry    # overlay header: entry function (task_execute / task_chain)
+0x18 s32 ovl_gp0
+0x1C s32 ovl_load_addr  # overlay header: load address of the rest of the file
+0x20 s32 ovl_text_size  # overlay header: t_size, size of the rest of the file (stage_overlay_load: room data follows it)
+0x44 s32 gp           # $gp for OpenTh (task_scheduler_init: GetGp(); overlays: the main program's g_MainGp)
+0x48 u8 pad48[56]     # (rest of the 0x80-byte slot; g_Tasks is TaskSlot[3])
+
+# rawfield.py round (2026-10-16): g_CurrentTask read as a byte pointer
+param task_scheduler_update q
+param task_scheduler_update p

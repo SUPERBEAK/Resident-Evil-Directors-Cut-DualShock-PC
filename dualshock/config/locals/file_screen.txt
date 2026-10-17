@@ -1,0 +1,30 @@
+# The Files screen of the status menu (the state block at g_FilePickupScreen, passed as arg0/p through
+# src/main/file_reader.c): the file list ("book") and the file reader. Names from what the code does.
+struct FileScreen
+macro FILESCR
+define
+0x00 u8 mode            # 0 = file list, 1 = reading a file (menu_file_state_machine); a 32-bit store resets 0..3
+0x01 u8 state           # file_book_advance / file_reader_advance: 0 init, 1 input
+0x02 u8 step            # draw step (file_book_draw / file_reader_draw switch)
+0x03 u8 open_request    # set to 1 when a file is opened
+0x04 s8 list_page       # file list page (selects the list texture g_FileBookTexFiles[n])
+0x05 s8 selected        # selected file in the list (0xFF = none collected)
+0x06 s8 file_page       # page of the open file (two pages per texture)
+0x07 s8 file_set        # g_FileBookTable[set]: 1 when game state flag 0x800000 is set
+0x08 s8 close_request   # non-zero: menu_file_state_machine returns -1 and clears it
+0x09 u8 busy            # 1 while opening/turning
+0x0A s16 slide_speed    # halved every frame (ease out)
+0x0C s16 slide_x        # horizontal slide offset (pages)
+0x0E s16 slide_y        # vertical slide-in offset (-0x7F -> 0)
+0x10 s8 exit_selected
+0x11 s8 arrow_blink
+0x12 u8 blink_timer     # ++ per frame; (& 0x30) gives the page-arrow blink phase
+0x13 u8 hold_timer      # frames a direction is held: auto-repeat after 20/21 frames (file_book_input / file_reader_input)
+param file_book_advance scr
+param file_book_init scr
+param file_book_input p
+param file_book_draw p
+param file_reader_advance scr
+param file_reader_init scr
+param file_reader_input scr
+param file_reader_draw scr

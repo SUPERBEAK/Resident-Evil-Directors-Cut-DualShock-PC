@@ -1,0 +1,5 @@
+# Local copies of g_ClTyperPtr (the computer lab typer, config/structs/cl_typer.txt).
+struct ClTyper
+macro CL_TYP
+fields ClTyper
+param computer_typer_wait obj

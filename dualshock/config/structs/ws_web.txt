@@ -1,0 +1,12 @@
+# Web spinner web threads (src/main/entity_common.c web_spinner_update_webs; PC WebSpinner.cpp web_spinner_update_webs): each thread
+# is a full 0x18C entity clone (entity_clone) chained from the spider's aim_target; they hang, swing toward
+# the player, jump at them (entity_ballistic_step) and stick on contact. Bytes 0x000-0x16B are the Entity
+# (ENT()/CURRENT_ENTITY_LIT for those); the thread's own work area starts at 0x16C.
+struct WsWeb
+view WS_WEB_CUR = ((WsWeb *)LIT(u8 *, g_CurrentEntity))    # the thread being updated (g_CurrentEntity walks the chain)
+base LIT(u8 *, g_CurrentEntity)
+define
+0x16C u16 drift        # state 0/1: random angle drift (0 or -(0..63)) added each frame; state 4/5: jump speed (entity_ballistic_step)
+0x170 u16 hit_done     # set to 1 once a jump has hit the player (-3 health)
+0x172 s16 swing        # +-0x80 wobble added to the angle (negated every frame); entity_add_speed_xz direction
+0x174 u16 se_cooldown  # 0x2D after the squash sound, counted down

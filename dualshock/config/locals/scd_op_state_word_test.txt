@@ -1,0 +1,9 @@
+# SCD opcode 0x07 state_word_test (6 bytes): compare state word [index] (g_FadeLevel..) with value.
+struct ScdOpStateWordTest
+macro SCD_WORD_TEST
+define
+0x00 u8  opcode
+0x02 u8  index        # state word index (from g_FadeLevel)
+0x03 u8  compare      # 0 ==, 1 <, 2 >=, 3 <, 4 >=, ...
+0x04 u16 value
+param scd_op_07_state_word_test p

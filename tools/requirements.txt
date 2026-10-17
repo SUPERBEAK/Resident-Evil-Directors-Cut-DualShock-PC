@@ -1,0 +1,11 @@
+numpy==2.5.3
+Pillow==12.3.0
+# splat and its disassembler: pinned, a newer version can split the executables differently
+splat64[mips]==0.50.0
+spimdisasm==1.42.4
+rabbitizer==1.16.2
+# m2c: pinned; dualshock/tools/m2c_macros.py downloads m2c_macros.h from the same commit
+m2c @ git+https://github.com/matt-kempster/m2c.git@708d2d2cb2698f091a92492b328f73b24209f72d
+# decomp-permuter's Python dependencies
+toml==0.10.2
+Levenshtein==0.27.5

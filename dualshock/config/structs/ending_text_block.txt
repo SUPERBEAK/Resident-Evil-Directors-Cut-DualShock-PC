@@ -1,0 +1,9 @@
+# Packed ending text block header (src/ending/ending.c ending_text_next_block): run lengths (u16, 0-terminated)
+# and the byte of each run follow; the unpacked bytes go to g_EndingSmallBuf. Pointer at 0x800E5DD4.
+struct EndingTextBlock
+view END_TBLK = ((EndingTextBlock *)LIT(void *, g_EndingTextBlock))
+base LIT(void *, g_EndingTextBlock)
+define
+0x00 u16 size          # bytes to the next block (g_EndingTextCursor += size)
+0x02 u16 runs_ofs      # offset of the u16 run lengths
+0x04 u16 bytes_ofs     # offset of the run bytes; 0xFFFF = no runs (the block is used as is)

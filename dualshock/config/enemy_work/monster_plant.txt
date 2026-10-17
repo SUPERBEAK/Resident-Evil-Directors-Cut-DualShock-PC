@@ -1,0 +1,18 @@
+# Monster plant work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from monster_plant.c usage; cross-checked with the RE1 PC decomp's MonsterPlant.cpp field notes (names only).
+# Behavior flag 0x29 (monster_plant_start_sway / monster_plant_mode_sway) reuses timer/tint_timer/saved_angle/lunge_side as a CLUT tint fade.
+# Type tie: 0x1C (s16 1 / u16 1) -> s16.
+struct MonsterPlantWork MONSTER_PLANT
+0x00 s32 player_dist          # 0x16C: |dx|+|dz| to the player (monster_plant_state_check); attack/retreat range checks (0xA8D, 0xBB8/0x9C4, 0x2135..)
+0x04 s16 attack_cooldown      # 0x170: 30 after a strike (monster_plant_grab_end / monster_plant_grab_lash_repeat), counted down in monster_plant_watch_strike_range/monster_plant_grab_wait; non-zero blocks the next attack
+0x06 s16 anim_end             # 0x172: last api_joint_move result (non-zero = animation finished), tested by the grab / strike / ambush step handlers
+0x08 s16 vine_segment         # 0x174: vine segment cursor (14 in monster_plant_start_ambush); monster_plant_ambush_extend / monster_plant_ambush_retract walk it against monster_plant_extend_stops setting joint bit 0
+0x0A s16 timer                # 0x176: general countdown: strike/extend delays (2, 0xC), and the tint fade period for flag 0x29 (0x28) and death (4)
+0x0C s16 tint_timer           # 0x178: second tint fade period (0x28 for flag 0x29, 8 on death); each expiry steps api_clut_fade_add_delta
+0x0E s16 fidget_timer         # 0x17A: idle sway countdown (rand & 0x1F), monster_plant_mode_watch / monster_plant_idle_fidget
+0x10 s16 unengaged            # 0x17C: 1 until the first strike (init / monster_plant_start_*), cleared in monster_plant_strike_swing; widens the reach check (0xBB8 vs 0x9C4)
+0x12 u16 saved_angle          # 0x17E: yaw saved before a test turn and restored (monster_plant_watch_ambush_range, monster_plant_grab_hold / _grab_end / _ambush_retract); flag 0x29 uses it as tint steps left
+0x14 u16 lunge_side           # 0x180: 0 none, 1/2 = side to lunge (angle += (n-1)<<11, monster_plant_watch_ambush_range); flag 0x29 uses it as tint steps left
+0x16 s16 shadow_flags         # 0x182: bit 0 = draw the ground shadow billboard (monster_plant_update); 1 or 0 in monster_plant_init/monster_plant_start_hidden
+0x18 s32 saved_state          # 0x184: copy of the state word (monster_plant_state_check); restored by monster_plant_damaged
+0x1C s16 hit_count            # 0x188: hits taken (monster_plant_damaged); at 4 sets game flag 0x5B

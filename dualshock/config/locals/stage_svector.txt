@@ -1,0 +1,9 @@
+# More SVECTORs (folded into svector.txt later): the tyrant's trail end points (PC g_tyTrailNear/Far).
+struct SVECTOR
+macro SVEC
+0x00 s16 vx
+0x02 s16 vy
+0x04 s16 vz
+0x06 s16 pad
+expr ^&g_TyTrail(Far|Near)$
+param tyrant_limb_launch vel

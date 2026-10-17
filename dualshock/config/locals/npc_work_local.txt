@@ -1,0 +1,14 @@
+# Local copies of the current NPC (NpcWork, config/structs/npc_work.txt) in src/main/npc.c.
+struct NpcWork
+macro NPC_W
+fields NpcWork
+param npc_state9_pathfind e2
+param npc_walk_behavior_02 e
+param npc_walk_behavior_02 e2
+param npc_walk_reset_lookat e
+param npc_walk_set_lookat_target e
+param npc_walk_turn_toward_heading g_CurrentEntity
+
+# raw-cast round 3
+param npc_walk_choose_heading e
+param npc_idle_walk_02 e

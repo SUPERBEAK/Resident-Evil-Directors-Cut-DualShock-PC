@@ -1,0 +1,8 @@
+# Title screen counters (src/title/title.c title_update): two halfwords at 0x800E1BD0 (the code reads them as
+# &g_TitleTimers, a data address named like a function).
+struct TitleTimers
+view TITLE_TMR = ((TitleTimers *)&g_TitleTimers)
+base &g_TitleTimers
+define
+0x00 u16 timer         # fade-in counter (0x80, -4 per frame), then the idle timeout (0x708 = 30 s, reset on input; 0 -> demo)
+0x02 s16 hold_timer    # 0x5A frames: counts down while Right (0x2000) is held on menu choice 6; 0 -> choice 7

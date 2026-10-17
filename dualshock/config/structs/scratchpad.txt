@@ -1,0 +1,81 @@
+# The PS1 scratchpad (1 KB fast RAM at 0x1F800000) as the game uses it: temporaries whose meaning changes per
+# function (enemy AIs: +0x00 distance to the player, +0x08 previous action, +0x1C a colour or flag, ...), a
+# rectangle block, a sprite texture descriptor (same layout as the PC decomp's TextureDesc), and a temporary
+# SVECTOR / VECTOR / MATRIX (flat names: vec_x = the VECTOR's vx, ...). Only the accesses written as struct
+# members (M2C_SFIELD(0x1F800000, ...)) use this; plain *(s32 *)0x1F80001C-style accesses are unchanged.
+struct Scratchpad
+view SCRATCH = ((Scratchpad *)0x1F800000)
+base 0x1F800000
+base ADDR_sp_tmp00
+define
+0x000 s32 tmp00
+0x004 s32 tmp04
+0x008 s32 tmp08
+0x00C s32 tmp0C
+0x010 s32 tmp10
+0x014 s32 tmp14
+0x018 s32 tmp18
+0x01C s32 tmp1C
+0x194 s32 mat180_t0
+0x198 s32 mat180_t1
+0x19C s32 mat180_t2
+0x1C0 s32 vec1C0_x
+0x1C4 s32 vec1C0_y
+0x1D0 u16 svec1D0_x
+0x1D2 u16 svec1D0_y
+0x1D4 u16 svec1D0_z
+0x370 s32 rect_flags     # rectangle block: flags, x, y, w, h, colour
+0x374 s16 rect_x
+0x376 s16 rect_y
+0x378 s16 rect_w
+0x37A s16 rect_h
+0x37C u8  rect_r
+0x37D u8  rect_g
+0x37E u8  rect_b
+0x380 s32 spr_flags      # sprite texture descriptor (PC TextureDesc layout)
+0x384 s16 spr_x          # screen position
+0x386 s16 spr_y
+0x388 s16 spr_w
+0x38A s16 spr_h
+0x38C s16 spr_tpage      # PS1 texture page
+0x38E u8  spr_u
+0x38F u8  spr_v
+0x390 s16 spr_clut_x
+0x392 s16 spr_clut_y
+0x394 u8  spr_r          # colour multipliers
+0x395 u8  spr_g
+0x396 u8  spr_b
+0x398 s16 spr_pivot_x
+0x39A s16 spr_pivot_y
+0x39C s16 spr_scale_x    # 4.12 fixed point
+0x39E s16 spr_scale_y
+0x3A0 s32 spr_rotate
+0x3A4 s32 gline_flags
+0x3A8 s16 gline_x0
+0x3AA s16 gline_y0
+0x3AC s16 gline_x1
+0x3AE s16 gline_y1
+0x3B0 u8  gline_r0
+0x3B1 u8  gline_g0
+0x3B2 u8  gline_b0
+0x3B3 u8  gline_r1
+0x3B4 u8  gline_g1
+0x3B5 u8  gline_b1
+0x3B8 s32 line_flags    # a GsLINE (sp_line, GsSortLine): flags, start x0/y0, end x1/y1, colour
+0x3BC s16 line_x0
+0x3BE s16 line_y0
+0x3C0 s16 line_x1
+0x3C2 s16 line_y1
+0x3C4 u8  line_r
+0x3C5 u8  line_g
+0x3C6 u8  line_b
+0x3C8 s16 sv_x           # temporary SVECTOR (0x1F8003C8)
+0x3CA s16 sv_y
+0x3CC s16 sv_z
+0x3D0 s32 vec_x          # temporary VECTOR (0x1F8003D0): e.g. the target position for api_turn_toward_target
+0x3D4 s32 vec_y
+0x3D8 s32 vec_z
+0x3E0 s16 mat_m00        # temporary MATRIX (0x1F8003E0); t[] at 0x3F4
+0x3F4 s32 mat_t0
+0x3F8 s32 mat_t1
+0x3FC s32 mat_t2

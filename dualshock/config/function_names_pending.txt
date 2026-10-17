@@ -1,0 +1,25 @@
+// Function names found so far, to be applied in the later renaming pass (the matching tools key on
+// func_XXXXXXXX names, so nothing is renamed yet). Format: old = new; // confidence: evidence
+// Source: published cheat-code lists for this version (see docs/re1_ram_map_detailed.md).
+// Applied with tools/rename.py so far (removed from this list): pad_update (0x8003BAF8), pad_get_raw_buttons (0x8003C788),
+// itembox_compact (0x8002E58C). Naming convention since 2026-10-15: snake_case functions, g_Name globals.
+
+// main (SLUS_007.47)
+func_8004182C = Player_ShootWeapon;      // high: the "Infinite Ammo" cheat patches its ammo decrement (count - 1 on the inventory slot)
+func_8003C5F4 = Pad_ResetVibration;      // medium: clears two 33-entry buffers (D_800BE640/D_800BE790) and the vibration bytes 0x800BA34C/D
+func_80029F88 = Game_Run;                // medium-high: calls the init and the main loop, then adds the elapsed VSync count to the total play time 0x800C8684
+func_8002A068 = Game_Init;               // medium: sets health 0x800C867E, the item box 0x800C8724, the inventory 0x800C8784 and much more before the loop
+func_8002A5C4 = Game_MainLoop;           // medium: srand, VSync, the lab timer 0x800C867A/0x800C867C; called by Game_Run after Game_Init
+func_8002E4E0 = ItemBox_Open;            // medium: loads files 0xD/0xE, then the model of the first item-box item (0x800C8724)
+func_8002DD14 = ItemBox_Update;          // medium: the item-box screen logic (reads/writes the 48-slot array 0x800C8724)
+func_8002E650 = ItemBox_Draw;            // medium-high: draws the item-box screen (sprites, boxes, sprintf of counts) from 0x800C8724
+func_80048FC0 = Scd_SetCharacter;        // medium: room-script opcode handler (advances 0x800CF640) that sets the character 0x800C8668 and three flags
+
+// ending overlay
+func_800E48E4 = Ending_CheckClearTimeUnder3h;  // high: compares the total time 0x800C8684 with 0x9E340 (648000 frames = 3 h at 60 fps) and sets a reward flag
+
+// Not named (yet):
+// func_800341EC - the "Save Anywhere" cheat turns two instructions in it into no-ops (a `< 0x17` counter check and a
+//                 load of field 0xF); it draws sprites (GsSortFastSprite/GsSortSprite) with a small animation counter.
+//                 Its exact job is unclear.
+// VSync         - already named (Sony library); the "Hyper Mode" cheat patches its wait loop.

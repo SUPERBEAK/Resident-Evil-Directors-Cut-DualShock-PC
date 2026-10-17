@@ -1,0 +1,9 @@
+# The scratchpad word 0x1F800038 holding a TMD object pointer in the tyrant / plant 42 render functions
+# (its vertex/normal/primitive tops go to GsPrstTG3L). Folded into tmd_object.txt later.
+struct TmdObject
+macro TMD_OBJ
+fields TmdObject
+param tyrant_draw_claw_ghosts LIT(s32, sp_tmp38)
+param tyrant_draw_heart LIT(s32, sp_tmp38)
+param plant42_render_copies LIT(s32, sp_tmp38)
+param tyrant_scroll_body_uvs tmd

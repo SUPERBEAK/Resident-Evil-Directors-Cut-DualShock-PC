@@ -1,0 +1,14 @@
+# One light of SCD opcode 0x46 room_lights_set (12 bytes per light, 3 lights after the 2-byte opcode).
+struct ScdOpLight
+macro SCD_LIGHT
+define
+0x00 s16 x            # -> RoomHeader light_x/y/z (light i)
+0x02 s16 y
+0x04 s16 z
+0x06 u8  r
+0x07 u8  g
+0x08 u8  b
+0x09 u8  type         # -> light_type
+0x0A u16 radius       # -> light_radius
+param scd_op_46_room_lights_set p
+param scd_op_46_room_lights_set p2

@@ -1,0 +1,24 @@
+# Plant 42 (stage 4) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# This layout is the plant42 enemy entity itself (main plant and its vine instances, behavior_flags bit 0).
+# Overlaps left out: the BODY clone (entity 0xB8, made by api_entity_clone in plant42_init and run by plant42_body_* via
+#   plant42_render_copies) uses 0x16C/0x170/0x174 as an s32 scale VECTOR for api_ScaleMatrix (0x1000 = 1.0; pulse/shrivel/fall).
+#   Those are the s32 accesses the survey shows at +0x00 (7), +0x04 (7) and +0x08 (7). They belong to a different entity
+#   kind, so the plant's own s8/u16/s8 fields are kept here (+0x00: s8 7 + u8 4; +0x04: u16 6 + s16 2; +0x08: s8 13).
+#   If the converter must handle the body accesses, give the body functions their own struct (s32 scale_x/scale_y/scale_z).
+# The roots entity (pointer at 0x178) runs plant42_roots.c with a different layout (see plant42_roots.txt).
+struct Plant42Work PLANT42
+skip plant42_body_*   # the body clone: s32 scale vector at 0x16C.., not this layout
+0x00 s8  yaw_step             # 0x16C: signed yaw step: random 0..15 added to angle (plant42_behavior_idle), +-1 sway decay (suspend), +-0x20 spin (death)
+0x01 s8  tilt_step            # 0x16D: signed tilt step: random 0..7 for angle_z (idle), +-1 decay of tilt_swing (suspend), +-0x40 for rot_x (death)
+0x02 u16 yaw_swing            # 0x16E: suspend: yaw swing subtracted from angle (starts 3); death: target yaw (0 or 0x800) the spin stops at
+0x04 u16 tilt_swing           # 0x170: suspend: tilt swing subtracted from angle_z (starts 6); death: target rot_x (0x400/0xC00)
+0x06 s16 rot_speed            # 0x172: per-behavior rotation speed: sweep ramp (+4, then +0x1C), spit/move/hold/release angle_z step, kill/recoil turn; suspend frame countdown
+0x08 s8  sweep_dir            # 0x174: sweep direction 0/1, index into the sweep table (plant42_behavior_sweep); checked in plant42_sweep_hit
+0x09 s8  grab_joint           # 0x175: joint index (15) the captured player is held at (move/hold matrices); recoil reuses it as a +-8 swing step
+0x0A s8  unused_176                # 0x176: only cleared in plant42_init
+0x0B s8  scd_effect_timer     # 0x177: script-driven countdown (10 on flinch/recoil); at 1 spawns debris effects + SE at the body, re-arms 13 (plant42_scd_state)
+0x0C void * roots             # 0x178: roots clone entity made by api_entity_clone (plant42_init); plant42_render_copies runs plant42_roots_clone_state_tbl on it
+0x10 u32 player_distance      # 0x17C: api_SquareRoot0 of dx^2+dz^2 to the player (plant42_state_check_body); also handed to plant42_action_dispatch
+0x14 s16 ambient_effect_timer # 0x180: random 0x32.. countdown; near 1/<0x1E (and every 50) spawns falling effects around the player when far away
+0x16 u8  death_wilt_timer     # 0x182: plant42_behavior_death phase 1 length (15..28 frames of tilting) before it falls
+0x17 u8  death_bounce_count   # 0x183: 5 at death; one per floor bounce while falling, plays the thud SE/effects at 4, ends the fall at 0

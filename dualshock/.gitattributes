@@ -1,0 +1,3 @@
+# The 1990s PSX toolchain (gcc 2.7.2 cpp) breaks on CRLF line endings (e.g. '\' line
+# continuations in include_asm.h), so always check out LF here, regardless of core.autocrlf.
+* text=auto eol=lf

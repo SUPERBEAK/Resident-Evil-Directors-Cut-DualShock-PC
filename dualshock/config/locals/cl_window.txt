@@ -1,0 +1,19 @@
+# A computer-lab terminal window (g_ClWindows: 4 x 0x1C bytes, walked by g_ClCurWindow). Names from the RE1 PC
+# decomp's ClWindow (names only); window 3's `enabled` byte is the keyboard flags (bit 7 = the cursor moved).
+struct ClWindow
+macro CL_WIN
+expr ^g_ClCurWindow(_voidp)?$
+param computer_keyboard_input f
+define
+0x00 u8 enabled
+0x01 u8 row_count
+0x02 s16 x
+0x04 s16 y
+0x06 s16 cols
+0x08 u16 rows
+0x0C s32 row_data
+0x10 u8 anim_cmd     # 0 idle, 1 open, 0x81 close
+0x11 u8 anim_state
+0x12 s16 alpha
+0x14 s16 visible
+0x16 s16 keyboard_ramp  # non-zero: fade to 0x80 (half; the keyboard window) instead of 0xFF

@@ -1,0 +1,19 @@
+# Character NPCs' work area (src/main/npc.c, character_npc_update and npc_walk_*): entity bytes 0x16C.. (bytes
+# 0x000-0x16B are the Entity: ENT() / CURRENT_ENTITY_LIT). Meanings from the code and the RE1 PC decomp's
+# CharacterNpc.cpp notes (names only).
+struct NpcWork
+view NPC_CUR = ((NpcWork *)LIT(void *, g_CurrentEntity))   # the NPC being updated (g_CurrentEntity's literal address)
+base LIT(void *, g_CurrentEntity)
+view NPC_OBJ = ((NpcWork *)OBJ)                    # npc_walk_lookat_wander's local #define OBJ (same pointer)
+base OBJ
+define
+0x16C s8 anim_done     # joint_move result (animation finished)
+0x16D u8 anim_flags    # bit 0: play the animation in reverse (joint_move arg)
+0x16F u8 look_timer    # look-at re-roll countdown (0x30..0x48 frames)
+0x170 u8 look_rand0    # look-at random state 0..3 (cleared as one s32): pick for the +0xD0 angle
+0x171 u8 look_rand1    # pick for the +0xCC angle
+0x172 u8 look_rand2    # pick for look_at_pitch_step (+0x14)
+0x173 u8 look_rand3    # pick for look_at_yaw_step (+0x28)
+0x174 u8 zone          # the NPC's walk zone (walk_zone_find; RDT +0x58)
+0x175 u8 next_zone     # the path's next zone
+0x176 s16 heading      # walk heading (target yaw) npc_walk_turn_toward_heading turns to

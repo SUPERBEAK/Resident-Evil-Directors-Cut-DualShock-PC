@@ -1,0 +1,9 @@
+# More joint pointers in the stage overlays (folded into joint.txt later): the tyrant's claw ghost block
+# (joint records, PC g_tyClawGhostBlock) and an entity's ->joints used directly as a base.
+struct Joint
+macro JOINT
+fields Joint
+stride 0x7C
+expr g_TyClawGhostBlock
+expr ^\(?\s*(\(\w+ \*+\)\s*)?g_CurrentEntity->joints\)?$|^ENTITY_AS\(g_CurrentEntity, joints, void \*\)$
+param cerberus_head_track head

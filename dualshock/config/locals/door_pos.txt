@@ -1,0 +1,9 @@
+# A door order entry's position (g_DoorOrderTable + 0x30 = its GsCOORDINATE2 coord.t; PC sca.localMatrix.t).
+struct DoorPos
+macro DOOR_POS
+define
+0x00 s32 x
+0x04 s32 y
+0x08 s32 z
+param door_op_order_pos pos
+param door_op_order_pos_add_vel pos

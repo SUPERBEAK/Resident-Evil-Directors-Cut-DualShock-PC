@@ -1,0 +1,12 @@
+# PS1 SDK GsDOBJ5 object handle (attribute, coord2, tmd, id) passed as such: reverse_anim_frame_data's
+# argument (setup_entity_joint_animation / entity_setup_weapon_part pass &Joint.anim_field).
+# No `define`: the SDK type (psyq_types.h) is used as is.
+struct GsDOBJ5
+macro DOBJ5
+param reverse_anim_frame_data dobj
+0x00 u32 attribute
+0x04 GsCOORDINATE2 * coord2
+0x08 u32 * tmd
+0x0C u32 * packet
+0x10 u32 id
+param tmd_link_object dobj

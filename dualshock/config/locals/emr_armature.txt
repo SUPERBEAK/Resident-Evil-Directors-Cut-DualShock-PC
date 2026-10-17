@@ -1,0 +1,9 @@
+# EMR (skeleton) armature entry: one 4-byte record per joint at EmrHeader.armature_offset (the table that
+# entity_compute_joint_world_matrices / rotate_entity walk): the joint's child count and the offset (from
+# the table start) of its list of child joint numbers (one byte each).
+struct EmrArmature
+macro EMR_ARM
+param rotate_entity entry
+define
+0x00 u8 child_count       # u16 in the file; the code reads the low byte
+0x02 u16 children_offset

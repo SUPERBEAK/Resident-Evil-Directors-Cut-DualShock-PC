@@ -1,0 +1,8 @@
+# One frame record of an animation (header + (AnimEntry.frame_offset >> 2)), read where yawn / plant42 step
+# their animations by hand. Only +2 is understood so far: copied into the entity's timing_control.
+struct AnimFrame
+macro ANIM_FRAME
+define
+0x02 u8 timing
+param yawn_anim_advance frame
+param plant42_joint_move frame

@@ -1,0 +1,27 @@
+// Capcom symbol names for overlay SELECT.EXE (splat format).
+select_state = 0x800E0038; // type:func
+select_draw_characters = 0x800E24E8; // type:func
+select_draw_arrows = 0x800E4B78; // type:func
+select_scroll_step = 0x800E4CEC; // type:func
+select_scroll_accel = 0x800E4D8C; // type:func
+select_chris_uv_tbl = 0x800E4E44;
+select_jill_uv_tbl = 0x800E4E4C;
+select_backdrop_uv_tbl = 0x800E4E54;
+g_SelectRtpFlag = 0x800E4E68;
+g_SelectMatrix = 0x800E4E70;
+g_SelectRtpInterp = 0x800E4E90;
+g_SelectRot = 0x800E4E98;
+g_SelectRot_vy = 0x800E4E9A;
+g_SelectRot_vz = 0x800E4E9C;
+g_SelectTrans = 0x800E4EA0;
+g_SelectTrans_vy = 0x800E4EA4;
+g_SelectTrans_vz = 0x800E4EA8;
+g_SelectCharacter = 0x800E4EB0;
+g_SelectQuadVerts = 0x800E4EB8;
+g_SelectState = 0x800E4ED8;
+g_SelectSubState = 0x800E4ED9;
+g_SelectUnused = 0x800E4EDA;
+g_SelectPanels = 0x800E4EE0;
+g_SelectPadChoice = 0x800E5360;
+g_SelectTimer = 0x800E5361;
+select__main = 0x800E4E2C; // type:func

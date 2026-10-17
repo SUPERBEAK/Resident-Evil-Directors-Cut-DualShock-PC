@@ -1,0 +1,11 @@
+# RDT model record (8 bytes): an element of the RDT item model list (+0x54, SCD 0x18) or object model
+# list (+0x50, SCD 0x1F); g_ItemModelLastRec / g_OmodelLastRec remember the last one loaded.
+struct RdtModelRec
+macro RDT_MODEL
+param scd_op_18_item_model_set rec
+param scd_op_18_item_model_set g_ItemModelLastRec
+param scd_op_1f_omodel_set rec
+param scd_op_1f_omodel_set g_OmodelLastRec
+define
+0x00 s32 tmd   # TMD (0 = no model; tmd_relocate_texture / tmd_link_object)
+0x04 s32 tim   # TIM (0 = none; tim_load_to_vram unless the same as the last record's)

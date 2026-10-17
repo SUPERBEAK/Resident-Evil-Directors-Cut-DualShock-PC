@@ -1,0 +1,13 @@
+# The hit-centre data an entity's sca_hit_data points to: an array of 3-short points (x, y, z relative to
+# the entity's position; 6 bytes each - plant42 writes the second one at +6). Was named as an SVECTOR first.
+struct HitPoint
+macro HIT_POINT
+stride 0x6
+define
+0x00 s16 x
+0x02 s16 y
+0x04 s16 z
+expr sca_hit_data\)\)?(\s*\+\s*6\))?$
+# the player's hit-centre data in player_state_init (D_800C512C = g_PlayerEntity.sca_hit_data; *pp = the same)
+param player_state_init D_800C512C_voidp
+param player_state_init *pp

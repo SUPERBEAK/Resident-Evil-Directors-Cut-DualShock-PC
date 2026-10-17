@@ -1,0 +1,11 @@
+# The current door command entry (DoorCmd, config/structs/door_cmd.txt) through door_op_order_setup's
+# aliases of g_DoorCmdCur.
+struct DoorCmd
+macro DCMD
+fields DoorCmd
+param door_op_order_setup g
+param door_op_order_setup g_DoorCmdCur_l
+
+# rawfield.py round (2026-10-16): local copy of g_DoorCmdCur
+param door_op_order_vert_set obj
+expr ^g_DoorCmdCur(_\w+)?$

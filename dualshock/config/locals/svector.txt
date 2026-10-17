@@ -1,0 +1,14 @@
+# Pointers to a PS1 SDK SVECTOR (x, y, z shorts) used as such.
+# No `define`: the SDK type is used as is.
+struct SVECTOR
+macro SVEC
+0x00 s16 vx
+0x02 s16 vy
+0x04 s16 vz
+0x06 s16 pad
+# boundary_get_cell's offset (see room_collision.c's callers) and rotate_vector_y's result:
+param boundary_get_cell ofs
+param rotate_vector_y dst
+param model_jitter_vertices base
+# item_viewer_check_examine: the viewer's three rotation angles
+param item_viewer_check_examine pos

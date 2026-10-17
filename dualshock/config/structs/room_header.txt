@@ -1,0 +1,45 @@
+# The loaded room file (RDT) header at g_RoomData (also read through the per-function aliases _l / _u8p).
+# Layout from the RDT format page (Just Solve the File Format Problem wiki, "RDT (Resident Evil 1997)"): counts, 3 unknown records, then
+# the 19 section pointers (relocated to addresses on load).
+struct RoomHeader
+view ROOM = ((RoomHeader *)g_RoomData)
+base g_RoomData
+view ROOM_L = ((RoomHeader *)g_RoomData_l)
+base g_RoomData_l
+view ROOM_P = ((RoomHeader *)g_RoomData_u8p)
+base g_RoomData_u8p
+define
+0x00 u8  sprite_count
+0x01 u8  num_cameras      # number of camera angles (camera records at +0x94)
+0x02 u8  object_count
+0x03 u8  item_model_count
+0x06 u16 ambient_r        # ambient light colour (GsSetAmbient; SCD 0x46 sets it)
+0x08 u16 ambient_g
+0x0A u16 ambient_b
+0x0C s32 light_x          # light 0 of 3 (0x14 bytes each; g_RoomData + i * 0x14 reaches light i):
+0x10 s32 light_y          #   position / direction
+0x14 s32 light_z
+0x18 u8  light_r          #   colour
+0x19 u8  light_g
+0x1A u8  light_b
+0x1C u16 light_type       #   0 = point light with radial falloff, else directional (PC RDT_Light)
+0x1E s16 light_radius
+0x48 s32 camera_switches  # sections (RDT page "object list"): camera zones/switches (*.RVD)
+0x4C s32 collision        # collision boundaries for 3D models (*.SCA)
+0x50 s32 object_models    # obstacle / movable object models: TMD/TIM pairs (count +0x02; PC RDT object_models)
+0x54 s32 item_models      # item models: TMD/TIM pairs (count +0x03; PC RDT item_models)
+0x58 s32 blocks           # block data (*.BLK)
+0x5C s32 floor_sounds     # footstep sound zones (*.FLR)
+0x60 s32 init_script      # initialisation script (*.SCD)
+0x64 s32 main_script      # execution script 0 (*.SCD)
+0x68 s32 event_scripts    # execution script 1 (*.SCD)
+0x6C s32 skeleton_anim    # skeleton animation (*.EMR)
+0x70 s32 skeleton_steps   # skeleton animation steps (*.EDD)
+0x74 s32 messages         # message texts (*.MSG)
+0x78 s32 raw_images       # RAW images (item images)
+0x7C s32 effect_index     # effect animation index (*.ESP)
+0x80 s32 effect_data      # effect animation data (*.EFF)
+0x84 s32 effect_textures  # effect sprite images (*.TIM)
+0x88 s32 sound_attributes # sound attribute table (*.SND, 192 bytes)
+0x8C s32 vab_header       # sound bank header (*.VH)
+0x90 s32 vab_body         # sound bank samples (*.VB)

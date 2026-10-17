@@ -1,0 +1,11 @@
+# SCD 0x51 vibrate_ramp record (8 bytes; PS1 only): pad_vibrate_large_ramp(duration, from, to, delay).
+struct ScdVibrateRamp
+noaddr
+macro SCD_VIBRATE_RAMP
+param scd_op_51_vibrate_ramp p
+define
+0x00 u16 head       # high byte nonzero: pad_vibration_reset first (read through the IP literal)
+0x02 u16 strength   # low byte: start strength, high byte: end strength
+0x04 u16 duration
+0x06 u16 delay
+param scd_op_51_vibrate_ramp LIT(void *, g_ScdIp)

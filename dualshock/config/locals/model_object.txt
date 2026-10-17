@@ -1,0 +1,53 @@
+# A room model object: one 0xA4-byte record of g_OmodelTable (SCD 0x1F omodel_set: movable/obstacle
+# objects) or g_ItemModelTable (SCD 0x18 item_model_set: the pick-ups lying in the room), allocated by
+# room.c from the 0x800CAB1C pool. Its first bytes have the same layout as an Entity (re1_types.h layout
+# note): a GsDOBJ2-style handle at 0x0C and a GsCOORDINATE2 at 0x1C whose matrix translation is the
+# position (0x34/0x38/0x3C). The entity spec (ENT) names the fields the Entity struct has; this one the
+# rest (Entity keeps those bytes as padding) and the item-model records, which are no entities.
+struct ModelObject
+macro MODEL_OBJ
+param scd_op_18_item_model_set obj
+param scd_op_1f_omodel_set obj
+param scd_op_3b_obj_rotation_set obj
+param scd_op_36_obj_field_test g_OmodelTable_s[a >> 8]
+define
+0x00 u8 flags                 # nonzero = shown/active (SCD 0x19 model_flag_set / 0x35 obj_flag_set write it)
+0x01 u8 index                 # item models: load order (g_ItemModelCount); omodels: entity id
+0x04 s32 sca_info         # collision (ScaInfo) records, as Entity +0x04
+0x08 s32 sca_hit_data     # as Entity +0x08
+0x0C u32 attribute            # GsDOBJ2 attribute: 0x40000000, | 0x40 when the SCD record asks for it
+0x10 GsCOORDINATE2 * coord2   # GsDOBJ2 coordinate system (tmd_link_object: -> coord at 0x1C)
+0x14 s32 tmd                  # GsDOBJ2 TMD object (0 = no model; Entity.model_load_buffer)
+0x18 s32 packet               # GsDOBJ2 packet
+0x1C u32 coord_flg            # GsCOORDINATE2 flg
+0x20 MATRIX coord             # GsCOORDINATE2 coord: local matrix, coord.t[] = position x/y/z
+0x40 MATRIX workm             # GsCOORDINATE2 workm
+0x60 s32 coord_param          # GsCOORDINATE2 param
+0x64 GsCOORDINATE2 * super    # parent coordinate system: NULL, the player's (0x800C5140), another omodel's, an enemy's
+0x6C u16 position_vx      # as Entity +0x6C..0x70 (set together with the position by scd_op_47)
+0x6E u16 position_vy
+0x70 u16 position_vz
+0x72 u16 rot_x                # rotation (SCD 0x3B obj_rotation_set writes x and z)
+0x74 u16 angle
+0x76 u16 angle_z
+0x86 u16 billboard            # effect slot of the object's billboard (item models: the sparkle; 0 = none); SCD 0x36 tests it
+0x92 u16 sca_radius                # omodels: SCD 0x1F record +0x14
+# The same GsDOBJ5 handle in an entity (init_anim_structure: the player entity's handle -> its coordinates)
+param init_anim_structure e
+expr ^g_ItemModelTable_u8p\[.*\]$
+
+# rawfield.py round (2026-10-16): room objects reached through local copies of g_OmodelTable entries;
+# chk_obj_slide gets two room objects (the pushed one and each other object)
+param update_room_objects e
+param render_room_objects obj
+param check_climb_object e
+param scd_op_47_obj_transform_set obj
+param scd_op_32_obj_clut_set obj
+param room_object_render obj
+param chk_obj_slide fixed
+param chk_obj_slide moved
+param model_jitter_vertices obj
+expr ^g_ClimbObject(_\w+)?$
+# g_OmodelTable_l declared as one pointer there: its value is room object 0
+param effect_behavior_shell_casing g_OmodelTable_l
+param player_behavior_14_knife_swing g_OmodelTable_l

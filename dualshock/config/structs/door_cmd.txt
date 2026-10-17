@@ -1,0 +1,10 @@
+# Door-animation command interpreter state (src/main/door.c): g_DoorCmdCur (PC g_doorCmdCur).
+struct DoorCmd
+view DOOR_CMD = ((DoorCmd *)g_DoorCmdCur_voidp)    # door.c reads it through the per-function alias
+base g_DoorCmdCur_voidp
+define
+0x00 u16 active
+0x02 u16 loop_depth    # nesting depth of the loop commands
+0x04 void * ip         # current command pointer (advanced by each command)
+0x08 s32 loop_ip[8]    # per depth: where the loop restarts
+0x28 u16 loop_count[8] # per depth: remaining repeats

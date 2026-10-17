@@ -1,0 +1,11 @@
+# Neptune (shark, stage 4) work area (entity 0x16C..), used by tools/enemywork.py. Offset from 0x16C, type, name, # comment.
+# Names from neptune.c usage; wander fields named like zombie's (same api_entity_update_wander_turn call pattern).
+struct NeptuneWork NEPTUNE
+0x00 s16 grab_struggle_timer  # 0x16C: 0x5A when the bite seizes the player (neptune_bite_seize); input subtracts 8, else 1 per frame; releases when < 0
+0x02 u16 wander_angle         # 0x16E: copied from scratch 0x1F800018 after api_check_room_collision (neptune_update); first arg of api_entity_update_wander_turn
+0x04 s8  wander_turn_state    # 0x170: cleared in neptune_state_init; given by address to api_entity_update_wander_turn
+0x05 s8  effect_timer         # 0x171: counts down; at 0 spawns effect 0x17 billboards on joints and reloads (4 swimming, 7 dying, 0xB biting/recovering)
+0x06 s8  swim_anim_count      # 0x172: adds api_joint_move results while swimming; at 3 plays swim SE 0 and resets (3 in neptune_swim_begin)
+0x07 s8  unused_173                # 0x173: only set to 5 in neptune_state_init
+0x08 u8  dir_control_flags    # 0x174: OR-ed api_check_room_collision bits (neptune_update), cleared in init; given by address to the wander turn
+0x09 s8  unused_175                # 0x175: only set to 0x20 in neptune_circle_begin

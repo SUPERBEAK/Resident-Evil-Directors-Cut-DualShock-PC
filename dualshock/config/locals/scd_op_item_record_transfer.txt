@@ -1,0 +1,8 @@
+# SCD 0x4C item_record_transfer record (4 bytes; PC cmd_item_record_transfer); read through g_ScdIp.
+struct ScdItemRecordTransfer
+noaddr
+macro SCD_ITEM_RECORD_TRANSFER
+param scd_op_4c_item_record_transfer g_ScdIp
+define
+0x00 u16 head     # high byte: mode 0 = record count -> state byte, 1 = state byte -> record, 2 = inventory -> both
+0x02 u16 target   # low byte: room action slot (its ScdZone.item_count), high byte: state byte (0x800C8660[n])

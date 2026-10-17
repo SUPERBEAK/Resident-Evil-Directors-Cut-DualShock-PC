@@ -1,0 +1,8 @@
+# Event script command 5 (create; 3 bytes; PC scd_event_cmd_create): starts another SCD event.
+struct ScdEventCmdCreate
+noaddr
+macro SCD_EVENT_CMD_CREATE
+param scd_event_cmd_create pc
+define
+0x01 u8 slot     # event slot (scd_event_entry_create arg 0; >= 8: first free)
+0x02 u8 script   # g_RoomEventScripts index

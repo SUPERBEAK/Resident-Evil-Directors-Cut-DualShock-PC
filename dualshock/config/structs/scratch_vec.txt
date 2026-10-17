@@ -1,0 +1,9 @@
+# The scratchpad's temporary VECTOR at 0x1F8003D0, where the code addresses it directly (see scratchpad.txt).
+struct ScratchVec
+view SCRATCH_VEC = ((ScratchVec *)0x1F8003D0)
+base (void *)0x1F8003D0
+base LITP(void, sp_vec)
+define
+0x00 s32 x
+0x04 s32 y
+0x08 s32 z

@@ -1,0 +1,16 @@
+# ESP sprite info: the header of one effect sprite (sprite table 0x800CF894[id], load_effect_sprite_data;
+# Effect.clut_info points here): counts, where setup_effect_sprite_textures put its CLUT and texture page,
+# then the frame list (EffectFrame, from +8) and the UV records (4 bytes: u, v, pivot x, pivot y).
+struct EspSpriteInfo
+macro ESP_INFO
+param effect_draw_mirror_reflection ((u8 *) EFFECT->clut_info)
+define
+0x00 u16 uv_count     # UV records (setup_effect_sprite_textures adds the VRAM y to each v)
+0x02 u16 frame_count  # frame records; the UV records follow them
+0x04 u16 clut         # PS1 CLUT id (cx = (clut & 0x3F) * 16, cy = clut >> 6)
+0x06 u16 tpage        # texture page (low byte written by setup_effect_sprite_textures)
+
+# rawfield.py round (2026-10-16)
+param setup_effect_sprite_textures p
+param effect_create_billboard p
+expr ^EFFECT->clut_info$

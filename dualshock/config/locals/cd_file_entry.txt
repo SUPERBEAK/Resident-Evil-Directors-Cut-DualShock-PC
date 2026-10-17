@@ -1,0 +1,10 @@
+# One entry of the CD file table g_CdFileTable (8 bytes; cd_get_file_lba / cd_verify_file_checksum); the overlay
+# loaders patch an entry's size/lba to skip the overlay header sector.
+struct CdFileEntry
+macro CD_FILE
+param load_and_schedule_overlay entry
+define
+0x00 u32 size
+0x04 u16 lba     # start sector (low 16 bits)
+0x06 u8 lba_hi
+0x07 u8 sum      # checksum (cd_verify_file_checksum)

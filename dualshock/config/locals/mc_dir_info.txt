@@ -1,0 +1,10 @@
+# Memory card directory listing (memcard_list_files): 15 file names of 0x16 bytes, then count/sizes.
+struct McDirInfo
+macro MC_DIR
+define
+0x000 u8  names[0x14A]  # 15 x 0x16-byte file names
+0x14A u8  count
+0x14C s32 total_size
+0x150 s32 sizes[15]
+param memcard_list_files info
+param memcard_screen info

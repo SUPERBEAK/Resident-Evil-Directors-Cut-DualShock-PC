@@ -1,0 +1,17 @@
+# The entity's SCA collision record (Entity.sca_info points to it): 6 shorts per record. Layout from the RE1 PC
+# decomp's sca tables (names only; e.g. the tiger's { 0x8000, -500, -180, 0, 180, 2500 }) and the PS1 uses:
+# room_action.c's entity-vs-entity push adds +0x02/+0x06 to pos_x/pos_z, uses +0x08 as the half-height and
+# +0x0A as the radius; +0x0A is also the radius passed to check_room_collision.
+struct ScaInfo
+macro SCA
+source sca_info\)?\s*$
+expr sca_info\)?$
+define
+0x00 u16 flags       # 0x8000 in most records
+0x02 s16 ofs_x       # box centre offset from the entity position
+0x04 s16 ofs_y
+0x06 s16 ofs_z
+0x08 u16 half_height
+0x0A u16 radius      # collision radius (check_room_collision)
+param weapon_hit_detect_knife ((u8 *) ENT(ent)->sca_info)
+expr ^ENTITY_AS\(g_CurrentEntity, sca_info, void \*\)$

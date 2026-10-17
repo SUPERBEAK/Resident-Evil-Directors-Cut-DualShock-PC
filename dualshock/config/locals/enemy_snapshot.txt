@@ -1,0 +1,21 @@
+# Enemy snapshot: one 0x1C-byte record of g_EnemySnapshots (0x800C810C, 16 records; cursor g_EnemySnapCur at
+# 0x800CAB18). build_enemy_snap (PC BuildEnemySnap, on room exit) saves each live enemy here,
+# restore_saved_enemy_state (SCD 0x1B em_set) puts it back when the room is entered again.
+struct EnemySnapshot
+macro SNAP
+stride 0x1C
+param build_enemy_snap LIT(void *, g_EnemySnapCur)
+param build_enemy_snap cur_snap
+param build_enemy_snap snap
+define
+0x00 u8 status_flags    # Entity.status_flags & 0xF (0 = dead: only kept for its death event)
+0x01 u8 behavior_flags  # Entity.behavior_flags
+0x02 u8 room_id         # the room it was saved in (g_RoomId)
+0x03 u8 slot_info            # Entity.slot_info, the whole byte (low nibble: the enemy slot, matched by restore_saved_enemy_state)
+0x04 s32 state          # Entity.state (the routine index, widened; restore_saved_enemy_state does not read it back)
+0x08 s16 pos_x          # position (Entity.pos_x/y/z, 16 bits)
+0x0A s16 pos_y
+0x0C s16 pos_z
+0x10 u16 angle          # Entity.angle
+0x14 u8 rooms_left      # 5 when saved, minus 1 per room change (0 = free record)
+0x15 u8 pad15[7]      # (unused; records are 0x1C bytes)

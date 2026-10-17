@@ -1,0 +1,141 @@
+# splat config for the RE1 Director's Cut Dual Shock (USA) main executable.
+# Run from dualshock/:  make split   (see README.md)
+# Layout facts: docs/psyq_sdk_detailed.md (milestone M1).
+name: SLUS_007.47
+sha1: 3ce8a75f601973926770635234ee03e34c812b36
+options:
+  basename: slus_007.47
+  # The original is never copied into git; it comes from the disc dump (dump_discs.sh).
+  target_path: ../extracted/RE1-Dualshock/SLUS_007.47
+  elf_path: build/slus_007.47.elf
+  base_path: .
+  platform: psx
+  compiler: PSYQ
+
+  asm_path: asm/main
+  src_path: src/main
+  build_path: build
+  asset_path: assets/main
+
+  ld_script_path: build/slus_007.47.ld
+  ld_dependencies: True
+  # PsyQ's linker doesn't pad sections to 16 bytes (.text starts at 0x80011A78).
+  ld_align_section_vram_end: False
+  ld_align_segment_vram_end: False
+
+  find_file_boundaries: False
+  # Set by the startup code (the EXE header says 0); found by `splat create_config`.
+  gp_value: 0x800B235C
+
+  o_as_suffix: True
+  use_legacy_include_asm: False
+  # Also write the assembly of functions that are already C (next to where INCLUDE_ASM files were),
+  # for the diff tools (sidediff.py, dist.py) - 2026-10-15.
+  disassemble_all: True
+  matchings_path: nonmatchings
+
+  # PsyQ's linker puts .rodata first.
+  section_order: [".rodata", ".text", ".data", ".bss"]
+
+  symbol_addrs_path:
+    - config/symbol_addrs_psyq.txt  # Sony PsyQ library functions (tools/psyq_match.py)
+    - config/symbol_addrs.txt       # Capcom names (M3)
+  reloc_addrs_path:
+    - config/reloc_addrs.txt
+
+  undefined_funcs_auto_path: build/slus_007.47_undefined_funcs_auto.txt
+  undefined_syms_auto_path: build/slus_007.47_undefined_syms_auto.txt
+
+  # every object's sections start 4-aligned (Capcom's link did the same; `as` doesn't pad sections)
+  subalign: 4
+
+  string_encoding: ASCII
+  data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+
+segments:
+  - name: header
+    type: header
+    start: 0x0
+
+  - name: main
+    type: code
+    start: 0x800
+    vram: 0x80010000
+    subsegments:
+      - [0x800, .rodata, weapon_damage]
+      - [0x830, .rodata, memcard]
+      - [0x930, .rodata, door]
+      - [0x968, .rodata, effect]
+      - [0x974, .rodata, entity]
+      - [0x9AC, .rodata, scd_event]
+      - [0xA44, .rodata, file_reader]
+      - [0xAC8, .rodata, game]
+      - [0xAF4, .rodata, inventory]
+      - [0xB10, .rodata, item]
+      - [0xB28, .rodata, map]
+      - [0xBD4, .rodata, message]
+      - [0xBF8, .rodata, room_action]
+      - [0xCDC, .rodata, options]
+      - [0xD20, .rodata, player]
+      - [0xE34, .rodata, player_weapon]
+      - [0xE48, .rodata, player_scd]
+      - [0xE9C, .rodata, room]
+      - [0xEDC, .rodata, scd]
+      - [0x101C, .rodata, interactive_screen]
+      - [0x1034, .rodata, computer_lab]
+      - [0x1038, .rodata, room_collision]
+      - [0x1044, .rodata, sound]
+      - [0x1070, .rodata, status_menu]
+      - [0x1140, .rodata, npc]
+      - [0x1154, .rodata, entity_common]
+      - [0x118C, rodata, psyq_rodata] # 0x8001098C Sony rodata (starts with printf's "0123456789ABCDEF")
+      - [0x22DC, c, weapon_damage]
+      - [0x5268, c, cd]
+      - [0x5EEC, c, clut_fade]
+      - [0x646C, c, keyconfig]
+      - [0x7E40, c, camera]
+      - [0x847C, c, memcard]
+      - [0xAB40, c, door]
+      - [0xC50C, c, effect]
+      - [0x147D0, c, spiderweb]
+      - [0x14B90, c, entity]
+      - [0x16ED4, c, scd_event]
+      - [0x18588, c, file_reader]
+      - [0x19FC4, c, file_pickup]
+      - [0x1A788, c, game]
+      - [0x1C820, c, enemy_path]
+      - [0x1DB6C, c, inventory]
+      - [0x1F608, c, item]
+      - [0x20AF4, c, model]
+      - [0x22258, c, magazine_clip]
+      - [0x2270C, c, main]
+      - [0x237A4, c, map]
+      - [0x2596C, c, message_actions]
+      - [0x25BA0, c, message]
+      - [0x27814, c, task]
+      - [0x284EC, c, room_action]
+      - [0x2B1AC, c, options]
+      - [0x2C188, c, pad]
+      - [0x2CFE4, c, player]
+      - [0x314E8, c, player_weapon]
+      - [0x357C0, c, player_scd]
+      - [0x36BAC, c, room]
+      - [0x37874, c, scd]
+      - [0x3B94C, c, interactive_screen]
+      - [0x3C3A4, c, computer_lab_terminal]
+      - [0x3EF1C, c, computer_lab]
+      - [0x4210C, c, room_collision]
+      - [0x43970, c, sound]
+      - [0x45B0C, c, stage_load]
+      - [0x45CF0, c, status_menu]
+      - [0x4AAF0, c, npc]
+      - [0x4D03C, c, texture]
+      - [0x4D414, c, movie]
+      - [0x4EAAC, c, game_reset]
+      - [0x4EB80, c, entity_common]
+      - [0x51188, c, tyrant_trail]
+      - [0x52080, asm, psyq]          # 0x80061880 Sony PsyQ libraries (2MBYTE.OBJ __main first)
+      - [0x8013C, data, data]         # 0x8008F93C data (start estimated by splat)
+  - [0xA3000]
