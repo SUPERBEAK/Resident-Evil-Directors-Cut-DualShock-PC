@@ -1,6 +1,44 @@
 # Your own copy of the game and the files extracted from it: never commit
 game_files/
 extracted/
+Resident Evil - Director's Cut - Dual Shock Ver. (USA)/
+*.bin
+*.cue
+*.iso
+*.img
+*.mdf
+*.mds
+*.ccd
+*.sub
+*.ecm
+*.pbp
+*.chd
+
+# Decoded / dumped asset scratch files
+tools/frame1.bs
+tools/test_capcom_audio.wav
+tools/*_decoded.bmp
+tools/*_decoded.png
+tools/*.bmp
+tools/*.wav
+test_decoded.png
+
+# Build directories and binary artifacts
+port/build/
+saves/
+*.log
+output_log.txt
+output_err.txt
+port/output_log.txt
+port/output_err.txt
+bg_width_search.txt
+bitreader_files.txt
+decode_bsframe_calls*.txt
+rgba_pixels_*.txt
+temp_background_loader.txt
+width_search.txt
+test.txt
+port/src/game/test.txt
 
 # Third-party tools, installed by tools/setup_tools.sh
 tools/external/
@@ -16,3 +54,5 @@ dualshock/compile_commands.json
 
 # Optional reference material (other decompilations, saved format pages), see docs/tools.md
 reference/
+tools/*.png
+tools/test_write.txt

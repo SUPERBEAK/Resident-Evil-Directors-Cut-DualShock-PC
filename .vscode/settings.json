@@ -29,5 +29,6 @@
         "**/game_files": true,
         "**/temp": true
     },
-    "C_Cpp.exclusionPolicy": "checkFilesAndFolders"
+    "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
+    "cmake.sourceDirectory": "H:/Antigravity Projects/ultimate dualshock/port"
 }

@@ -1,0 +1,19 @@
+# CLINE & GEMMA RULES
+
+## File Editing Protocol
+1. **Target Small, Precise Chunks**:
+   - When using `replace_in_file`, keep `old_text` small (3 to 6 lines max) anchored around a unique line or identifier.
+   - Do NOT attempt to replace entire multi-paragraph sections at once. Large chunks easily fail due to subtle whitespace or line-ending differences.
+2. **Line Endings (LF vs CRLF)**:
+   - This project uses LF (`\n`) for all source files.
+   - Never output literal `\n` characters (e.g. `\n`) as text inside code files. Ensure actual newline characters are emitted.
+3. **Always View Before Editing**:
+   - Before editing a file, view the exact line range first to see the exact indentation (spaces vs tabs) and surrounding context.
+   - Copy the exact characters from the file read into `old_text`.
+4. **Project Collaboration**:
+   - Keep tasks updated in `PROJECT_PARITY.md`.
+   - If an edit fails in `AGENTS.md` or any markdown file due to strict matching, append only to the end of the file or request Antigravity / Gemini to sync the handoff log.
+   - Do not touch original decomp files in `dualshock/`; all port work goes into `port/`.
+5. # Rule for Gemma:
+Do NOT use search-and-replace or line diffs to edit files. 
+Always use `write_to_file` to output the complete updated file.
